@@ -28,7 +28,7 @@ Same chart, but every curve is aligned with Italy. That's an easier way to compa
 
 ## Data
 You can find 2 datasets:
-- Data downloaded from (). Data come from WHO (World Health Organization).
+- Data downloaded [Worldindata](https://cowid.netlify.com/data/total_deaths.csv). Data come from WHO (World Health Organization).
 - Personal data.
 
 The two dataset are then merged into a more complete dataset.
