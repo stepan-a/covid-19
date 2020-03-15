@@ -18,6 +18,6 @@ while True is True:
     subprocess.run(["git", "push"])
 
     print(">>>>> " + str(datetime.now()))
-    print("---- Iteration " + k)
+    print("---- Iteration " + str(k))
     k += 1
     time.sleep(3600)
