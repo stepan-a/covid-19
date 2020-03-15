@@ -17,8 +17,7 @@ while True is True:
     subprocess.run(["git", "commit", "-m", "Charts updated (image folder)"])
     subprocess.run(["git", "push"])
 
-	print(">>>>> " + datetime.now())
-	print("---- Iteration " + k)
-	k += 1
-
-	time.sleep(3600)
+    print(">>>>> " + str(datetime.now()))
+    print("---- Iteration " + k)
+    k += 1
+    time.sleep(3600)
