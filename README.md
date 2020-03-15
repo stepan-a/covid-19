@@ -6,7 +6,7 @@ You can see how the virus spreads in France, Luxembourg, Spain, Belgium, United 
 ## Dashboard
 I created a [dashboard](https://plot.ly/dashboard/worldice:14/) where you can find 4 of the charts I generate. It is refreshed every 4 hours.
 
-Link : https://plot.ly/dashboard/worldice:14/
+![](./images/dashboard.png)
 
 ## Charts
 
