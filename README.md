@@ -15,12 +15,19 @@ I created a dashboard where you can find 4 of the charts I generate. It is refre
 Link : https://plot.ly/dashboard/worldice:14/
 
 ## Charts
-Last update: 
 
-### 1
+### Total cases for 1 million inhabitants
+That's simply the total number of cases over time for each countr divided by the total population of the country.
+![](./images/cases_per_1m_inhabitant.png)
 
-### 2
+### Total cases for 1 million inhabitants, aligned
+Same chart, but every curve is aligned with Italy. That's an easier way to compare how fast the curves grow.  
+![](./images/cases_per_1m_inhabitant_aligned.png)
 
-### 3
+### Total deaths for 1 million inhabitants
+That's simply the total number of deaths over time for each countr divided by the total population of the country.
+![](./images/deaths_per_1m_inhabitant.png)
 
-### 4
+### Total deaths for 1 million inhabitants, aligned
+Same chart, but every curve is aligned with Italy. That's an easier way to compare how fast the curves grow.  
+![](./images/deaths_per_1m_inhabitant_aligned.png)
