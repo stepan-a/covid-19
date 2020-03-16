@@ -4,7 +4,7 @@
 # # COVID-19 Analysis
 # Guillaume Rozier, 2020
 
-# In[2]:
+# In[43]:
 
 
 import requests
@@ -19,43 +19,68 @@ import plotly.graph_objects as go
 import plotly
 import chart_studio.plotly as py
 import sys
+import matplotlib.pyplot as plt
 
 chart_studio.tools.set_credentials_file(username='worldice', api_key='2iXFe4Ch2oPo1dpaBj8p')
 
+"build : " + today
 
-# In[8]:
+
+# In[44]:
 
 
 upload = False
 show = True
+export = True
 
 if len(sys.argv) == 1:
-    print("Error.\n Usage: covid-19 arg1 arg2")
-    print("arg1: upload? (True/False)\n arg2: show charts? (True/False)")
+    print("Error.\n Usage: covid-19 arg1 arg2 arg3")
+    print("arg1: upload? (True/False)\n arg2: show charts? (True/False)\n arg3: export charts as png?")
     sys.exit()
     
-if len(sys.argv) == 2:
+if len(sys.argv) >= 2:
     upload = sys.argv[1]
     
-if len(sys.argv) == 3:
+if len(sys.argv) >= 3:
     show = sys.argv[2]
+
+if len(sys.argv) >= 4:
+    export = sys.argv[3]
+    
+"build : " + today
 
 
 # ##### Functions
 
-# In[3]:
+# In[54]:
 
 
 def compute_offset(df, col_of_reference, col_to_align):
     diffs = []
     for offset in range(len(df)):
-        delta = df[col_of_reference][:].shift(offset) - df[col_to_align][:]
+        a = df[col_of_reference][1:].shift(offset).dropna()
+        b = df[col_to_align][1:].dropna()
+        if len(a) > len(b):
+            a = a[:-2]
+        m = min(len(a), len(b))
+            
+        delta = a[ -m : ]**2 - b[-m:]**2
         diffs.append(abs(delta.mean()))
+        xa = [i for i in range(len(a))]
+        xb = [i for i in range(len(b))]
+        #plt.scatter(x=xa, y=a)
+        #plt.scatter(x=xb, y=b)
+        #plt.savefig("images/offset"+str(offset)+".png")
     ret = diffs.index(min(diffs))
-    #print(ret)
+    #print("a", a)
+    #print("b", b)
+    #print("d", delta)
+
     if col_of_reference == col_to_align:
         return 0
     return ret
+
+"build : " + today
 
 
 # 
@@ -63,7 +88,7 @@ def compute_offset(df, col_of_reference, col_to_align):
 
 # #### Download data
 
-# In[4]:
+# In[45]:
 
 
 today = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -79,11 +104,13 @@ with open('data/total_cases_who.csv', 'wb') as f:
     
 with open('data/total_deaths_who.csv', 'wb') as f:
     f.write(r_deaths.content)
+    
+"build : " + today
 
 
 # #### Import data and merge
 
-# In[5]:
+# In[46]:
 
 
 df_confirmed_who = pd.read_csv('data/total_cases_who.csv')
@@ -93,19 +120,22 @@ df_confirmed_perso = pd.read_csv('data/total_cases_perso.csv')
 df_deaths_perso = pd.read_csv('data/total_deaths_perso.csv')
 
 #df_confirmed = pd.concat([df_confirmed_who, df_confirmed_perso], keys=['date'])
-df_confirmed = pd.merge(df_confirmed_perso,df_confirmed_who, how='outer')
+df_confirmed = pd.merge(df_confirmed_who, df_confirmed_perso, how='outer')
 df_deaths = pd.merge(df_deaths_who, df_deaths_perso, how='outer')
 
+"build : " + today
 
-# In[84]:
+
+# In[39]:
 
 
 df_confirmed
+df_deaths['Italy']
 
 
 # #### Informations on countries (population, offset)
 
-# In[6]:
+# In[ ]:
 
 
 # Importing informations on countries
@@ -114,18 +144,21 @@ with open('data/info_countries.json', 'r') as f:
     
 # Computing offset
 for c in countries:
-    countries[c]['offset'] = compute_offset(df_confirmed, 'Italy', c)
+    countries[c]['offset_confirmed'] = compute_offset(df_confirmed, 'Italy', c)
+    countries[c]['offset_deaths'] = compute_offset(df_deaths, 'Italy', c)
 
 # Exporting informations on countries
 with open('data/info_countries.json', 'w') as fp:
     json.dump(countries, fp)
+    
+"build : " + today
 
 
 # # Graphs
 
 # ### Total cases for 1 million inhabitants
 
-# In[28]:
+# In[58]:
 
 
 fig = go.Figure()
@@ -148,20 +181,20 @@ fig.update_layout(
         text ='Last update: {} ; Last data: {}'.format(today, df_confirmed['date'].values[-1]))]
 )
 fig.update_xaxes(nticks = last_d)
-#plotly.offline.plot(fig, filename = 'cases.html', auto_open=False)
-#fig.write_image('cases.png')
+
 if upload:
     py.plot(fig, filename = 'cases', auto_open=False)
     
 if show:
     fig.show()
-    
-fig.write_image("images/cases_per_1m_inhabitant.png", scale=8, width=1000, height=600)
+
+if export:
+    fig.write_image("images/cases_per_1m_inhabitant.png", scale=8, width=1000, height=600)
 
 
 # ### Total cases (world)
 
-# In[21]:
+# In[59]:
 
 
 fig = go.Figure()
@@ -192,28 +225,30 @@ if upload:
 if show:
     fig.show()
     
-fig.write_image("images/cases.png", scale=8, width=1000, height=600)
+if export:
+    fig.write_image("images/cases.png", scale=8, width=1000, height=600)
 
 
 # ### Total cases for 1 million inhabitants [aligned]
 
-# In[24]:
+# In[65]:
 
 
 import plotly.graph_objects as go
 
 fig = go.Figure()
 
-last_d = 20
-countries["Luxembourg"]["offset"] = 11
-countries["Belgium"]["offset"] = 8
+last_d = 30
+countries["Luxembourg"]["offset_confirmed"] = 11
+countries["Belgium"]["offset_confirmed"] = 8
 
 for c in countries:
-    offset = countries[c]['offset']
-    if offset==0: offset2=-1
+    offset = countries[c]['offset_confirmed']
+    offset2 = offset
+    if offset==0: offset2 = 1
     pop = countries[c]['pop']
-    print(offset)
-    fig.add_trace(go.Scatter(x=df_confirmed['date'][ -last_d - offset:], y=df_confirmed[c][-last_d:]/pop,
+
+    fig.add_trace(go.Scatter(x = df_confirmed['date'][ -last_d - offset : - offset2], y = df_confirmed[c][-last_d:] / pop,
                     mode='lines+markers',
                     name='{} [delayed by {} days]'.format(c, -offset)))
 
@@ -237,13 +272,14 @@ if upload:
 
 if show:
     fig.show()
-#py.iplot(fig, filename='covid_aligned.html')
-fig.write_image("images/cases_per_1m_inhabitant_aligned.png", scale=8, width=1000, height=600)
+    
+if export:
+    fig.write_image("images/cases_per_1m_inhabitant_aligned.png", scale=8, width=1000, height=600)
 
 
 # ### Total deaths for 1 million inhabitants
 
-# In[25]:
+# In[13]:
 
 
 import plotly.graph_objects as go
@@ -275,12 +311,14 @@ if upload:
     
 if show:
     fig.show()
-fig.write_image("images/deaths_per_1m_inhabitant.png", scale=8, width=1000, height=600)
+    
+if export:
+    fig.write_image("images/deaths_per_1m_inhabitant.png", scale=8, width=1000, height=600)
 
 
 # ### Total deaths for 1 million inhabitants [aligned]
 
-# In[26]:
+# In[62]:
 
 
 import plotly.graph_objects as go
@@ -289,42 +327,21 @@ import plotly
 fig = go.Figure()
 
 last_d = 16
-offset_france = compute_offset(df_confirmed, 'Italy', 'France')
-offset_uk = compute_offset(df_confirmed, 'Italy', 'United Kingdom')
-offset_sp = compute_offset(df_confirmed, 'Italy', 'Spain')
-offset_ge = compute_offset(df_confirmed, 'Italy', 'Germany')
 upset_ch = 1
 
 for c in countries:
+    offset = countries[c]['offset_deaths']
+    offset2 = offset
+    if offset==0: offset2 = 1
+        
     pop = countries[c]['pop']
-    offset = countries[c]['offset']
+    offset = countries[c]['offset_deaths']
     if offset==0: offset2=-1
     fig.add_trace(go.Scatter(x = df_deaths['date'][-last_d-offset:], y=df_deaths[c][-last_d:]/pop,
                     mode='lines+markers',
                     name='{} [delayed by {} days]'.format(c, -offset)))
     
-"""
-fig.add_trace(go.Scatter(x=df_deaths['date'][-last_d-offset_france:-offset_france], y=df_deaths['France'][-last_d:]/pop_fr,
-                    mode='lines+markers',
-                    name='France [delayed by {} days]'.format(-offset_france)))
-fig.add_trace(go.Scatter(x=df_deaths['date'][-last_d:], y=df_deaths['Italy'][-last_d:]/pop_it,
-                    mode='lines+markers',
-                    name='Italy [reference]'))
-fig.add_trace(go.Scatter(x=df_deaths['date'][-last_d-offset_uk:-offset_uk], y=df_deaths['United Kingdom'][-last_d:]/pop_uk,
-                    mode='lines+markers',
-                    name='UK [delayed by {} days]'.format(-offset_uk)))
 
-fig.add_trace(go.Scatter(x=df_deaths['date'][-last_d:], y=df_deaths['China'][upset_ch : upset_ch+last_d]/pop_ch,
-                    mode='lines+markers',
-                    name='CH [delayed by {} days]'.format(len(df_confirmed)-upset_ch)))
-fig.add_trace(go.Scatter(x=df_deaths['date'][-last_d-offset_sp:-offset_sp], y=df_deaths['Spain'][-last_d:]/pop_sp,
-                    mode='lines+markers',
-                    name='Spain [delayed by {} days]'.format(-offset_sp)))
-fig.add_trace(go.Scatter(x=df_deaths['date'][-last_d-offset_ge:-offset_ge], y=df_deaths['Germany'][-last_d:]/pop_ge,
-                    mode='lines+markers',
-                    name='Germany [delayed by {} days]'.format(-offset_ge)))
-
-"""
 fig.update_layout(
     title="COVID-19 deaths over time for 1 million inhabitants [aligned for comparison]",
     xaxis_title="Time (day) — delayed for some countries",
@@ -345,8 +362,9 @@ if upload:
 
 if show:
     fig.show()
-    
-fig.write_image("images/deaths_per_1m_inhabitant_aligned.png", scale=8, width=1000, height=600)
+
+if export:  
+    fig.write_image("images/deaths_per_1m_inhabitant_aligned.png", scale=8, width=1000, height=600)
 
 
 # # Dashboard
