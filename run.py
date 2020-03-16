@@ -5,7 +5,7 @@ import subprocess
 k=0
 
 while True is True:
-    subprocess.run(["git", "pull"])
+    #subprocess.run(["git", "pull"])
 
     if k%4 == 0: # do upload to plotly
         subprocess.run(["python3", "covid-19.py", "True", "False"])

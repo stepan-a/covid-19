@@ -28,17 +28,18 @@ chart_studio.tools.set_credentials_file(username='worldice', api_key='2iXFe4Ch2o
 
 upload = False
 show = True
-
+print(sys.argv)
 if len(sys.argv) == 1:
     print("Error.\n Usage: covid-19 arg1 arg2")
     print("arg1: upload? (True/False)\n arg2: show charts? (True/False)")
     sys.exit()
     
-if len(sys.argv) == 2:
+if len(sys.argv) >= 2:
     upload = sys.argv[1]
     
-if len(sys.argv) == 3:
+if len(sys.argv) >= 3:
     show = sys.argv[2]
+    print(show)
 
 
 # ##### Functions
@@ -91,10 +92,11 @@ df_deaths_who = pd.read_csv('data/total_deaths_who.csv')
 
 df_confirmed_perso = pd.read_csv('data/total_cases_perso.csv')
 df_deaths_perso = pd.read_csv('data/total_deaths_perso.csv')
-
+df_confirmed = df_confirmed_who
+df_deaths = df_deaths_who
 #df_confirmed = pd.concat([df_confirmed_who, df_confirmed_perso], keys=['date'])
-df_confirmed = pd.merge(df_confirmed_perso,df_confirmed_who, how='outer')
-df_deaths = pd.merge(df_deaths_who, df_deaths_perso, how='outer')
+#df_confirmed = pd.merge(df_confirmed_who, df_confirmed_perso, how='outer')
+#df_deaths = pd.merge(df_deaths_who, df_deaths_perso, how='outer')
 
 
 # In[84]:
@@ -133,6 +135,7 @@ fig = go.Figure()
 last_d = len(df_confirmed)
       
 for country in countries:
+    print(country)
     fig.add_trace(go.Scatter(x=df_confirmed['date'][-last_d:], y=df_confirmed[country][-last_d:]/countries[country]['pop'],
                     mode='lines+markers',
                     name='{}'.format(country)))
@@ -156,7 +159,7 @@ if upload:
 if show:
     fig.show()
     
-fig.write_image("images/cases_per_1m_inhabitant.png", scale=8, width=1000, height=600)
+#fig.write_image("images/cases_per_1m_inhabitant.png", scale=8, width=1000, height=600)
 
 
 # ### Total cases (world)
@@ -192,7 +195,7 @@ if upload:
 if show:
     fig.show()
     
-fig.write_image("images/cases.png", scale=8, width=1000, height=600)
+#fig.write_image("images/cases.png", scale=8, width=1000, height=600)
 
 
 # ### Total cases for 1 million inhabitants [aligned]
@@ -238,7 +241,7 @@ if upload:
 if show:
     fig.show()
 #py.iplot(fig, filename='covid_aligned.html')
-fig.write_image("images/cases_per_1m_inhabitant_aligned.png", scale=8, width=1000, height=600)
+#fig.write_image("images/cases_per_1m_inhabitant_aligned.png", scale=8, width=1000, height=600)
 
 
 # ### Total deaths for 1 million inhabitants
@@ -275,7 +278,7 @@ if upload:
     
 if show:
     fig.show()
-fig.write_image("images/deaths_per_1m_inhabitant.png", scale=8, width=1000, height=600)
+#fig.write_image("images/deaths_per_1m_inhabitant.png", scale=8, width=1000, height=600)
 
 
 # ### Total deaths for 1 million inhabitants [aligned]
@@ -346,7 +349,7 @@ if upload:
 if show:
     fig.show()
     
-fig.write_image("images/deaths_per_1m_inhabitant_aligned.png", scale=8, width=1000, height=600)
+#fig.write_image("images/deaths_per_1m_inhabitant_aligned.png", scale=8, width=1000, height=600)
 
 
 # # Dashboard
