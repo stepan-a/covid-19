@@ -22,15 +22,16 @@ import sys
 import matplotlib.pyplot as plt
 
 chart_studio.tools.set_credentials_file(username='worldice', api_key='2iXFe4Ch2oPo1dpaBj8p')
+today = datetime.now().strftime("%Y-%m-%d %H:%M")
 
 "build : " + today
 
 
-# In[44]:
+# In[78]:
 
 
 upload = False
-show = True
+show = False
 export = True
 
 if len(sys.argv) == 1:
@@ -43,7 +44,6 @@ if len(sys.argv) >= 2:
     
 if len(sys.argv) >= 3:
     show = sys.argv[2]
-    print(show)
 
 if len(sys.argv) >= 4:
     export = sys.argv[3]
@@ -89,10 +89,9 @@ def compute_offset(df, col_of_reference, col_to_align):
 
 # #### Download data
 
-# In[45]:
+# In[66]:
 
 
-today = datetime.now().strftime("%Y-%m-%d %H:%M")
 
 url_confirmed = "https://cowid.netlify.com/data/total_cases.csv"
 url_deaths = "https://cowid.netlify.com/data/total_deaths.csv"
@@ -105,13 +104,13 @@ with open('data/total_cases_who.csv', 'wb') as f:
     
 with open('data/total_deaths_who.csv', 'wb') as f:
     f.write(r_deaths.content)
-    
+print("> data downloaded")
 "build : " + today
 
 
 # #### Import data and merge
 
-# In[46]:
+# In[67]:
 
 
 df_confirmed_who = pd.read_csv('data/total_cases_who.csv')
@@ -119,26 +118,25 @@ df_deaths_who = pd.read_csv('data/total_deaths_who.csv')
 
 df_confirmed_perso = pd.read_csv('data/total_cases_perso.csv')
 df_deaths_perso = pd.read_csv('data/total_deaths_perso.csv')
-df_confirmed = df_confirmed_who
-df_deaths = df_deaths_who
-#df_confirmed = pd.concat([df_confirmed_who, df_confirmed_perso], keys=['date'])
 
+#df_confirmed = pd.concat([df_confirmed_who, df_confirmed_perso], keys=['date'])
 df_confirmed = pd.merge(df_confirmed_who, df_confirmed_perso, how='outer')
 df_deaths = pd.merge(df_deaths_who, df_deaths_perso, how='outer')
 
+print("> data merged")
 "build : " + today
 
 
-# In[39]:
+# In[68]:
 
 
-df_confirmed
-df_deaths['Italy']
+#df_confirmed
+#df_deaths['France']
 
 
 # #### Informations on countries (population, offset)
 
-# In[ ]:
+# In[69]:
 
 
 # Importing informations on countries
@@ -153,7 +151,7 @@ for c in countries:
 # Exporting informations on countries
 with open('data/info_countries.json', 'w') as fp:
     json.dump(countries, fp)
-    
+print("> pop data imported")
 "build : " + today
 
 
@@ -161,7 +159,7 @@ with open('data/info_countries.json', 'w') as fp:
 
 # ### Total cases for 1 million inhabitants
 
-# In[58]:
+# In[79]:
 
 
 fig = go.Figure()
@@ -169,7 +167,6 @@ fig = go.Figure()
 last_d = len(df_confirmed)
       
 for country in countries:
-    print(country)
     fig.add_trace(go.Scatter(x=df_confirmed['date'][-last_d:], y=df_confirmed[country][-last_d:]/countries[country]['pop'],
                     mode='lines+markers',
                     name='{}'.format(country)))
@@ -194,13 +191,16 @@ if show:
 
 if export:
     fig.write_image("images/cases_per_1m_inhabitant.png", scale=8, width=1000, height=600)
+    
+print("> graph 1 built")
 
 
 # ### Total cases (world)
 
-# In[59]:
+# In[ ]:
 
 
+"""
 fig = go.Figure()
 
 last_d = len(df_confirmed)
@@ -231,11 +231,13 @@ if show:
     
 if export:
     fig.write_image("images/cases.png", scale=8, width=1000, height=600)
+print("> graph 2 built")
+"""
 
 
 # ### Total cases for 1 million inhabitants [aligned]
 
-# In[65]:
+# In[81]:
 
 
 import plotly.graph_objects as go
@@ -243,7 +245,7 @@ import plotly.graph_objects as go
 fig = go.Figure()
 
 last_d = 30
-countries["Luxembourg"]["offset_confirmed"] = 11
+countries["Luxembourg"]["offset_confirmed"] = 9
 countries["Belgium"]["offset_confirmed"] = 8
 
 for c in countries:
@@ -278,11 +280,13 @@ if show:
     fig.show()
     
 if export:
-    fig.write_image("images/cases_per_1m_inhabitant_aligned.png", scale=8, width=1000, height=600)
+    fig.write_image("images/cases_per_1m_inhabitant_aligned.png", scale=5, width=1000, height=600)
+print("> graph 3 built")
+
 
 # ### Total deaths for 1 million inhabitants
 
-# In[13]:
+# In[82]:
 
 
 import plotly.graph_objects as go
@@ -316,12 +320,14 @@ if show:
     fig.show()
     
 if export:
-    fig.write_image("images/deaths_per_1m_inhabitant.png", scale=8, width=1000, height=600)
+    fig.write_image("images/deaths_per_1m_inhabitant.png", scale=5, width=1000, height=600)
+    
+print("> graph 4 built")
 
 
 # ### Total deaths for 1 million inhabitants [aligned]
 
-# In[62]:
+# In[77]:
 
 
 import plotly.graph_objects as go
@@ -368,6 +374,7 @@ if show:
 
 if export:  
     fig.write_image("images/deaths_per_1m_inhabitant_aligned.png", scale=8, width=1000, height=600)
+print("> graph 5 built")
 
 
 # # Dashboard
