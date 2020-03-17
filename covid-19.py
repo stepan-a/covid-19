@@ -182,17 +182,20 @@ fig.update_layout(
 )
 fig.update_xaxes(nticks = last_d)
 print("> graph 1 built")
+print("a")
+print("upload: " + upload)
 if upload:
-
- py.plot(fig, filename = 'cases', auto_open=False)
-
+    print("a1")
+    py.plot(fig, filename = 'cases', auto_open=False)
+    
+print("b")
 if show:
     fig.show()
-
+print("c")
 if export:
     fig.write_image("images/cases_per_1m_inhabitant.png", scale=5, width=900, height=500)
     print("> graph 1 exported")
-
+print("d")
 
 # ### Total cases (world)
 
