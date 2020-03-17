@@ -7,7 +7,6 @@
 # In[43]:
 
 
-
 import requests
 import json
 from datetime import date
@@ -39,16 +38,19 @@ if len(sys.argv) == 1:
     print("Error.\n Usage: covid-19 arg1 arg2 arg3")
     print("arg1: upload? (True/False)\n arg2: show charts? (True/False)\n arg3: export charts as png?")
     sys.exit()
-
+    
 if len(sys.argv) >= 2:
-    upload = sys.argv[1]
-
+    if lower(sys.argv[1]) == "true":
+        upload = True
+    
 if len(sys.argv) >= 3:
-    show = sys.argv[2]
+    if lower(sys.argv[2]) == "true":
+        show = True
 
 if len(sys.argv) >= 4:
-    export = sys.argv[3]
-
+    if lower(sys.argv[3]) == "true":
+        export = True
+    
 "build : " + today
 
 
@@ -65,7 +67,7 @@ def compute_offset(df, col_of_reference, col_to_align):
         if len(a) > len(b):
             a = a[:-2]
         m = min(len(a), len(b))
-
+            
         delta = a[ -m : ]**2 - b[-m:]**2
         diffs.append(abs(delta.mean()))
         xa = [i for i in range(len(a))]
@@ -85,22 +87,24 @@ def compute_offset(df, col_of_reference, col_to_align):
 "build : " + today
 
 
-#
+# 
 # ### DATA
 
 # #### Download data
 
 # In[66]:
 
+
+
 url_confirmed = "https://cowid.netlify.com/data/total_cases.csv"
 url_deaths = "https://cowid.netlify.com/data/total_deaths.csv"
-
+    
 r_confirmed = requests.get(url_confirmed)
 r_deaths = requests.get(url_deaths)
 
 with open('data/total_cases_who.csv', 'wb') as f:
     f.write(r_confirmed.content)
-
+    
 with open('data/total_deaths_who.csv', 'wb') as f:
     f.write(r_deaths.content)
 print("> data downloaded")
@@ -141,7 +145,7 @@ print("> data merged")
 # Importing informations on countries
 with open('data/info_countries.json', 'r') as f:
     countries = json.load(f)
-
+    
 # Computing offset
 for c in countries:
     countries[c]['offset_confirmed'] = compute_offset(df_confirmed, 'Italy', c)
@@ -164,7 +168,7 @@ print("> pop data imported")
 fig = go.Figure()
 
 last_d = len(df_confirmed)
-
+      
 for country in countries:
     fig.add_trace(go.Scatter(x=df_confirmed['date'][-last_d:], y=df_confirmed[country][-last_d:]/countries[country]['pop'],
                     mode='lines+markers',
@@ -185,6 +189,7 @@ print("> graph 1 built")
 print("a")
 print("upload: " + upload)
 if upload:
+<<<<<<< HEAD
     print("a1")
     py.plot(fig, filename = 'cases', auto_open=False)
     
@@ -227,10 +232,10 @@ plotly.offline.plot(fig, filename = 'cases.html', auto_open=False)
 #fig.write_image('cases.png')
 if upload:
     py.plot(fig, filename = 'cases', auto_open=False)
-
+    
 if show:
     fig.show()
-
+    
 if export:
     fig.write_image("images/cases.png", scale=8, width=1000, height=600)
 print("> graph 2 built")
@@ -282,7 +287,7 @@ if upload:
 
 if show:
     fig.show()
-
+    
 if export:
     fig.write_image("images/cases_per_1m_inhabitant_aligned.png", scale=5, width=900, height=500)
     print("> graph 3 exported")
@@ -318,13 +323,13 @@ fig.update_xaxes(nticks = last_d)
 plotly.offline.plot(fig, filename = 'deaths.html', auto_open=False)
 
 print("> graph 4 built")
-
+    
 if upload:
     py.plot(fig, filename = 'deaths', auto_open=False)
-
+    
 if show:
     fig.show()
-
+    
 if export:
     fig.write_image("images/deaths_per_1m_inhabitant.png", scale=5, width=900, height=500)
     print("> graph 4 exported")
@@ -347,14 +352,14 @@ for c in countries:
     offset = countries[c]['offset_deaths']
     offset2 = offset
     if offset==0: offset2 = 1
-
+        
     pop = countries[c]['pop']
     offset = countries[c]['offset_deaths']
     if offset==0: offset2=-1
     fig.add_trace(go.Scatter(x = df_deaths['date'][-last_d-offset:], y=df_deaths[c][-last_d:]/pop,
                     mode='lines+markers',
                     name='{} [delayed by {} days]'.format(c, -offset)))
-
+    
 
 fig.update_layout(
     title="COVID-19 deaths over time for 1 million inhabitants [aligned for comparison]",
@@ -370,7 +375,7 @@ fig.update_layout(
 fig.update_xaxes(nticks = 30)
 
 print("> graph 5 built")
-
+    
 if upload:
     py.plot(fig, filename = 'deaths-aligned', auto_open=False)
 #plotly.offline.plot(fig, filename = 'deaths_aligned.html', auto_open=False)
@@ -379,7 +384,7 @@ if upload:
 if show:
     fig.show()
 
-if export:
+if export:  
     fig.write_image("images/deaths_per_1m_inhabitant_aligned.png", scale=5, width=900, height=500)
     print("> graph 5 exported")
 
@@ -447,3 +452,4 @@ if show:
 import chart_studio.plotly as py
 
 #py.dashboard_ops.upload(my_dboard, 'COVID-19 Europe Dashboard', auto_open=False)
+
