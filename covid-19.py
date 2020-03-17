@@ -7,6 +7,7 @@
 # In[43]:
 
 
+
 import requests
 import json
 from datetime import date
@@ -22,6 +23,7 @@ import sys
 import matplotlib.pyplot as plt
 
 chart_studio.tools.set_credentials_file(username='worldice', api_key='2iXFe4Ch2oPo1dpaBj8p')
+today = datetime.now().strftime("%Y-%m-%d %H:%M")
 
 "build : " + today
 
@@ -30,7 +32,7 @@ chart_studio.tools.set_credentials_file(username='worldice', api_key='2iXFe4Ch2o
 
 
 upload = False
-show = True
+show = False
 export = True
 
 if len(sys.argv) == 1:
@@ -43,7 +45,7 @@ if len(sys.argv) >= 2:
     
 if len(sys.argv) >= 3:
     show = sys.argv[2]
-    print(show)
+    print("show: " + show)
 
 if len(sys.argv) >= 4:
     export = sys.argv[3]
@@ -91,8 +93,6 @@ def compute_offset(df, col_of_reference, col_to_align):
 
 # In[45]:
 
-
-today = datetime.now().strftime("%Y-%m-%d %H:%M")
 
 url_confirmed = "https://cowid.netlify.com/data/total_cases.csv"
 url_deaths = "https://cowid.netlify.com/data/total_deaths.csv"
@@ -169,7 +169,6 @@ fig = go.Figure()
 last_d = len(df_confirmed)
       
 for country in countries:
-    print(country)
     fig.add_trace(go.Scatter(x=df_confirmed['date'][-last_d:], y=df_confirmed[country][-last_d:]/countries[country]['pop'],
                     mode='lines+markers',
                     name='{}'.format(country)))
@@ -187,12 +186,14 @@ fig.update_layout(
 fig.update_xaxes(nticks = last_d)
 
 if upload:
-    py.plot(fig, filename = 'cases', auto_open=False)
-    
+ 
+ py.plot(fig, filename = 'cases', auto_open=False)
+
 if show:
     fig.show()
 
 if export:
+    print("export")
     fig.write_image("images/cases_per_1m_inhabitant.png", scale=8, width=1000, height=600)
 
 
