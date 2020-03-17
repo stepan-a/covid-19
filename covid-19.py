@@ -182,7 +182,7 @@ fig.update_layout(
         text ='Last update: {} ; Last data: {}'.format(today, df_confirmed['date'].values[-1]))]
 )
 fig.update_xaxes(nticks = last_d)
-
+print("> graph 1 built")
 if upload:
     py.plot(fig, filename = 'cases', auto_open=False)
     
@@ -190,9 +190,8 @@ if show:
     fig.show()
 
 if export:
-    fig.write_image("images/cases_per_1m_inhabitant.png", scale=8, width=1000, height=600)
-    
-print("> graph 1 built")
+    fig.write_image("images/cases_per_1m_inhabitant.png", scale=5, width=900, height=500)
+    print("> graph 1 exported")
 
 
 # ### Total cases (world)
@@ -273,6 +272,8 @@ fig.update_layout(
 fig.update_xaxes(nticks = last_d)
 plotly.offline.plot(fig, filename = 'cases_aligned.html', auto_open=False)
 
+print("> graph 3 built")
+
 if upload:
     py.plot(fig, filename = 'cases-aligned', auto_open=False)
 
@@ -280,8 +281,8 @@ if show:
     fig.show()
     
 if export:
-    fig.write_image("images/cases_per_1m_inhabitant_aligned.png", scale=5, width=1000, height=600)
-print("> graph 3 built")
+    fig.write_image("images/cases_per_1m_inhabitant_aligned.png", scale=5, width=900, height=500)
+    print("> graph 3 exported")
 
 
 # ### Total deaths for 1 million inhabitants
@@ -313,6 +314,8 @@ fig.update_layout(
 fig.update_xaxes(nticks = last_d)
 plotly.offline.plot(fig, filename = 'deaths.html', auto_open=False)
 
+print("> graph 4 built")
+    
 if upload:
     py.plot(fig, filename = 'deaths', auto_open=False)
     
@@ -320,9 +323,8 @@ if show:
     fig.show()
     
 if export:
-    fig.write_image("images/deaths_per_1m_inhabitant.png", scale=5, width=1000, height=600)
-    
-print("> graph 4 built")
+    fig.write_image("images/deaths_per_1m_inhabitant.png", scale=5, width=900, height=500)
+    print("> graph 4 exported")
 
 
 # ### Total deaths for 1 million inhabitants [aligned]
@@ -364,6 +366,8 @@ fig.update_layout(
 
 fig.update_xaxes(nticks = 30)
 
+print("> graph 5 built")
+    
 if upload:
     py.plot(fig, filename = 'deaths-aligned', auto_open=False)
 #plotly.offline.plot(fig, filename = 'deaths_aligned.html', auto_open=False)
@@ -373,8 +377,8 @@ if show:
     fig.show()
 
 if export:  
-    fig.write_image("images/deaths_per_1m_inhabitant_aligned.png", scale=8, width=1000, height=600)
-print("> graph 5 built")
+    fig.write_image("images/deaths_per_1m_inhabitant_aligned.png", scale=5, width=900, height=500)
+    print("> graph 5 exported")
 
 
 # # Dashboard
