@@ -41,7 +41,7 @@ Same chart, but every curve is aligned with Italy. That's an easier way to compa
 
 ## Data
 You can find 2 datasets:
-- Data downloaded from (). Data come from WHO (World Health Organization).
-- Personal data.
+- Data downloaded from [CSSE](https://github.com/CSSEGISandData/COVID-19). Data come from WHO (World Health Organization).
+- Personal data (added manually).
 
 The two dataset are then merged into a more complete dataset.
