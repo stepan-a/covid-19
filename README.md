@@ -8,23 +8,36 @@ I created a [dashboard](https://plot.ly/dashboard/worldice:14/) where you can fi
 
 ![](./images/dashboard.png)
 
-## Charts
+# Charts
+## Confirmed cases
+### Total cases
+![](./images/charts/cases.png)
 
 ### Total cases for 1 million inhabitants
 That's simply the total number of cases over time for each countr divided by the total population of the country.
-![](./images/cases_per_1m_inhabitant.png)
+![](./images/charts/cases_per_1m_inhabitant.png)
 
 ### Total cases for 1 million inhabitants, aligned
 Same chart, but every curve is aligned with Italy. That's an easier way to compare how fast the curves grow.  
-![](./images/cases_per_1m_inhabitant_aligned.png)
+![](./images/charts/cases_per_1m_inhabitant_aligned.png)
+
+### Total cases for 1 million inhabitants, since "x cases/mill. hab."
+![](./images/charts/cases_per_1m_inhabitant_since.png)
+
+## Deaths
+### Total deaths
+![](./images/charts/deaths.png)
 
 ### Total deaths for 1 million inhabitants
 That's simply the total number of deaths over time for each countr divided by the total population of the country.
-![](./images/deaths_per_1m_inhabitant.png)
+![](./images/charts/deaths_per_1m_inhabitant.png)
 
 ### Total deaths for 1 million inhabitants, aligned
 Same chart, but every curve is aligned with Italy. That's an easier way to compare how fast the curves grow.  
-![](./images/deaths_per_1m_inhabitant_aligned.png)
+![](./images/charts/deaths_per_1m_inhabitant_aligned.png)
+
+### Total deaths for 1 million inhabitants, since "x deaths/mill. hab."
+![](./images/charts/deaths_per_1m_inhabitant_since.png)
 
 ## Data
 You can find 2 datasets:
