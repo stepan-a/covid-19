@@ -3,7 +3,7 @@ I worked on COVID-19 (Coronavirus) to see how it spreads around the world. I bui
 
 You can see how the virus spreads in France, Luxembourg, Spain, Belgium, United Kingdom (UK) compared to Italy and China.
 # All charts
-Confirmed cases of COVID-19
+Below are all the charts done. You can download the `PNG` file by clicking on the PNG link for each chart. You will soon be able to access and download interactive HTML charts.
 
 ## Confirmed cases of COVID-19
 
@@ -49,7 +49,9 @@ Same as 3., but each curve is aligned on Italy using the Least Squares method. I
 Same as 3., but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
 ***
 
-# Few Charts
+# Main Charts
+All charts are listed above. But, here are the main one, so you don't have to download every one.
+
 ## Confirmed cases
 ### Total cases
 ![](./images/charts/cases.png)
