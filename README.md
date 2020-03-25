@@ -5,21 +5,28 @@ You can see how the virus spreads in France, Luxembourg, Spain, Belgium, United 
 # All charts
 Confirmed cases of COVID-19
 
-File | Title | Comments
---- | --- | ---
-**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png)** | **Confirmed cases over time** | This chart represents the total number of confirmed cases of COVID-19 against time, in days).
-**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_since.png)** | **Confirmed cases over time [since a treschold]** | d
-**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant.png)** | **Confirmed cases for 1 million inhabitants over time** |
-**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_aligned.png)** | **Confirmed cases for 1 million inhabitants over time [aligned]** | 
-**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_since.png)** | **Confirmed cases for 1 million inhabitants over time [since a treschold]** |
+`Confirmed cases of COVID-19`
 
+1. **[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png)** • **Confirmed cases over time**.
+This chart represents the total number of confirmed cases of COVID-19 against time, in days.
+***
 
-* [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png) - Confirmed cases over time
-⋅⋅*This chart represents the total number of confirmed cases of COVID-19 against time, in days).
-* [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_since.png) - Confirmed cases over time [since a treschold]
-* [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant.png) - Confirmed cases for 1 million inhabitants over time
-* [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_aligned.png) - Confirmed cases for 1 million inhabitants over time [aligned]
-* [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_since.png) - Confirmed cases for 1 million inhabitants over time [since a treschold]
+2. **[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_since.png)** • **Confirmed cases over time [since]**.
+Same as 1., but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
+***
+
+3. **[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant.png)** | **Confirmed cases for 1 million inhabitants over time**
+Same as 1. but the number of cases is divided by the population of each country. So the plotted data is the number of confirmed cases for 1 million inhabitants.
+***
+
+4. **[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_aligned.png)** • **Confirmed cases for 1 million inhabitants over time [aligned]**
+Same as 3., but each curve is aligned on Italy using the Least Squares method. It is easier to compare the progression of each curve.
+***
+
+5. **[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_since.png)** | **Confirmed cases for 1 million inhabitants over time [since a treschold]**
+Same as 3., but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
+***
+
 
 Deaths caused by COVID-19
 * [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths.png) - Deaths over time
