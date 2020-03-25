@@ -10,9 +10,7 @@ Below are all the charts done. You can download the `PNG` file by clicking on th
 This chart represents the total number of confirmed cases of COVID-19 against time, in days.
 ***
 
-<br />
-
-<br />
+<br /><br />
 
 <img align="left" height="100" src="images/charts/cases.png">
 
