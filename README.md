@@ -12,7 +12,7 @@ Confirmed cases of COVID-19
 
 Deaths caused by COVID-19
 * [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths.png) - Deaths over time
-* [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_since.png) -  Deaths over time [since a treschold]
+* [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_since.png) -  Deaths over time [since a treschold]
 * [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant.png) -  Deaths for 1 million inhabitants over time
 * [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_aligned.png) -  Deaths for 1 million inhabitants over time [aligned]
 * [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_since.png) - Deaths for 1 million inhabitants over time [since a treschold]
