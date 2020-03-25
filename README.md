@@ -4,11 +4,11 @@ I worked on COVID-19 (Coronavirus) to see how it spreads around the world. I bui
 You can see how the virus spreads in France, Luxembourg, Spain, Belgium, United Kingdom (UK) compared to Italy and China.
 # All charts
 Confirmed cases of COVID-19
-* (PNG)[https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png] Confirmed cases over time
-* (PNG)[https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_since.png] Confirmed cases over time [since a treschold]
-* (PNG)[https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant.png] Confirmed cases for 1 million inhabitants over time
-* (PNG)[https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png] Confirmed cases for 1 million inhabitants over time [aligned]
-* (PNG)[https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png] Confirmed cases for 1 million inhabitants over time [since a treschold]
+* [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png) Confirmed cases over time
+* [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_since.png) Confirmed cases over time [since a treschold]
+* [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant.png) Confirmed cases for 1 million inhabitants over time
+* [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png) Confirmed cases for 1 million inhabitants over time [aligned]
+* [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png) Confirmed cases for 1 million inhabitants over time [since a treschold]
 
 Deaths caused by COVID-19
 * (PNG)[] Deaths over time
