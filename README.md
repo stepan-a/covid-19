@@ -10,6 +10,8 @@ Below are all the charts done. You can download the `PNG` file by clicking on th
 This chart represents the total number of confirmed cases of COVID-19 against time, in days.
 ***
 
+<img align="left" width="300" src="images/charts/cases.png">
+
 2. **[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_since.png)** • **Confirmed cases over time [since]**.
 Same as 1., but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
 ***
