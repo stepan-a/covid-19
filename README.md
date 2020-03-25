@@ -12,6 +12,8 @@ This chart represents the total number of confirmed cases of COVID-19 against ti
 
 <br />
 
+<br />
+
 <img align="left" width="300" src="images/charts/cases.png">
 
 2. **[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_since.png)** • **Confirmed cases over time [since]**.
