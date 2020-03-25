@@ -1,7 +1,6 @@
-# COVID-19: data, charts and interpretations in Europe
-I worked on COVID-19 (Coronavirus) to see how it spreads around the world. I built charts and collected data, built dashboards and interpretations...
+# COVID-19: data, charts and interpretations
+You can find on this repository many charts and data about Coronavirus (COVID-19) disease, especially in Europe. Most of data come from CSSE, but I also add data of my own to have up-to-date data.
 
-You can see how the virus spreads in France, Luxembourg, Spain, Belgium, United Kingdom (UK) compared to Italy and China.
 # All charts
 Below are all the charts done. You can download the `PNG` file by clicking on the PNG link for each chart. You will soon be able to access and download interactive HTML charts.
 
