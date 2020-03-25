@@ -4,6 +4,16 @@ I worked on COVID-19 (Coronavirus) to see how it spreads around the world. I bui
 You can see how the virus spreads in France, Luxembourg, Spain, Belgium, United Kingdom (UK) compared to Italy and China.
 # All charts
 Confirmed cases of COVID-19
+
+File | Title | Comments
+--- | --- | ---
+**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png)** | **Confirmed cases over time** | This chart represents the total number of confirmed cases of COVID-19 against time, in days).
+**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_since.png)** | **Confirmed cases over time [since a treschold]** | d
+**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant.png)** | **Confirmed cases for 1 million inhabitants over time** |
+**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_aligned.png)** | **Confirmed cases for 1 million inhabitants over time [aligned]** | 
+**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_since.png)** | **Confirmed cases for 1 million inhabitants over time [since a treschold]** |
+
+
 * [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png) - Confirmed cases over time
 ⋅⋅*This chart represents the total number of confirmed cases of COVID-19 against time, in days).
 * [PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_since.png) - Confirmed cases over time [since a treschold]
