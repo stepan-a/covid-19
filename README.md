@@ -5,9 +5,7 @@ You can find on this repository many charts and data about Coronavirus (COVID-19
 Below are all the charts done. You can download the `PNG` file by clicking on the PNG link for each chart. You will soon be able to access and download interactive HTML charts.
 
 ## Confirmed cases of COVID-19
-<img align="left" width="100" height="100" src="images/charts/cases.png">
-
-blablabla
+<img align="left" width="300" src="images/charts/cases.png">
 1. **[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png)** • **Confirmed cases over time**.
 This chart represents the total number of confirmed cases of COVID-19 against time, in days.
 ***
