@@ -12,11 +12,15 @@ This chart represents the total number of confirmed cases of COVID-19 against ti
 
 <br /><br />
 
-<img align="left" height="100" src="images/charts/cases.png">
+<img align="left" height="100" src="images/charts/cases_since.png">
 
 2. **[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_since.png)** • **Confirmed cases over time [since]**.
 Same as 1., but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
 ***
+
+<br /><br />
+
+<img align="left" height="100" src="images/charts/cases_per_1m_inhabitant.png">
 
 3. **[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant.png)** | **Confirmed cases for 1 million inhabitants over time**.
 Same as 1. but the number of cases is divided by the population of each country. So the plotted data is the number of confirmed cases for 1 million inhabitants.
