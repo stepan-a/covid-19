@@ -1,14 +1,85 @@
-# covid-19: data, charts and interpretations in Europe
-I worked on COVID-19 (Coronavirus) to see how it spreads around the world. I built charts and collected data, built dashboards and interpretations...
+# COVID-19: data, charts and interpretations
+You can find on this repository many charts and data about Coronavirus (COVID-19) disease, especially in Europe. Most of data come from CSSE, but I also add data of my own to have up-to-date data.
 
-You can see how the virus spreads in France, Luxembourg, Spain, Belgium, United Kingdom (UK) compared to Italy and China.
+# All charts
+Below are all the charts done. You can download the `PNG` file by clicking on the PNG link for each chart. You will soon be able to access and download interactive HTML charts.
 
-## Dashboard
-I created a [dashboard](https://plot.ly/dashboard/worldice:14/) where you can find 4 of the charts I generate. It is refreshed every 4 hours.
+## Confirmed cases of COVID-19
+<img align="left" height="100" src="images/charts/cases.png">
 
-![](./images/dashboard.png)
+**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png)** • **Confirmed cases over time**.
+This chart represents the total number of confirmed cases of COVID-19 against time, in days.
 
-# Charts
+<br /><br />
+
+<img align="left" height="100" src="images/charts/cases_since.png">
+
+**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_since.png)** • **Confirmed cases over time [since]**.
+Same as the first one, but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
+
+<br /><br />
+
+<img align="left" height="100" src="images/charts/cases_per_1m_inhabitant.png">
+
+**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant.png)** | **Confirmed cases for 1 million inhabitants over time**.
+Same as the first one, but the number of cases is divided by the population of each country. So the plotted data is the number of confirmed cases for 1 million inhabitants.
+
+<br /><br />
+
+<img align="left" height="100" src="images/charts/cases_per_1m_inhabitant_aligned.png">
+
+**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_aligned.png)** • **Confirmed cases for 1 million inhabitants over time [aligned]**.
+Same as the thirs one, but each curve is aligned on Italy using the Least Squares method. It is easier to compare the progression of each curve.
+
+<br /><br />
+
+<img align="left" height="100" src="images/charts/cases_per_1m_inhabitant_since.png">
+
+**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_since.png)** | **Confirmed cases for 1 million inhabitants over time [since a treschold]**.
+Same as the third one, but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
+
+<br /><br />
+
+## Deaths of COVID-19
+
+<img align="left" height="100" src="images/charts/deaths.png">
+
+**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths.png) • Deaths over time**.
+This chart represents the total number of deaths of COVID-19 against time, in days.
+
+<br /><br />
+
+<img align="left" height="100" src="images/charts/deaths_since.png">
+
+**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_since.png)** •  **Deaths over time [since a treschold]**.
+Same as 1., but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
+
+<br /><br />
+
+<img align="left" height="100" src="images/charts/deaths_per_1m_inhabitant.png">
+
+**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant.png)** •  **Deaths for 1 million inhabitants over time**.
+Same as 1. but the number of cases is divided by the population of each country. So the plotted data is the number of confirmed cases for 1 million inhabitants.
+
+<br /><br />
+
+<img align="left" height="100" src="images/charts/deaths_per_1m_inhabitant_aligned.png">
+
+**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_aligned.png)** • **Deaths for 1 million inhabitants over time [aligned]**.
+Same as 3., but each curve is aligned on Italy using the Least Squares method. It is easier to compare the progression of each curve.
+
+<br /><br />
+
+<img align="left" height="100" src="images/charts/deaths_per_1m_inhabitant_since.png">
+
+**[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_since.png)** • **Deaths for 1 million inhabitants over time [since a treschold]**.
+Same as 3., but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
+
+<br /><br />
+
+# Main Charts
+All charts are listed above. But, here are the main one, so you don't have to download every one.
+
 ## Confirmed cases
 ### Total cases
 ![](./images/charts/cases.png)
@@ -38,6 +109,12 @@ Same chart, but every curve is aligned with Italy. That's an easier way to compa
 
 ### Total deaths for 1 million inhabitants, since "x deaths/mill. hab."
 ![](./images/charts/deaths_per_1m_inhabitant_since.png)
+
+## Dashboard (deprecated)
+I will do a better one soon...
+I created a [dashboard](https://plot.ly/dashboard/worldice:14/) where you can find 4 of the charts I generate. It is refreshed every 4 hours.
+
+![](./images/dashboard.png)
 
 ## Data
 You can find 2 datasets:
