@@ -38,13 +38,14 @@ Same as the thirs one, but each curve is aligned on Italy using the Least Square
 **[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_since.png)** | **Confirmed cases for 1 million inhabitants over time [since a treschold]**.
 Same as the third one, but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
 
+<br /><br />
+
 ## Deaths of COVID-19
 
 <img align="left" height="100" src="images/charts/deaths.png">
 
 **[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths.png) • Deaths over time**.
 This chart represents the total number of deaths of COVID-19 against time, in days.
-***
 
 <br /><br />
 
@@ -52,7 +53,6 @@ This chart represents the total number of deaths of COVID-19 against time, in da
 
 **[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_since.png)** •  **Deaths over time [since a treschold]**.
 Same as 1., but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
-***
 
 <br /><br />
 
@@ -60,7 +60,6 @@ Same as 1., but each country is displayed from the day a certain threshold has b
 
 **[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant.png)** •  **Deaths for 1 million inhabitants over time**.
 Same as 1. but the number of cases is divided by the population of each country. So the plotted data is the number of confirmed cases for 1 million inhabitants.
-***
 
 <br /><br />
 
@@ -68,7 +67,6 @@ Same as 1. but the number of cases is divided by the population of each country.
 
 **[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_aligned.png)** • **Deaths for 1 million inhabitants over time [aligned]**.
 Same as 3., but each curve is aligned on Italy using the Least Squares method. It is easier to compare the progression of each curve.
-***
 
 <br /><br />
 
@@ -76,7 +74,6 @@ Same as 3., but each curve is aligned on Italy using the Least Squares method. I
 
 **[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_since.png)** • **Deaths for 1 million inhabitants over time [since a treschold]**.
 Same as 3., but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
-***
 
 # Main Charts
 All charts are listed above. But, here are the main one, so you don't have to download every one.
