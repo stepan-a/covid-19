@@ -114,9 +114,9 @@ Same chart, but every curve is aligned with Italy. That's an easier way to compa
 ## Dashboard (deprecated)
 I will do a better one soon...
 I created a [dashboard](https://plot.ly/dashboard/worldice:14/) where you can find 4 of the charts I generate. It is refreshed every 4 hours.
-
+<!--
 ![](./images/dashboard.png)
-
+-->
 ## Data
 You can find 2 datasets:
 - Data downloaded from [CSSE](https://github.com/CSSEGISandData/COVID-19). Data come from WHO (World Health Organization).
