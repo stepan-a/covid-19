@@ -40,7 +40,7 @@ Same as the third one, but each country is displayed from the day a certain thre
 
 <br /><br />
 
-## Deaths of COVID-19
+## Deaths caused by COVID-19
 
 <img align="left" height="100" src="images/charts_sd/deaths.png">
 
