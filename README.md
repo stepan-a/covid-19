@@ -35,7 +35,7 @@ Same as the third one, but each curve is aligned on Italy using the Least Square
 
 <img align="left" height="100" src="images/charts_sd/cases_per_1m_inhabitant_since.png">
 
-**[PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_since.png)** • **[PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/cases_per_1m_inhabitant_since.png)** • **Confirmed cases for 1M inhabitants [since a treschold]**.
+**[PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_since.png)** • **[PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/cases_per_1m_inhabitant_since.png)** • **Confirmed cases for 1M inhabitants [since a threschold]**.
 Same as the third one, but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
 
 <br /><br />
@@ -72,7 +72,7 @@ Same as the third one, but each curve is aligned on Italy using the Least Square
 
 <img align="left" height="100" src="images/charts_sd/deaths_per_1m_inhabitant_since.png">
 
-**[PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_since.png)** • **[PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/deaths_per_1m_inhabitant_since.png)** • **Deaths for 1M inhabitants [since a treschold]**.
+**[PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_since.png)** • **[PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/deaths_per_1m_inhabitant_since.png)** • **Deaths for 1M inhabitants [since a threschold]**.
 Same as the third one, but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
 
 <br /><br />
