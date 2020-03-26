@@ -110,14 +110,20 @@ Same chart, but every curve is aligned with Italy. That's an easier way to compa
 ### Total deaths for 1 million inhabitants, since "x deaths/mill. hab."
 ![](./images/charts/deaths_per_1m_inhabitant_since.png)
 -->
+# Repository structure
+covid-19.ipynb : Jupyther Notebook that downlaod, merge data and plot and export charts.
+data : datasets from CSSE, WHO and personal datasets.
+images/charts : all charts.
+images/charts_sd : charts in low defintion.
+images/charts/log_yaxis : all charts but ploteded on a log. scale.
 
-## Dashboard (deprecated)
+# Dashboard (deprecated)
 I will do a better one soon...
 I created a [dashboard](https://plot.ly/dashboard/worldice:14/) where you can find 4 of the charts I generate. It is refreshed every 4 hours.
 <!--
 ![](./images/dashboard.png)
 -->
-## Data
+# Data
 You can find 2 datasets:
 - Data downloaded from [CSSE](https://github.com/CSSEGISandData/COVID-19). Data come from WHO (World Health Organization).
 - Personal data (added manually).
