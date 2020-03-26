@@ -14,28 +14,28 @@ This chart represents the total number of confirmed cases of COVID-19 against ti
 
 <img align="left" height="100" src="images/charts/cases_since.png">
 
-**[Échelle linéaire (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_since.png)** • **[PNG](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_since.png)** • **Confirmed cases over time [since]**.
+**[Échelle linéaire (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_since.png)** • **[Échelle log. (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/cases_since.png)** • **Confirmed cases over time [since]**.
 Same as the first one, but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
 
 <br /><br />
 
 <img align="left" height="100" src="images/charts/cases_per_1m_inhabitant.png">
 
-**[Échelle linéaire (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant.png)** | **Confirmed cases for 1 million inhabitants over time**.
+**[Échelle linéaire (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant.png)** • **[Échelle log. (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/cases_per_1m_inhabitant.png)** • **Confirmed cases for 1 million inhabitants over time**.
 Same as the first one, but the number of cases is divided by the population of each country. So the plotted data is the number of confirmed cases for 1 million inhabitants.
 
 <br /><br />
 
 <img align="left" height="100" src="images/charts/cases_per_1m_inhabitant_aligned.png">
 
-**[Échelle linéaire (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_aligned.png)** • **Confirmed cases for 1 million inhabitants over time [aligned]**.
+**[Échelle linéaire (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_aligned.png)** • **[Échelle log. (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/cases_per_1m_inhabitant_aligned.png)** • **Confirmed cases for 1 million inhabitants over time [aligned]**.
 Same as the thirs one, but each curve is aligned on Italy using the Least Squares method. It is easier to compare the progression of each curve.
 
 <br /><br />
 
 <img align="left" height="100" src="images/charts/cases_per_1m_inhabitant_since.png">
 
-**[Échelle linéaire (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_since.png)** | **Confirmed cases for 1 million inhabitants over time [since a treschold]**.
+**[Échelle linéaire (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_since.png)** • **[Échelle log. (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/cases_per_1m_inhabitant_since.png)** • **Confirmed cases for 1 million inhabitants over time [since a treschold]**.
 Same as the third one, but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
 
 <br /><br />
@@ -44,35 +44,35 @@ Same as the third one, but each country is displayed from the day a certain thre
 
 <img align="left" height="100" src="images/charts/deaths.png">
 
-**[Échelle linéaire (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths.png) • Deaths over time**.
+**[Échelle linéaire (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths.png) • **[Échelle log. (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/deaths.png) • Deaths over time**.
 This chart represents the total number of deaths of COVID-19 against time, in days.
 
 <br /><br />
 
 <img align="left" height="100" src="images/charts/deaths_since.png">
 
-**[Échelle linéaire (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_since.png)** •  **Deaths over time [since a treschold]**.
+**[Échelle linéaire (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_since.png)** •  **[Échelle log. (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/deaths_since.png)** • **Deaths over time [since a treschold]**.
 Same as 1., but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
 
 <br /><br />
 
 <img align="left" height="100" src="images/charts/deaths_per_1m_inhabitant.png">
 
-**[Échelle linéaire (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant.png)** •  **Deaths for 1 million inhabitants over time**.
+**[Échelle linéaire (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant.png)** •  **[Échelle log. (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/deaths_per_1m_inhabitant.png)** •  **Deaths for 1 million inhabitants over time**.
 Same as 1. but the number of cases is divided by the population of each country. So the plotted data is the number of confirmed cases for 1 million inhabitants.
 
 <br /><br />
 
 <img align="left" height="100" src="images/charts/deaths_per_1m_inhabitant_aligned.png">
 
-**[Échelle linéaire (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_aligned.png)** • **Deaths for 1 million inhabitants over time [aligned]**.
+**[Échelle linéaire (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_aligned.png)** • **[Échelle log. (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/deaths_per_1m_inhabitant_aligned.png)** • **Deaths for 1 million inhabitants over time [aligned]**.
 Same as 3., but each curve is aligned on Italy using the Least Squares method. It is easier to compare the progression of each curve.
 
 <br /><br />
 
 <img align="left" height="100" src="images/charts/deaths_per_1m_inhabitant_since.png">
 
-**[Échelle linéaire (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_since.png)** • **Deaths for 1 million inhabitants over time [since a treschold]**.
+**[Échelle linéaire (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_since.png)** • **[Échelle log. (PNG)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/deaths_per_1m_inhabitant_since.png)** • **Deaths for 1 million inhabitants over time [since a treschold]**.
 Same as 3., but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
 
 <br /><br />
