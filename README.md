@@ -76,7 +76,7 @@ Same as the third one, but each curve is aligned on Italy using the Least Square
 Same as the third one, but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
 
 <br /><br />
-
+<!---
 # Main Charts
 All charts are listed above. But, here are the main one, so you don't have to download every one.
 
@@ -109,6 +109,7 @@ Same chart, but every curve is aligned with Italy. That's an easier way to compa
 
 ### Total deaths for 1 million inhabitants, since "x deaths/mill. hab."
 ![](./images/charts/deaths_per_1m_inhabitant_since.png)
+-->
 
 ## Dashboard (deprecated)
 I will do a better one soon...
