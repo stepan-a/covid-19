@@ -112,10 +112,15 @@ Same chart, but every curve is aligned with Italy. That's an easier way to compa
 -->
 # Repository structure
 covid-19.ipynb : Jupyther Notebook that downlaod, merge data and plot and export charts.
+
 data : datasets from CSSE, WHO and personal datasets.
+
 images/charts : all charts.
+
 images/charts_sd : charts in low defintion.
+
 images/charts/log_yaxis : all charts but ploteded on a log. scale.
+
 
 # Dashboard (deprecated)
 I will do a better one soon...
