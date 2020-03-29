@@ -7,6 +7,7 @@ Please go to this folder:
 
 ![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map.gif)
 ![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_region_comp.png)
+![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/evol_journ.png)
 Please find the other charts here: 
 **[FRENCH CHARTS](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
 
