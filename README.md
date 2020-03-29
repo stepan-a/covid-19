@@ -1,6 +1,17 @@
 # COVID-19: data, charts and interpretations
 You can find on this repository many charts and data about Coronavirus (COVID-19) disease, especially in Europe. Most of data come from CSSE, but I also add data of my own to have up-to-date data.
 
+# France: All Charts
+Please go to this folder: 
+**[FRENCH CHARTS](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
+
+![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map.gif)
+![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_region_comp.png)
+Please find the other charts here: 
+**[FRENCH CHARTS](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
+
+<br /><br />
+
 # World: All Charts
 Below are all the charts done. You can download the `PNG` file by clicking on the PNG link for each chart. You will soon be able to access and download interactive HTML charts.
 
@@ -77,14 +88,6 @@ Same as the third one, but each country is displayed from the day a certain thre
 
 <br /><br />
 
-# France: All Charts
-Please go to this folder: 
-**[FRENCH CHARTS](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
-
-![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map.gif)
-
-
-<br /><br />
 <!---
 # Main Charts
 All charts are listed above. But, here are the main one, so you don't have to download every one.
