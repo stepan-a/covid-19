@@ -75,8 +75,11 @@ Same as the third one, but each curve is aligned on Italy using the Least Square
 **[PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_since.png)** • **[PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/deaths_per_1m_inhabitant_since.png)** • **Deaths for 1M inhabitants [since a threshold]**.
 Same as the third one, but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
 
+<br /><br />
+
 # France: All Charts
-Please go to this folder: [french charts](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).
+Please go to this folder: 
+**[FRENCH CHARTS](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
 
 <br /><br />
 <!---
@@ -118,11 +121,14 @@ covid-19.ipynb : Jupyther Notebook that downlaod, merge data and plot and export
 
 data : datasets from CSSE, WHO and personal datasets.
 
-images/charts : all charts.
+images/charts : all charts (world).
+
+images/charts/france : french charts.
 
 images/charts_sd : charts in low defintion.
 
 images/charts/log_yaxis : all charts but ploteded on a log. scale.
+
 
 
 # Dashboard (deprecated)
