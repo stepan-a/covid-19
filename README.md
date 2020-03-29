@@ -81,6 +81,9 @@ Same as the third one, but each country is displayed from the day a certain thre
 Please go to this folder: 
 **[FRENCH CHARTS](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
 
+![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map.gif)
+
+
 <br /><br />
 <!---
 # Main Charts
