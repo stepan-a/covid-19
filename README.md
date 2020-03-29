@@ -5,7 +5,13 @@ You can find on this repository many charts and data about Coronavirus (COVID-19
 Please go to this folder: 
 **[FRENCH CHARTS](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
 
-![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map.gif)
+<p float="left">
+  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map.gif" width="100" />
+  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map.gif" width="100" /> 
+  <img src="/img3.png" width="100" />
+</p>
+
+
 ![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_region_comp.png)
 ![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/evol_journ.png)
 Please find the other charts here: 
