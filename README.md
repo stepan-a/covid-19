@@ -17,7 +17,7 @@ Please find the other charts here:
 Below are all the charts done. You can download the `PNG` file by clicking on the PNG link for each chart. You will soon be able to access and download interactive HTML charts.
 
 ## Confirmed cases of COVID-19
-<img align="left" height="100" src="images/charts/cases.png">
+<img align="left" height="100" src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png">
 
 **[PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png)** • **[PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/cases.png)** • **Confirmed cases**.
 This chart represents the total number of confirmed cases of COVID-19 against time, in days.
