@@ -1,7 +1,7 @@
 # COVID-19: data, charts and interpretations
 You can find on this repository many charts and data about Coronavirus (COVID-19) disease, especially in Europe. Most of data come from CSSE, but I also add data of my own to have up-to-date data.
 
-# All charts
+# World: All Charts
 Below are all the charts done. You can download the `PNG` file by clicking on the PNG link for each chart. You will soon be able to access and download interactive HTML charts.
 
 ## Confirmed cases of COVID-19
@@ -74,6 +74,9 @@ Same as the third one, but each curve is aligned on Italy using the Least Square
 
 **[PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_since.png)** • **[PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/deaths_per_1m_inhabitant_since.png)** • **Deaths for 1M inhabitants [since a threshold]**.
 Same as the third one, but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
+
+# France: All Charts
+Please go to this folder: [french charts](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).
 
 <br /><br />
 <!---
