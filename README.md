@@ -1,5 +1,7 @@
-# COVID-19: data, charts and interpretations
+# COVID-19: data, statistics and charts
 You can find on this repository many charts and data about Coronavirus (COVID-19) disease, especially in Europe. Most of data come from CSSE, but I also add data of my own to have up-to-date data.
+
+For more information and comments in French, you can **follow me on Twitter: [@guillaumerozier](http://twitter.com/guillaumerozier).**
 
 # France: All Charts
 Please go to this folder: 
