@@ -23,7 +23,7 @@ Please go to this folder:
 
 Please find the other charts here: 
 **[FRENCH CHARTS](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
-
+Please **follow me on Twitter [@guillaumerozier](http://twitter.com/guillaumerozier) for more information.
 <br /><br />
 
 # World: All Charts
