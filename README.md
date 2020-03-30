@@ -139,17 +139,6 @@ Same chart, but every curve is aligned with Italy. That's an easier way to compa
 ![](./images/charts/deaths_per_1m_inhabitant_since.png)
 -->
 # Repository structure
-covid-19.ipynb : Jupyter Notebook that downloads, merge data and plots and exports charts.
-
-data : datasets from CSSE, WHO and personal datasets.
-
-images/charts : all charts (world).
-
-images/charts/france : french charts.
-
-images/charts_sd : charts in low defintion.
-
-images/charts/log_yaxis : all charts but ploteded on a log. scale.
 
 ```
 covid-19
@@ -166,12 +155,22 @@ covid-19
 |   |   data_confirmed.csv  ->  exported cases dataset after merging other datasets.
 |   |   data_deaths.csv  ->  exported deaths dataset after merging other datasets.
 |   |   info_countries.json  ->  information about countries (e.g. population).
+|   |   Please ignore everything else
 │   
 └───images
-    └───charts
+    └───charts  ->  world charts (linear axis).
         |
+        |   * Lot of charts! *
         |
-        └───france
+        └───logy_axis  ->  world charts (log axis).
+        |
+        |   * Exactly the same charts, but whith a log y axis *
+        |
+        └───france  ->  french charts.
+            |
+            |  * Lot of charts and gifs! * 
+            |
+        
 ```
 
 # Dashboard (deprecated)
