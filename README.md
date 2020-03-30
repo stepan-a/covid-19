@@ -133,7 +133,7 @@ Same chart, but every curve is aligned with Italy. That's an easier way to compa
 ![](./images/charts/deaths_per_1m_inhabitant_since.png)
 -->
 # Repository structure
-covid-19.ipynb : Jupyther Notebook that downlaod, merge data and plot and export charts.
+covid-19.ipynb : Jupyter Notebook that downlaod, merge data and plot and export charts.
 
 data : datasets from CSSE, WHO and personal datasets.
 
