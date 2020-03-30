@@ -1,5 +1,9 @@
-# COVID-19: data, charts and interpretations
-You can find on this repository many charts and data about Coronavirus (COVID-19) disease, especially in Europe. Most of data come from CSSE, but I also add data of my own to have up-to-date data.
+# COVID-19: data, statistics and charts
+You can find on this repository many charts and data about Coronavirus (COVID-19) disease, especially in Europe. Most of data come from [CSSE](https://systems.jhu.edu) (Johns Hopkins Center for Systems Science and Engineering), but I also add data of my own to have up-to-date data.
+
+French data comes frome [INSEE](https://insee.fr/fr/accueil) (Institut National de la Statistiques et des Études Économiques) and [Santé Publique France](https://www.santepubliquefrance.fr).
+
+For more information and comments in French, you can **follow me on Twitter: [@guillaumerozier](http://twitter.com/guillaumerozier).**
 
 # France: All Charts
 Please go to this folder: 
@@ -19,6 +23,8 @@ Please go to this folder:
 
 Please find the other charts here: 
 **[FRENCH CHARTS](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
+
+Please **follow me on Twitter [@guillaumerozier](http://twitter.com/guillaumerozier) for more information.**
 
 <br /><br />
 
@@ -133,7 +139,7 @@ Same chart, but every curve is aligned with Italy. That's an easier way to compa
 ![](./images/charts/deaths_per_1m_inhabitant_since.png)
 -->
 # Repository structure
-covid-19.ipynb : Jupyther Notebook that downlaod, merge data and plot and export charts.
+covid-19.ipynb : Jupyter Notebook that downloads, merge data and plots and exports charts.
 
 data : datasets from CSSE, WHO and personal datasets.
 
