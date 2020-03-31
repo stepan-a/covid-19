@@ -1,7 +1,7 @@
 # COVID-19: data, statistics and charts
 You can find on this repository many charts and data about Coronavirus (COVID-19) disease, especially in Europe. Most of data come from [CSSE](https://systems.jhu.edu) (Johns Hopkins Center for Systems Science and Engineering), but I also add data of my own to have up-to-date data.
 
-French data comes frome [INSEE](https://insee.fr/fr/accueil) (Institut National de la Statistiques et des Études Économiques) and [Santé Publique France](https://www.santepubliquefrance.fr).
+French data come frome [INSEE](https://insee.fr/fr/accueil) (Institut National de la Statistiques et des Études Économiques) and [Santé Publique France](https://www.santepubliquefrance.fr).
 
 For more information and comments in French, you can **follow me on Twitter: [@guillaumerozier](http://twitter.com/guillaumerozier).**
 
@@ -186,7 +186,7 @@ covid-19
 
 # Dashboard (deprecated)
 I will do a better one soon...
-I created a [dashboard](https://plot.ly/dashboard/worldice:14/) where you can find 4 of the charts I generate. It is refreshed every 4 hours.
+I created a [dashboard](https://plot.ly/dashboard/worldice:14/) where you can find 4 of the charts I generate.
 <!--
 ![](./images/dashboard.png)
 -->
