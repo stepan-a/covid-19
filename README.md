@@ -3,7 +3,7 @@ You can find on this repository many charts and data about Coronavirus (COVID-19
 
 French data come frome [INSEE](https://insee.fr/fr/accueil) (Institut National de la Statistiques et des Études Économiques) and [Santé Publique France](https://www.santepubliquefrance.fr).
 
-For more information and comments in French, you can **follow me on Twitter: [@guillaumerozier](http://twitter.com/guillaumerozier).**
+For more information and comments in French, you can follow me on Twitter: [@guillaumerozier](http://twitter.com/guillaumerozier).
 
 # France: All Charts
 Please go to this folder: 
@@ -33,11 +33,9 @@ Please go to this folder:
 </p>
 
 Please find the other charts here: 
-**[FRENCH CHARTS](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
+**[French charts](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
 
-Please **follow me on Twitter [@guillaumerozier](http://twitter.com/guillaumerozier) for more information.**
-
-<br /><br />
+Vous pouvez aussi me suivre sur [Twitter](http://twitter.com/guillaumerozier) pour des interprétations des graphiques.
 
 # World: All Charts
 Below are all the charts done. You can download the `PNG` file by clicking on the PNG link for each chart. You will soon be able to access and download interactive HTML charts.
