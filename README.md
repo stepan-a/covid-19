@@ -16,10 +16,17 @@ Please go to this folder:
 
 <br /><br />
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map-dc-cum.gif" width="450" />
+  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/capacite_rea.png" width="450" /> 
+</p>
+
+<br /><br />
+
 ![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_region_comp.png)
 ![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/situation_cas.png)
 ![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/evol_journ.png)
-![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/capacite_rea.png)
+![Alt Text]()
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_hab_nonhab_comp.png" width="450" />
