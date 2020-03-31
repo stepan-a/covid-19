@@ -182,6 +182,7 @@ covid-19
         
 ```
 
+
 # Dashboard (deprecated)
 I will do a better one soon...
 I created a [dashboard](https://plot.ly/dashboard/worldice:14/) where you can find 4 of the charts I generate.
@@ -195,4 +196,5 @@ You can find 2 datasets:
 - [Santé Publique France](https://www.santepubliquefrance.fr).
 - Personal data (added manually).
 
-The two dataset are then merged into a more complete dataset.
+
+If you have any question or feedback please ask me by email or on Twitter.
