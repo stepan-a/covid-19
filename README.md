@@ -6,7 +6,7 @@ French data come frome [INSEE](https://insee.fr/fr/accueil) (Institut National d
 For more information and comments in French, you can follow me on Twitter: [@guillaumerozier](http://twitter.com/guillaumerozier).
 
 # France: All Charts
-Please go to this folder: 
+Only few charts are displayed here. You can download every chart in high definition here: 
 **[FRENCH CHARTS](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
 
 <p align="center">
