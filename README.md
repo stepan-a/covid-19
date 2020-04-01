@@ -8,6 +8,7 @@ For more information and comments in French, you can follow me on Twitter: [@gui
 # France: All Charts
 Only few charts are displayed here. You can download every chart in high definition here: 
 **[FRENCH CHARTS](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
+MàJ 01/04 10h00 : à cette heure, les données du 31 mars n'ont toujours pas été publiées par le Gouvernement.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map.gif" width="450" />
