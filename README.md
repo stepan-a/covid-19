@@ -86,14 +86,14 @@ Same as the first one, but the number of cases is divided by the population of e
 <img align="left" height="100" src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_aligned.png">
 
 **[Show graph](http://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/cases_per_1m_inhabitant_aligned.html)** • [PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_aligned.png) • [PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/cases_per_1m_inhabitant_aligned.png) • **Confirmed cases for 1M inhabitants [aligned]**.
-Same as the third one, but each curve is aligned on Italy using the Least Squares method. It is easier to compare the progression of each curve.
+Same as the first one, but each curve is aligned on Italy using the Least Squares method. It is easier to compare the progression of each curve.
 
 <br /><br />
 
 <img align="left" height="100" src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_since.png">
 
 **[Show graph](http://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/cases_per_1m_inhabitant_since.html)** • [PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_since.png) • [PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/cases_per_1m_inhabitant_since.png) • **Confirmed cases for 1M inhabitants [since a threshold]**.
-Same as the third one, but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
+Same as the second one, but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
 
 <br /><br />
 
@@ -123,14 +123,14 @@ Same as the first one, but the number of cases is divided by the population of e
 <img align="left" height="100" src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_aligned.png">
 
 **[Show graph](http://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/deaths_per_1m_inhabitant_aligned.html)** • [PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_aligned.png) • [PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/deaths_per_1m_inhabitant_aligned.png) • **Deaths for 1M inhabitants [aligned]**.
-Same as the third one, but each curve is aligned on Italy using the Least Squares method. It is easier to compare the progression of each curve.
+Same as the second one, but each curve is aligned on Italy using the Least Squares method. It is easier to compare the progression of each curve.
 
 <br /><br />
 
 <img align="left" height="100" src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_since.png">
 
 **[Show graph](http://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/deaths_per_1m_inhabitant_since.html)** • [PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_since.png) • [PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/deaths_per_1m_inhabitant_since.png) • **Deaths for 1M inhabitants [since a threshold]**.
-Same as the third one, but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
+Same as the second one, but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
 
 <br /><br />
 
