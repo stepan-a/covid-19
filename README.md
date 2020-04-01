@@ -7,7 +7,10 @@ For more information and comments in French, you can follow me on Twitter: [@gui
 
 # France: All Charts
 Only few charts are displayed here. You can download every chart in high definition here: 
-**[FRENCH CHARTS](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
+**[French Charts](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
+
+
+**Nouveau** : cliquez sur une image pour afficher une version interactive. Vous pouvez alors zoomer, et enlever des courbes en cliquant ou double-cliquant sur un élément de légende.
 
 <p align="center">
   
