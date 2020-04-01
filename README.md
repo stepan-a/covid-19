@@ -1,12 +1,12 @@
 # COVID-19: data, statistics and charts
 You can find on this repository many charts and data about Coronavirus (COVID-19) disease, especially in Europe. Most of data come from [CSSE](https://systems.jhu.edu) (Johns Hopkins Center for Systems Science and Engineering), but I also add data of my own to have up-to-date data.
 
-French data comes frome [INSEE](https://insee.fr/fr/accueil) (Institut National de la Statistiques et des Études Économiques) and [Santé Publique France](https://www.santepubliquefrance.fr).
+French data come frome [INSEE](https://insee.fr/fr/accueil) (Institut National de la Statistiques et des Études Économiques) and [Santé Publique France](https://www.santepubliquefrance.fr).
 
-For more information and comments in French, you can **follow me on Twitter: [@guillaumerozier](http://twitter.com/guillaumerozier).**
+For more information and comments in French, you can follow me on Twitter: [@guillaumerozier](http://twitter.com/guillaumerozier).
 
 # France: All Charts
-Please go to this folder: 
+Only few charts are displayed here. You can download every chart in high definition here: 
 **[FRENCH CHARTS](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
 
 <p align="center">
@@ -16,17 +16,26 @@ Please go to this folder:
 
 <br /><br />
 
-![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_region_comp.png)
-![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_hab_nonhab_comp.png)
-![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/evol_journ.png)
-![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/situation_cas.png)
-
-Please find the other charts here: 
-**[FRENCH CHARTS](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
-
-Please **follow me on Twitter [@guillaumerozier](http://twitter.com/guillaumerozier) for more information.**
+<p align="center">
+  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map-dc-cum.gif" width="450" />
+  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/capacite_rea.png" width="450" /> 
+</p>
 
 <br /><br />
+
+![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_region_comp.png)
+![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/situation_cas.png)
+![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/evol_journ.png)
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_hab_nonhab_comp.png" width="450" />
+  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/rea_line.png" width="450" /> 
+</p>
+
+Please find the other charts here: 
+**[French charts](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
+
+Vous pouvez aussi me suivre sur [Twitter](http://twitter.com/guillaumerozier) pour des interprétations des graphiques.
 
 # World: All Charts
 Below are all the charts done. You can download the `PNG` file by clicking on the PNG link for each chart. You will soon be able to access and download interactive HTML charts.
@@ -173,15 +182,19 @@ covid-19
         
 ```
 
+
 # Dashboard (deprecated)
 I will do a better one soon...
-I created a [dashboard](https://plot.ly/dashboard/worldice:14/) where you can find 4 of the charts I generate. It is refreshed every 4 hours.
+I created a [dashboard](https://plot.ly/dashboard/worldice:14/) where you can find 4 of the charts I generate.
 <!--
 ![](./images/dashboard.png)
 -->
 # Data
 You can find 2 datasets:
 - Data downloaded from [CSSE](https://github.com/CSSEGISandData/COVID-19). Data come from WHO (World Health Organization).
+- [INSEE](https://insee.fr/fr/accueil) (Institut National de la Statistiques et des Études Économiques)
+- [Santé Publique France](https://www.santepubliquefrance.fr).
 - Personal data (added manually).
 
-The two dataset are then merged into a more complete dataset.
+
+If you have any question or feedback please ask me by email or on Twitter.
