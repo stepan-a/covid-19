@@ -24,11 +24,23 @@ Only few charts are displayed here. You can download every chart in high definit
 
 <br /><br />
 
-<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_cum_region_comp.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_region_comp.png" width="450" /> </a>
+<p align="center">
+  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_cum_region_comp.html">
+      <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_region_comp.png" width="450" /> </a>
 
-![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_region_comp.png)
-![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/situation_cas.png)
-![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/evol_journ.png)
+  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/situation_cas.html">
+    <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/situation_cas.png" width="450" /> </a>
+</p>
+
+<br /><br />
+
+<p align="center">
+  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/evol_journ.html">
+      <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/evol_journ.png" width="450" /> </a>
+
+</p>
+
+<br /><br />
 
 <p align="center">
   <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_cum_hab_nonhab_comp.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_hab_nonhab_comp.png" width="450" /> </a>
