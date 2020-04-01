@@ -19,7 +19,7 @@ Only few charts are displayed here. You can download every chart in high definit
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map-dc-cum.gif" width="450" />
-  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/capacite_rea.html"> <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/capacite_rea.png" width="450" /> <a href="">
+  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/capacite_rea.html"> <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/capacite_rea.png" width="450" /> </a>
 </p>
 
 <br /><br />
@@ -29,8 +29,8 @@ Only few charts are displayed here. You can download every chart in high definit
 ![Alt Text](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/evol_journ.png)
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_hab_nonhab_comp.png" width="450" />
-  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/rea_line.png" width="450" /> 
+  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_cum_hab_nonhab_comp.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_hab_nonhab_comp.png" width="450" /> </a>
+  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/rea_line.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/rea_line.png" width="450" /> </a>
 </p>
 
 Please find the other charts here: 
