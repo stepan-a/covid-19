@@ -1,7 +1,7 @@
 # COVID-19: data, statistics and charts
 You can find on this repository many charts and data about Coronavirus (COVID-19) disease, especially in Europe. Most of data come from [CSSE](https://systems.jhu.edu) (Johns Hopkins Center for Systems Science and Engineering), but I also add data of my own to have up-to-date data.
 
-French data come frome [INSEE](https://insee.fr/fr/accueil) (Institut National de la Statistiques et des Études Économiques) and [Santé Publique France](https://www.santepubliquefrance.fr).
+French data come frome [INSEE](https://insee.fr/fr/accueil) (Institut National des Statistiques et des Études Économiques) and [Santé Publique France](https://www.santepubliquefrance.fr).
 
 For more information and comments in French, you can follow me on Twitter: [@guillaumerozier](http://twitter.com/guillaumerozier).
 
@@ -64,7 +64,7 @@ Below are all the charts done. You can download the `PNG` file by clicking on th
 ## Confirmed cases of COVID-19
 <img align="left" height="100" src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png">
 
-**[Show graph](http://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/cases.html)** • **[PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png)** • **[PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/cases.png)** • **Confirmed cases**.
+**[Show graph](http://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/cases.html)** • [PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png) • [PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/cases.png) • **Confirmed cases**.
 This chart represents the total number of confirmed cases of COVID-19 against time, in days.
 
 <!---
