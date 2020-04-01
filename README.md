@@ -213,7 +213,7 @@ I created a [dashboard](https://plot.ly/dashboard/worldice:14/) where you can fi
 # Data
 You can find 2 datasets:
 - Data downloaded from [CSSE](https://github.com/CSSEGISandData/COVID-19). Data come from WHO (World Health Organization).
-- [INSEE](https://insee.fr/fr/accueil) (Institut National de la Statistiques et des Études Économiques)
+- [INSEE](https://insee.fr/fr/accueil) (Institut National des Statistiques et des Études Économiques)
 - [Santé Publique France](https://www.santepubliquefrance.fr).
 - Personal data (added manually).
 
