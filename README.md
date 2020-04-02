@@ -1,7 +1,7 @@
 # COVID-19: data, statistics and charts
 You can find on this repository many charts and data about Coronavirus (COVID-19) disease, especially in Europe. Most of data come from [CSSE](https://systems.jhu.edu) (Johns Hopkins Center for Systems Science and Engineering), but I also add data of my own to have up-to-date data.
 
-French data come frome [INSEE](https://insee.fr/fr/accueil) (Institut National de la Statistiques et des Études Économiques) and [Santé Publique France](https://www.santepubliquefrance.fr).
+French data come frome [INSEE](https://insee.fr/fr/accueil) (Institut National des Statistiques et des Études Économiques) and [Santé Publique France](https://www.santepubliquefrance.fr).
 
 For more information and comments in French, you can follow me on Twitter: [@guillaumerozier](http://twitter.com/guillaumerozier).
 
@@ -64,7 +64,7 @@ Below are all the charts done. You can download the `PNG` file by clicking on th
 ## Confirmed cases of COVID-19
 <img align="left" height="100" src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png">
 
-**[Show graph](http://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/cases.html)** • **[PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png)** • **[PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/cases.png)** • **Confirmed cases**.
+**[Show graph](http://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/cases.html)** • [PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png) • [PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/cases.png) • **Confirmed cases**.
 This chart represents the total number of confirmed cases of COVID-19 against time, in days.
 
 <!---
@@ -86,14 +86,14 @@ Same as the first one, but the number of cases is divided by the population of e
 <img align="left" height="100" src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_aligned.png">
 
 **[Show graph](http://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/cases_per_1m_inhabitant_aligned.html)** • [PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_aligned.png) • [PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/cases_per_1m_inhabitant_aligned.png) • **Confirmed cases for 1M inhabitants [aligned]**.
-Same as the third one, but each curve is aligned on Italy using the Least Squares method. It is easier to compare the progression of each curve.
+Same as the first one, but each curve is aligned on Italy using the Least Squares method. It is easier to compare the progression of each curve.
 
 <br /><br />
 
 <img align="left" height="100" src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_since.png">
 
 **[Show graph](http://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/cases_per_1m_inhabitant_since.html)** • [PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases_per_1m_inhabitant_since.png) • [PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/cases_per_1m_inhabitant_since.png) • **Confirmed cases for 1M inhabitants [since a threshold]**.
-Same as the third one, but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
+Same as the second one, but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
 
 <br /><br />
 
@@ -123,14 +123,14 @@ Same as the first one, but the number of cases is divided by the population of e
 <img align="left" height="100" src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_aligned.png">
 
 **[Show graph](http://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/deaths_per_1m_inhabitant_aligned.html)** • [PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_aligned.png) • [PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/deaths_per_1m_inhabitant_aligned.png) • **Deaths for 1M inhabitants [aligned]**.
-Same as the third one, but each curve is aligned on Italy using the Least Squares method. It is easier to compare the progression of each curve.
+Same as the second one, but each curve is aligned on Italy using the Least Squares method. It is easier to compare the progression of each curve.
 
 <br /><br />
 
 <img align="left" height="100" src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_since.png">
 
 **[Show graph](http://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/deaths_per_1m_inhabitant_since.html)** • [PNG (linear scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant_since.png) • [PNG (log. scale)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/deaths_per_1m_inhabitant_since.png) • **Deaths for 1M inhabitants [since a threshold]**.
-Same as the third one, but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
+Same as the second one, but each country is displayed from the day a certain threshold has been reached. This makes it possible to compare the recent increase in the number of cases between countries.
 
 <br /><br />
 
@@ -213,7 +213,7 @@ I created a [dashboard](https://plot.ly/dashboard/worldice:14/) where you can fi
 # Data
 You can find 2 datasets:
 - Data downloaded from [CSSE](https://github.com/CSSEGISandData/COVID-19). Data come from WHO (World Health Organization).
-- [INSEE](https://insee.fr/fr/accueil) (Institut National de la Statistiques et des Études Économiques)
+- [INSEE](https://insee.fr/fr/accueil) (Institut National des Statistiques et des Études Économiques)
 - [Santé Publique France](https://www.santepubliquefrance.fr).
 - Personal data (added manually).
 
