@@ -59,7 +59,7 @@ Please find the other charts here:
 Vous pouvez aussi me suivre sur [Twitter](http://twitter.com/guillaumerozier) pour des interprétations des graphiques.
 
 # World: All Charts
-Below are all the charts done. You can download the `PNG` file by clicking on the PNG link for each chart. You will soon be able to access and download interactive HTML charts.
+You can show interactive graphes by clicking on "Show Graph". You can add or remove items in the legend by cliking or double-clicking on items.
 
 ## Confirmed cases of COVID-19
 <img align="left" height="100" src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png">
