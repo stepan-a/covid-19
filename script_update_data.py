@@ -14,7 +14,7 @@ def update_repo():
     subprocess.run(["sudo", "jupyter", "nbconvert", "--to", "script", "*.ipynb"])
     
 def push(type_data):
-    subprocess.run(["git", "add", "."])
+    subprocess.run(["git", "add", "images/", "date/"])
     subprocess.run(["git", "comit", "-m", "auto data update: {}".format(type_data)])
     
 while True:
@@ -24,18 +24,18 @@ while True:
     
     if h == '05' & m =='00':
         update_repo()
-        subprocess.run(["sudo", "python3", "covid-19.py"])
-        subprocess.run(["sudo", "python3", "covid-19-France.py"])
+        subprocess.run(["sudo", "python3", "covid19_world_charts.py"])
+        subprocess.run(["sudo", "python3", "covid19_france_charts.py"])
         push("World")
         
     if h == '19' & m == '05':
         update_repo()
-        subprocess.run(["sudo", "python3", "covid-19-France.py"]) 
+        subprocess.run(["sudo", "python3", "covid19_france_charts.py"])
         push("France")
         
-    if h == '19' & m == '45':
+    if h == '19' & m == '40':
         update_repo()
-        subprocess.run(["sudo", "python3", "covid-19-France.py"])    
+        subprocess.run(["sudo", "python3", "covid19_france_charts.py"])  
         push("France")
         
     time.sleep(30)
