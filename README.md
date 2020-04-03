@@ -115,7 +115,10 @@ Same as the first one, but each country is displayed from the day a certain thre
 
 <img align="left" height="100" src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant.png">
 
-**[Graph](http://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/deaths_per_1m_inhabitant.html)** • [Graph (log.)](http://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/log_yaxis/deaths_per_1m_inhabitant.html) •[Image](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant.png) •  [Image (log.)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/deaths_per_1m_inhabitant.png) •  **Deaths for 1M inhabitants**.
+**[Graph](http://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/deaths_per_1m_inhabitant.html)** • [Graph (log.)](http://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/log_yaxis/deaths_per_1m_inhabitant.html) •[Image](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/deaths_per_1m_inhabitant.png) •  [Image (log.)](https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/log_yaxis/deaths_per_1m_inhabitant.png) •  
+
+**Deaths for 1M inhabitants**.
+
 Same as the first one, but the number of cases is divided by the population of each country. So the plotted data is the number of confirmed cases for 1 million inhabitants.
 
 <br /><br />
