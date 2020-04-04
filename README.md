@@ -47,6 +47,7 @@ Autres :
 Autres graphiques :
 
    <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/hosp_var.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/hosp_var.png" width="250" /></a>
+      <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/capacite_rea.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/capacite_rea.png" width="250" /></a>
 
 <br />
  
@@ -65,6 +66,9 @@ Autres graphiques :
 Autres graphiques :
 
   <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_cum_hab_nonhab_comp.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_hab_nonhab_comp.png" width="250" /> </a>
+    <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_cum_line.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_line.png" width="250" /> </a>
+    <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_cum_region.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_region.png" width="250" /> </a>
+    <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_journ_line.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_journ_line.png" width="250" /> </a>
 
 ## Mortalité toutes causes
 
