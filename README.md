@@ -26,7 +26,7 @@ Only few charts are displayed here. You can download every chart in high definit
      <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/evol_journ.png" width="800" /> </a>
 </p>
 
-Autres :  
+Autres hospitalisations :  
 
    <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/situation_cas.html">
     <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/situation_cas.png" width="250" /> </a>
