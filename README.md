@@ -48,12 +48,12 @@ Only few charts are displayed here. You can download every chart in high definit
 <br />
 
 <p align="center">
-  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/rea_dep.html">
-      <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/rea_dep.png" width="200" /> </a>
-  
+  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/rea_dep.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/rea_dep.png" width="200" /> </a>
   
   <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/capacite_rea.html"> <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/capacite_rea.png" width="200" /> </a>
 </p>
+
+<br />
 
 <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map.gif" width="450" />
 
