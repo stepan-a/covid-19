@@ -5,7 +5,7 @@ French data come frome [INSEE](https://insee.fr/fr/accueil) (Institut National d
 
 For more information and comments in French, you can follow me on Twitter: [@guillaumerozier](http://twitter.com/guillaumerozier).
 
-# Table of contents
+# Contents
 * [**France: tous les graphiques**](https://github.com/rozierguillaume/covid-19#tous-les-graphiques)
   * [Vue d'ensemble](https://github.com/rozierguillaume/covid-19#vue-densemble)
   * [Hospitalisations et réanimations dues au Covid-19](https://github.com/rozierguillaume/covid-19#hospitalisations-et-réanimations-liées-au-covid-19)
