@@ -5,6 +5,12 @@ French data come frome [INSEE](https://insee.fr/fr/accueil) (Institut National d
 
 For more information and comments in French, you can follow me on Twitter: [@guillaumerozier](http://twitter.com/guillaumerozier).
 
+# Table of contents
+* [France: All Charts](https://github.com/rozierguillaume/covid-19#france-all-charts)
+* [World: All Charts](https://github.com/rozierguillaume/covid-19#world-all-charts)
+* [Data sources](https://github.com/rozierguillaume/covid-19#data-sources)
+* [Repository structure](https://github.com/rozierguillaume/covid-19#repository-structure)
+
 # France: All Charts
 Only few charts are displayed here. You can download every chart in high definition here: 
 **[French Charts](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
@@ -218,7 +224,7 @@ I created a [dashboard](https://plot.ly/dashboard/worldice:14/) where you can fi
 <!--
 ![](./images/dashboard.png)
 -->
-# Data
+# Data Sources
 You can find 2 datasets:
 - Data downloaded from [CSSE](https://github.com/CSSEGISandData/COVID-19). Data come from WHO (World Health Organization).
 - [INSEE](https://insee.fr/fr/accueil) (Institut National des Statistiques et des Études Économiques)
