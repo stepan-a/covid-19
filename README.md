@@ -6,12 +6,12 @@ French data come frome [INSEE](https://insee.fr/fr/accueil) (Institut National d
 For more information and comments in French, you can follow me on Twitter: [@guillaumerozier](http://twitter.com/guillaumerozier).
 
 # Table of contents
-* [France: tous les graphiques](https://github.com/rozierguillaume/covid-19#tous-les-graphiques)
+* [**France: tous les graphiques**](https://github.com/rozierguillaume/covid-19#tous-les-graphiques)
   * [Vue d'ensemble](https://github.com/rozierguillaume/covid-19#vue-densemble)
   * [Hospitalisations et réanimations dues au Covid-19](https://github.com/rozierguillaume/covid-19#hospitalisations-et-réanimations-liées-au-covid-19)
   * [Décès dus au Covid-19](https://github.com/rozierguillaume/covid-19#décès-dus-au-covid-19)
   * [Mortalité toutes causes](https://github.com/rozierguillaume/covid-19#décès-dus-au-covid-19)
-* [World: All Charts](https://github.com/rozierguillaume/covid-19#world-all-charts)
+* [**World: All Charts**](https://github.com/rozierguillaume/covid-19#world-all-charts)
   * [Confirmed cases of Covid-19](https://github.com/rozierguillaume/covid-19#confirmed-cases-of-covid-19)
   * [Deaths caused by Covid-19](https://github.com/rozierguillaume/covid-19#deaths-caused-by-covid-19)
 * [Repository structure](https://github.com/rozierguillaume/covid-19#repository-structure)
