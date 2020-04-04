@@ -60,10 +60,10 @@ Only few charts are displayed here. You can download every chart in high definit
 
 <br /><br />
 
-<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_cum_region_comp.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_region_comp.png" width="450" /> </a>
+<p align="center">
+<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_cum_region_comp.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_region_comp.png" width="700" /></a>
+</p>
 
-<br /><br />
-  
 ## Mortalité toutes causes
 
 <br /><br />
@@ -77,7 +77,6 @@ Only few charts are displayed here. You can download every chart in high definit
 <p align="center">
 
 </p>
-
 
 Please find the other charts here: 
 **[French charts](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
