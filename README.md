@@ -12,8 +12,8 @@ For more information and comments in French, you can follow me on Twitter: [@gui
   * [Décès dus au Covid-19](https://github.com/rozierguillaume/covid-19#décès-dus-au-covid-19)
   * [Mortalité toutes causes](https://github.com/rozierguillaume/covid-19#décès-dus-au-covid-19)
 * [World: All Charts](https://github.com/rozierguillaume/covid-19#world-all-charts)
- * [Confirmed cases of Covid-19](https://github.com/rozierguillaume/covid-19#confirmed-cases-of-covid-19)
- * [Deaths caused by Covid-19](https://github.com/rozierguillaume/covid-19#deaths-caused-by-covid-19)
+  * [Confirmed cases of Covid-19](https://github.com/rozierguillaume/covid-19#confirmed-cases-of-covid-19)
+  * [Deaths caused by Covid-19](https://github.com/rozierguillaume/covid-19#deaths-caused-by-covid-19)
 * [Repository structure](https://github.com/rozierguillaume/covid-19#repository-structure)
 * [Data sources](https://github.com/rozierguillaume/covid-19#data-sources)
 
