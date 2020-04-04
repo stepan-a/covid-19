@@ -8,8 +8,9 @@ For more information and comments in French, you can follow me on Twitter: [@gui
 # Table of contents
 * [France: All Charts](https://github.com/rozierguillaume/covid-19#france-all-charts)
 * [World: All Charts](https://github.com/rozierguillaume/covid-19#world-all-charts)
-* [Data sources](https://github.com/rozierguillaume/covid-19#data-sources)
 * [Repository structure](https://github.com/rozierguillaume/covid-19#repository-structure)
+* [Data sources](https://github.com/rozierguillaume/covid-19#data-sources)
+
 
 # France: All Charts
 Only few charts are displayed here. You can download every chart in high definition here: 
