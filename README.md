@@ -5,52 +5,89 @@ French data come frome [INSEE](https://insee.fr/fr/accueil) (Institut National d
 
 For more information and comments in French, you can follow me on Twitter: [@guillaumerozier](http://twitter.com/guillaumerozier).
 
-# France: All Charts
+# Contents
+* [**France: tous les graphiques**](https://github.com/rozierguillaume/covid-19#tous-les-graphiques)
+  * [Vue d'ensemble](https://github.com/rozierguillaume/covid-19#vue-densemble)
+  * [Hospitalisations et réanimations dues au Covid-19](https://github.com/rozierguillaume/covid-19#hospitalisations-et-réanimations-liées-au-covid-19)
+  * [Décès dus au Covid-19](https://github.com/rozierguillaume/covid-19#décès-dus-au-covid-19)
+  * [Mortalité toutes causes](https://github.com/rozierguillaume/covid-19#décès-dus-au-covid-19)
+* [**World: All Charts**](https://github.com/rozierguillaume/covid-19#world-all-charts)
+  * [Confirmed cases of Covid-19](https://github.com/rozierguillaume/covid-19#confirmed-cases-of-covid-19)
+  * [Deaths caused by Covid-19](https://github.com/rozierguillaume/covid-19#deaths-caused-by-covid-19)
+* [Repository structure](https://github.com/rozierguillaume/covid-19#repository-structure)
+* [Data sources](https://github.com/rozierguillaume/covid-19#data-sources)
+
+
+# France: tous les graphiques
 Only few charts are displayed here. You can download every chart in high definition here: 
 **[French Charts](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
 
 
 **Nouveau** : cliquez sur une image pour afficher une version interactive. Vous pouvez alors zoomer, et enlever des courbes en cliquant ou double-cliquant sur un élément de légende.
 
-<p align="center">
-  
-  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map.gif" width="450" />
-  <a href=""><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map-surmortalite.gif" width="450" />
-</p>
-
-<br /><br />
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map-dc-cum.gif" width="450" />
-  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/capacite_rea.html"> <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/capacite_rea.png" width="450" /> </a>
-</p>
-
-<br /><br />
-
-<p align="center">
-  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_cum_region_comp.html">
-      <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_region_comp.png" width="450" /> </a>
-
-  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/situation_cas.html">
-    <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/situation_cas.png" width="450" /> </a>
-</p>
-
-<br /><br />
+## Vue d'ensemble
 
 <p align="center">
   <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/evol_journ.html">
-      <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/evol_journ.png" width="450" /> </a>
-  
-  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/rea_dep.html">
-      <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/rea_dep.png" width="450" /> </a>
+     <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/evol_journ.png" width="800" /> </a>
+</p>
 
+Autres graphiques :  
+
+   <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/situation_cas.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/situation_cas.png" width="250" /> </a>
+   <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/situation_cas_region.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/situation_cas_region.png" width="250" /> </a>
+
+
+<br /><br />
+
+## Hospitalisations et réanimations liées au Covid-19
+
+<p align="center">
+  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/hosp_line.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/hosp_line.png" width="800" /></a> 
+</p>
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map.gif" width="600" />
+</p>
+
+Autres graphiques :
+
+   <a target="_blank" href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/hosp_var.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/hosp_var.png" width="250" /></a>
+      <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/capacite_rea.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/capacite_rea.png" width="250" /></a>
+      <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/rea_dep.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/rea_dep.png" width="250" /></a>
+<br />
+ 
+## Décès dus au Covid-19
+
+<br /><br />
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map-dc-cum.gif" width="600" />
+</p>
+
+<p align="center">
+<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_cum_region_comp.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_region_comp.png" width="800" /></a>
+</p>
+
+Autres graphiques :
+
+  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_cum_hab_nonhab_comp.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_hab_nonhab_comp.png" width="250" /> </a>
+    <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_cum_line.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_line.png" width="250" /> </a>
+    <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_cum_region.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_region.png" width="250" /> </a>
+    <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_journ_line.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_journ_line.png" width="250" /> </a>
+
+## Mortalité toutes causes
+
+<br /><br />
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map-surmortalite.gif" width="450" />
 </p>
 
 <br /><br />
 
 <p align="center">
-  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_cum_hab_nonhab_comp.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_hab_nonhab_comp.png" width="450" /> </a>
-  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/rea_line.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/rea_line.png" width="450" /> </a>
+
 </p>
 
 Please find the other charts here: 
@@ -218,7 +255,7 @@ I created a [dashboard](https://plot.ly/dashboard/worldice:14/) where you can fi
 <!--
 ![](./images/dashboard.png)
 -->
-# Data
+# Data Sources
 You can find 2 datasets:
 - Data downloaded from [CSSE](https://github.com/CSSEGISandData/COVID-19). Data come from WHO (World Health Organization).
 - [INSEE](https://insee.fr/fr/accueil) (Institut National des Statistiques et des Études Économiques)
