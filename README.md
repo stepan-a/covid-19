@@ -31,6 +31,8 @@ Only few charts are displayed here. You can download every chart in high definit
  
 </p>
 
+<br /><br />
+
 ## Hospitalisations et réanimations liées au Covid-19
 <p align="center">
 
@@ -39,6 +41,8 @@ Only few charts are displayed here. You can download every chart in high definit
    <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/hosp_var.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/hosp_var.png" width="400" /> </a>
 
 </p>
+
+<br /><br />
 
 <p align="center">
   <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/rea_dep.html">
@@ -52,6 +56,8 @@ Only few charts are displayed here. You can download every chart in high definit
 
 ## Décès dus au Covid-19
 <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map-dc-cum.gif" width="450" />
+
+<br /><br />
 
 <p align="center">
 <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_cum_region_comp.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_region_comp.png" width="450" /> </a>
