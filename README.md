@@ -35,7 +35,7 @@ Only few charts are displayed here. You can download every chart in high definit
 
 ## Hospitalisations et réanimations liées au Covid-19
 
-<br /><br />
+<br />
 
 <p align="center">
 
@@ -45,15 +45,17 @@ Only few charts are displayed here. You can download every chart in high definit
 
 </p>
 
-<br /><br />
+<br />
 
 <p align="center">
   <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/rea_dep.html">
       <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/rea_dep.png" width="200" /> </a>
   
-  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map.gif" width="450" />
+  
   <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/capacite_rea.html"> <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/capacite_rea.png" width="200" /> </a>
 </p>
+
+<img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map.gif" width="450" />
 
       
 
@@ -78,7 +80,8 @@ Only few charts are displayed here. You can download every chart in high definit
 <br /><br />
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map-surmortalite.gif" width="450" />
+  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/
+            -surmortalite.gif" width="450" />
 </p>
 
 <br /><br />
