@@ -24,10 +24,10 @@ Only few charts are displayed here. You can download every chart in high definit
 <p align="center">
 
   <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/situation_cas.html">
-    <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/situation_cas.png" width="200" /> </a>
+    <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/situation_cas.png" width="450" /> </a>
     
   <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/evol_journ.html">
-     <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/evol_journ.png" width="200" /> </a>
+     <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/evol_journ.png" width="450" /> </a>
  
 </p>
 
@@ -43,7 +43,10 @@ Only few charts are displayed here. You can download every chart in high definit
 
 <br />
 
+<p align="center">
 <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map.gif" width="450" />
+</p>
+
 
  
 ## Décès dus au Covid-19
@@ -66,7 +69,7 @@ Only few charts are displayed here. You can download every chart in high definit
 <br /><br />
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/-surmortalite.gif" width="450" />
+  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map-surmortalite.gif" width="450" />
 </p>
 
 <br /><br />
