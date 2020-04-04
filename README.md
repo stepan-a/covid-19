@@ -37,10 +37,49 @@ Only few charts are displayed here. You can download every chart in high definit
 
 
 <p align="center">
-   <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/hosp_line.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/hosp_line.png" width="200" /></a>  
-   <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/hosp_var.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/hosp_var.png" width="200" /></a>
+   <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/hosp_line.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/hosp_line.png" width="450" /></a>  
+   <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/hosp_var.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/hosp_var.png" width="450" /></a>
 </p>
-      
+
+<br />
+
+<img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map.gif" width="450" />
+
+ 
+## Décès dus au Covid-19
+
+<br /><br />
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dep-map-dc-cum.gif" width="450" />
+  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_cum_hab_nonhab_comp.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_hab_nonhab_comp.png" width="450" /> </a>
+</p>
+
+<br /><br />
+
+<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/html_exports/france/dc_cum_region_comp.html"><img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/dc_cum_region_comp.png" width="450" /> </a>
+
+<br /><br />
+  
+## Mortalité toutes causes
+
+<br /><br />
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/-surmortalite.gif" width="450" />
+</p>
+
+<br /><br />
+
+<p align="center">
+
+</p>
+
+
+Please find the other charts here: 
+**[French charts](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
+
+Vous pouvez aussi me suivre sur [Twitter](http://twitter.com/guillaumerozier) pour des interprétations des graphiques.
 
 # World: All Charts
 You can show interactive graphes by clicking on "Show Graph". You can add or remove items in the legend by cliking or double-clicking on items.
