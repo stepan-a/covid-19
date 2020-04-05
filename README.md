@@ -92,8 +92,11 @@ Vous pouvez aussi me suivre sur [Twitter](http://twitter.com/guillaumerozier) po
 <br /><br />
 
 # World: All Charts
-You can show interactive graphes by clicking on "Show Graph". You can add or remove items in the legend by cliking or double-clicking on items.
-
+:bulb Get interactive graphes by clicking on "Show Graph".\
+:bulb: Add or remove items in the legend by cliking or double-clicking on items.\
+:bulb: Zoom-in: draw a rectangle with your finger/mouse on the graph then release.\
+:bulb: Reinitalize: double tap/click on the graph.\
+ 
 ## Confirmed cases of COVID-19
 <img align="left" width="30%" src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png">
 
