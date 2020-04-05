@@ -92,7 +92,7 @@ Vous pouvez aussi me suivre sur [Twitter](http://twitter.com/guillaumerozier) po
 <br /><br />
 
 # :earth_africa: World: All Charts
-:bulb: **TIPS:**
+:bulb: **TIPS:**\
 :chart_with_upwards_trend: Get interactive graphes by clicking on "Show Graph".\
 :bar_chart: Add or remove items in the legend by cliking or double-clicking on items.\
 :mag_right: Zoom-in: draw a rectangle with your finger/mouse on the graph then release.\
