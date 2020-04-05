@@ -18,7 +18,7 @@ For more information and comments in French, you can follow me on Twitter: [@gui
 * [Data sources](https://github.com/rozierguillaume/covid-19#data-sources)
 
 
-# France: tous les graphiques
+# :fr: France: tous les graphiques
 Only few charts are displayed here. You can download every chart in high definition here: 
 **[French Charts](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
 
@@ -91,11 +91,12 @@ Vous pouvez aussi me suivre sur [Twitter](http://twitter.com/guillaumerozier) po
 
 <br /><br />
 
-# World: All Charts
+# :earth_africa: World: All Charts
+:bulb: **TIPS:**
 :chart_with_upwards_trend: Get interactive graphes by clicking on "Show Graph".\
 :bar_chart: Add or remove items in the legend by cliking or double-clicking on items.\
 :mag_right: Zoom-in: draw a rectangle with your finger/mouse on the graph then release.\
-:house: Reinitalize: double tap/click on the graph.\
+:house: Reinitalize: double tap/click on the graph.
  
 ## Confirmed cases of COVID-19
 <img align="left" width="30%" src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png">
