@@ -6,19 +6,19 @@ French data come frome [INSEE](https://insee.fr/fr/accueil) (Institut National d
 For more information and comments in French, you can follow me on Twitter: [@guillaumerozier](http://twitter.com/guillaumerozier).
 
 # Contents
-* [**France: tous les graphiques**](https://github.com/rozierguillaume/covid-19#tous-les-graphiques)
+* [:fr: **France: tous les graphiques**](https://github.com/rozierguillaume/covid-19#tous-les-graphiques)
   * [Vue d'ensemble](https://github.com/rozierguillaume/covid-19#vue-densemble)
   * [Hospitalisations et réanimations dues au Covid-19](https://github.com/rozierguillaume/covid-19#hospitalisations-et-réanimations-liées-au-covid-19)
   * [Décès dus au Covid-19](https://github.com/rozierguillaume/covid-19#décès-dus-au-covid-19)
   * [Mortalité toutes causes](https://github.com/rozierguillaume/covid-19#décès-dus-au-covid-19)
-* [**World: All Charts**](https://github.com/rozierguillaume/covid-19#world-all-charts)
+* [:earth_africa: **World: All Charts**](https://github.com/rozierguillaume/covid-19#world-all-charts)
   * [Confirmed cases of Covid-19](https://github.com/rozierguillaume/covid-19#confirmed-cases-of-covid-19)
   * [Deaths caused by Covid-19](https://github.com/rozierguillaume/covid-19#deaths-caused-by-covid-19)
 * [Repository structure](https://github.com/rozierguillaume/covid-19#repository-structure)
 * [Data sources](https://github.com/rozierguillaume/covid-19#data-sources)
 
 
-# France: tous les graphiques
+# :fr: France: tous les graphiques
 Only few charts are displayed here. You can download every chart in high definition here: 
 **[French Charts](https://github.com/rozierguillaume/covid-19/tree/master/images/charts/france).**
 
@@ -91,9 +91,13 @@ Vous pouvez aussi me suivre sur [Twitter](http://twitter.com/guillaumerozier) po
 
 <br /><br />
 
-# World: All Charts
-You can show interactive graphes by clicking on "Show Graph". You can add or remove items in the legend by cliking or double-clicking on items.
-
+# :earth_africa: World: All Charts
+:bulb: **TIPS:**\
+:chart_with_upwards_trend: Get interactive graphes by clicking on "Show Graph".\
+:bar_chart: Add or remove items in the legend by cliking or double-clicking on items.\
+:mag_right: Zoom-in: draw a rectangle with your finger/mouse on the graph then release.\
+:house: Reinitalize: double tap/click on the graph.
+ 
 ## Confirmed cases of COVID-19
 <img align="left" width="30%" src="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/cases.png">
 
