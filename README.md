@@ -5,6 +5,9 @@ French data come frome [INSEE](https://insee.fr/fr/accueil) (Institut National d
 
 For more information and comments in French, you can follow me on Twitter: [@guillaumerozier](http://twitter.com/guillaumerozier).
 
+# Migration
+Bientot cette page n'existera plus. Vous pourrez retrouver le dashboard via ce lien : [guillaumerozier.fr](www.guillaumerozier.fr).
+
 # Contents
 * [:fr: **France: tous les graphiques**](https://github.com/rozierguillaume/covid-19#tous-les-graphiques)
   * [Vue d'ensemble](https://github.com/rozierguillaume/covid-19#vue-densemble)
