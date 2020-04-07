@@ -7,7 +7,7 @@ For more information and comments in French, you can follow me on Twitter: [@gui
 
 # Attention : migration du site
 Bientot cette page n'existera plus.  
-**Vous pourrez retrouver le dashboard via ce lien : [guillaumerozier.fr](www.guillaumerozier.fr).**
+**Vous pourrez retrouver le dashboard via ce lien : [guillaumerozier.fr](http://www.guillaumerozier.fr).**
 
 # Contents
 * [:fr: **France: tous les graphiques**](https://github.com/rozierguillaume/covid-19#tous-les-graphiques)
