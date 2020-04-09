@@ -7,10 +7,10 @@ For more information and comments in French, you can follow me on Twitter: [@gui
 
 # :warning: Attention : migration du site
 Bientot cette page n'existera plus.  
-**Vous pourrez retrouver le dashboard via ce lien : [guillaumerozier.fr](http://www.guillaumerozier.fr).**
+**Vous pourrez retrouver le dashboard via ce lien : [CovidTracker (guillaumerozier.fr)](http://www.guillaumerozier.fr).**
 
 # :warning: Deprecated! This page will soon be removed
-**A new website has been built. Please use it instead of this page : [guillaumerozier.fr](http://www.guillaumerozier.fr).**
+**A new website has been built. Please use it instead of this page : [CovidTracker (guillaumerozier.fr)](http://www.guillaumerozier.fr).**
 
 # Contents
 * [:fr: **France: tous les graphiques**](https://github.com/rozierguillaume/covid-19#tous-les-graphiques)
