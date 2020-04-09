@@ -9,7 +9,7 @@ For more information and comments in French, you can follow me on Twitter: [@gui
 Bientot cette page n'existera plus.  
 **Vous pourrez retrouver le dashboard via ce lien : [guillaumerozier.fr](http://www.guillaumerozier.fr).**
 
-# :warning: Deprecated! This page will move soon
+# :warning: Deprecated! This page will soon be removed
 **A new website has been built. Please use it instead of this page : [guillaumerozier.fr](http://www.guillaumerozier.fr).**
 
 # Contents
