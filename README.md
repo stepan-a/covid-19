@@ -256,7 +256,7 @@ covid-19
 ```
 
 
-# New Dashboard: [CovidTracker](www.guillaumerozier.fr)
+# New Dashboard: [CovidTracker](http://www.guillaumerozier.fr)
 
 # Data Sources
 You can find 2 datasets:
