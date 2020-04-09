@@ -6,7 +6,7 @@ French data come frome [INSEE](https://insee.fr/fr/accueil) (Institut National d
 For more information and comments in French, you can follow me on Twitter: [@guillaumerozier](http://twitter.com/guillaumerozier).
 
 # :warning: Attention : migration du site
-Bientot cette page n'existera plus.  
+Bientôt cette page n'existera plus.  
 **Vous pourrez retrouver le dashboard via ce lien : [CovidTracker (guillaumerozier.fr)](http://www.guillaumerozier.fr).**
 
 # :warning: Deprecated! This page will soon be removed
@@ -256,12 +256,8 @@ covid-19
 ```
 
 
-# Dashboard (deprecated)
-I will do a better one soon...
-I created a [dashboard](https://plot.ly/dashboard/worldice:14/) where you can find 4 of the charts I generate.
-<!--
-![](./images/dashboard.png)
--->
+# New Dashboard: [CovidTracker](www.guillaumerozier.fr)
+
 # Data Sources
 You can find 2 datasets:
 - Data downloaded from [CSSE](https://github.com/CSSEGISandData/COVID-19). Data come from WHO (World Health Organization).
