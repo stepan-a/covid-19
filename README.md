@@ -268,5 +268,8 @@ You can find 2 datasets:
 
 If you have any question or feedback please ask me by email or on Twitter.
 
+# LICENSE
+License MIT. Please see [LICENSE.md](https://github.com/rozierguillaume/covid-19/blob/master/LICENSE)
+
 [![HitCount](http://hits.dwyl.com/rozierguillaume/covid-19.svg)](http://hits.dwyl.com/rozierguillaume/covid-19)
 since 03/04/2020
