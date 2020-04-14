@@ -1,8 +1,21 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[146]:
+# In[1553]:
 
+
+"""
+
+LICENSE MIT
+2020
+Guillaume Rozier
+Website : http://www.guillaumerozier.fr
+Mail : guillaume.rozier@telecomnancy.net
+
+"""
+
+
+# In[2]:
 
 
 from multiprocessing import Pool
@@ -23,13 +36,13 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 colors = px.colors.qualitative.D3 + px.colors.qualitative.Dark24 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.colors.qualitative.Plotly + px.colors.qualitative.Alphabet
 
 
-# In[147]:
+# In[1555]:
 
 
 show_charts = False
 
 
-# In[148]:
+# In[1]:
 
 
 def download_data():
@@ -49,17 +62,25 @@ def download_data():
     pbar.update(5)
     df_metadata = pd.read_csv('data/france/metadata.csv', sep=";")
     url_data = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-covid19")]["url"].values[0]
+    url_data_new = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-nouveaux")]["url"].values[0]
+    
     pbar.update(6)
     data = requests.get(url_data)
+    
+    data_new = requests.get(url_data_new)
     pbar.update(7)
     with open('data/france/donnes-hospitalieres-covid19.csv', 'wb') as f:
         f.write(data.content)
+        
+    with open('data/france/donnes-hospitalieres-covid19-nouveaux.csv', 'wb') as f:
+        f.write(data_new.content)
+        
     pbar.update(8)
 
 download_data()
 
 
-# In[149]:
+# In[3]:
 
 
 def import_data():
@@ -67,16 +88,24 @@ def import_data():
     pbar = tqdm(total=4)
     pbar.update(1)
     df = pd.read_csv('data/france/donnes-hospitalieres-covid19.csv', sep=";")
+    df_new = pd.read_csv('data/france/donnes-hospitalieres-covid19-nouveaux.csv', sep=";")
+    
     df_regions = pd.read_csv('data/france/departments_regions_france_2016.csv', sep=",")
     df_reg_pop = pd.read_csv('data/france/population_regions.csv', sep=",")
     df_dep_pop = pd.read_csv('data/france/dep-pop.csv', sep=";")
     
+    ###
     df = df.merge(df_regions, left_on='dep', right_on='departmentCode')
     df = df.merge(df_reg_pop, left_on='regionName', right_on='regionName')
     df = df.merge(df_dep_pop, left_on='dep', right_on='dep')
-    #df_geojson = pd.read_csv('data/france/dep.geojson)
     df = df[df["sexe"] == 0]
     df['hosp_nonrea'] = df['hosp'] - df['rea']
+    
+    df_new = df_new.merge(df_regions, left_on='dep', right_on='departmentCode')
+    df_new = df_new.merge(df_reg_pop, left_on='regionName', right_on='regionName')
+    df_new = df_new.merge(df_dep_pop, left_on='dep', right_on='dep')
+    df_new['incid_hosp_nonrea'] = df_new['incid_hosp'] - df_new['incid_rea']
+    
     pbar.update(2)
     
     df['rea_pop'] = df['rea']/df['regionPopulation']*100000
@@ -88,6 +117,8 @@ def import_data():
     df['dc_deppop'] = df['dc']/df['departmentPopulation']*100000
     
     df['hosp_pop'] = df['hosp']/df['regionPopulation']*100000
+    df['hosp_deppop'] = df['hosp']/df['departmentPopulation']*100000
+    
     df['hosp_nonrea_pop'] = df['hosp_nonrea']/df['regionPopulation']*100000
     pbar.update(3)
     df_confirmed = pd.read_csv('data/data_confirmed.csv')
@@ -101,13 +132,929 @@ def import_data():
             df.loc[vals.index,col+"_new_deppop"] = vals / df.loc[vals.index,"departmentPopulation"]*100000
     dates = list(dict.fromkeys(list(df['jour'].values))) 
     
-    return df, df_confirmed, dates
+    return df, df_confirmed, dates, df_new
 
-df, df_confirmed, dates = import_data()
+df, df_confirmed, dates, df_new = import_data()
 
-df_region = df.groupby(['regionName', 'jour']).sum().reset_index()
+df_region = df.groupby(['regionName', 'jour', 'regionPopulation']).sum().reset_index()
+df_region["hosp_regpop"] = df_region["hosp"] / df_region["regionPopulation"]*1000000 
+df_region["rea_regpop"] = df_region["rea"] / df_region["regionPopulation"]*1000000 
 
-#df.dtypes
+df_new_region = df_new.groupby(['regionName', 'jour']).sum().reset_index()
+df_france = df.groupby('jour').sum().reset_index()
+
+regions = list(dict.fromkeys(list(df['regionName'].values))) 
+
+
+# In[1558]:
+
+
+df_france
+
+
+# In[1559]:
+
+
+df_new_tot = pd.melt(df_new, id_vars=['jour'], value_vars=['incid_rad', 'incid_rea', 'incid_dc', 'incid_hosp'])
+df_new_tot = df_new.groupby(["jour"]).sum().reset_index()
+
+last_row = df_new_tot.iloc[-1]
+df_new_tot = df_new_tot.shift()
+df_new_tot = df_new_tot.append(last_row, ignore_index=True)
+
+#Calcul sorties de réa
+df_new_tot["incid_dep_rea"] = df_france["rea"] - df_france["rea"].shift() - df_new_tot["incid_rea"]
+df_new_tot["incid_dep_hosp_nonrea"] = df_france["hosp_nonrea"] - df_france["hosp_nonrea"].shift() - df_new_tot["incid_hosp_nonrea"]
+
+df_new_tot_last15 = df_new_tot[ df_new_tot["jour"].isin(dates[-19:]) ]
+df_france_last15 = df_france[ df_france["jour"].isin(dates[-19:]) ]
+
+
+# In[1560]:
+
+
+df_new_tot = pd.melt(df, id_vars=['jour'], value_vars=['rad_new', 'rea_new', 'dc_new', 'hosp_new'])
+df_new_tot = df_new.groupby(["jour"]).sum().reset_index()
+
+last_row = df_new_tot.iloc[-1]
+df_new_tot = df_new_tot.shift()
+df_new_tot = df_new_tot.append(last_row, ignore_index=True)
+
+#Calcul sorties de réa
+df_new_tot["incid_dep_rea"] = df_france["rea"] - df_france["rea"].shift() - df_new_tot["incid_rea"]
+df_new_tot["incid_dep_hosp_nonrea"] = df_france["hosp_nonrea"] - df_france["hosp_nonrea"].shift() - df_new_tot["incid_hosp_nonrea"]
+
+df_new_tot_last15 = df_new_tot[ df_new_tot["jour"].isin(dates[-19:]) ]
+df_france_last15 = df_france[ df_france["jour"].isin(dates[-19:]) ]
+
+
+# In[1561]:
+
+
+fig = go.Figure()
+#fig = make_subplots(specs=[[{"secondary_y": True}]])
+fig.add_trace(go.Bar(
+    x = df_new_tot_last15["jour"],
+    y = df_new_tot_last15["incid_rea"],
+    name = "Admissions réanimation",
+    marker_color='red',
+    opacity=0.8
+))
+
+fig.add_trace(go.Bar(
+    x = df_new_tot_last15["jour"],
+    y = df_new_tot_last15["incid_hosp_nonrea"],
+    name = "Admissions autre hispitalisation",
+    marker_color='red',
+    opacity=0.5
+))
+
+fig.add_trace(go.Bar(
+    x = df_new_tot_last15["jour"],
+    y = df_new_tot_last15["incid_dep_rea"],
+    name = "Sorties réanimation",
+    marker_color='green',
+    opacity=0.8
+))
+
+fig.add_trace(go.Bar(
+    x = df_new_tot_last15["jour"],
+    y = df_new_tot_last15["incid_dep_hosp_nonrea"],
+    name = "Sorties autre hospitalisation",
+    marker_color='green',
+    opacity=0.5
+))
+
+fig.add_trace(go.Scatter(
+    x = df_france["jour"],
+    y = df_france["rea_new"],
+    name = "Bilan réa",
+    marker_color='black',
+    mode="lines+markers",
+    opacity=0.8
+))
+
+fig.add_trace(go.Scatter(
+    x = df_france["jour"],
+    y = df_france["hosp_nonrea_new"],
+    name = "Bilan autre hosp",
+    marker_color='black',
+    mode="lines+markers",
+    opacity=0.4
+))
+
+
+# Here we modify the tickangle of the xaxis, resulting in rotated labels.
+fig.update_layout(
+    legend_orientation="v",
+    barmode='relative',
+    title={
+                'text': "<b>COVID-19 : entrées et sorties en hospitalisation</b>",
+                'y':0.95,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'},
+                titlefont = dict(
+                size=20),
+    xaxis=dict(
+        title='',
+        tickformat='%d/%m'),
+    yaxis_title="Nb. de personnes",
+    
+    annotations = [
+                dict(
+                    x=0,
+                    y=1.05,
+                    xref='paper',
+                    yref='paper',
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                )]
+                 )
+
+name_fig = "entrees_sorties_hosp_rea"
+fig.write_image("images/charts/france/{}.png".format(name_fig), scale=2, width=1200, height=800)
+
+fig.update_layout(
+    annotations = [
+                dict(
+                    x=0.5,
+                    y=1.05,
+                    xref='paper',
+                    yref='paper',
+                    xanchor='center',
+                    text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
+                    showarrow = False
+                )]
+                 )
+plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+print("> " + name_fig)
+if show_charts:
+    fig.show()
+
+
+# In[1562]:
+
+
+fig = go.Figure()
+
+fig.add_trace(go.Bar(
+    x = df_new_tot_last15["jour"],
+    y = df_new_tot_last15["incid_dc"],
+    name = "Nouveaux décès hosp.",
+    marker_color='black',
+    opacity=0.6
+))
+
+fig.add_trace(go.Bar(
+    x = df_new_tot_last15["jour"],
+    y = df_new_tot_last15["incid_rea"],
+    name = "<b>Admissions</b> réanimations",
+    marker_color='red',
+    opacity=0.6
+))
+
+fig.add_trace(go.Bar(
+    x = df_new_tot_last15["jour"],
+    y = df_new_tot_last15["incid_hosp_nonrea"],
+    name = "<b>Admissions</b> autres hospit.",
+    marker_color='grey',
+    opacity=0.6
+))
+
+fig.add_trace(go.Bar(
+    x = df_new_tot_last15["jour"],
+    y = df_new_tot_last15["incid_rad"],
+    name = "Nouv. retours à domicile",
+    marker_color='green',
+    opacity=0.6
+))
+
+# Here we modify the tickangle of the xaxis, resulting in rotated labels.
+fig.update_layout(
+    barmode='group',
+    title={
+                'text': "<b>COVID-19 : évolution quotidienne en France</b>",
+                'y':0.95,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'},
+                titlefont = dict(
+                size=20),
+    xaxis=dict(
+        title='',
+        tickformat='%d/%m',
+        nticks=100),
+    yaxis_title="Nb. de personnes",
+    
+    annotations = [
+                dict(
+                    x=0,
+                    y=1.05,
+                    xref='paper',
+                    yref='paper',
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                )]
+                 )
+
+name_fig = "evol_journ"
+fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1400, height=800)
+
+fig.update_layout(
+    legend_orientation="h",
+    annotations = [
+                dict(
+                    x=0.5,
+                    y=1.05,
+                    xref='paper',
+                    yref='paper',
+                    xanchor='center',
+                    text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
+                    showarrow = False
+                )]
+                 )
+plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+print("> " + name_fig)
+if show_charts:
+    fig.show()
+
+
+# In[1563]:
+
+
+fig = go.Figure()
+
+"""fig.add_trace(go.Bar(
+    x = df_france["jour"],
+    y = df_france["hosp"],
+    name = "Hospitalisations",
+    opacity=0.6
+))"""
+
+fig = px.bar(df_france, x='jour', y='hosp',
+             color='hosp_new',
+             labels={'hosp_new':'Solde hospitalisations'}, color_continuous_scale=["green", "#ffc832", "#cf0000"], range_color=(-2500, 2500))
+
+
+
+# Here we modify the tickangle of the xaxis, resulting in rotated labels.
+fig.update_layout(
+    barmode='group',
+    bargap=0,
+    yaxis=dict(
+        range=[0, 45000]),
+    title={
+                'text': "COVID19 : <b>nombre de personnes hospitalisées</b>",
+                'y':0.97,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'},
+                titlefont = dict(
+                    family="Roboto",
+                    size=30),
+    xaxis=dict(
+        range=["2020-03-15", "2020-04-25"],
+        title='',
+        tickformat='%d/%m',
+        nticks=50
+    ),
+    yaxis_title="Nb. de personnes",
+    
+    annotations = [
+                dict(
+                    x=0.01,
+                    y=0.99,
+                    xref='paper',
+                    yref='paper',
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                )]
+                 )
+
+name_fig = "hosp_bar"
+fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1400, height=800)
+
+fig.update_layout(
+    legend_orientation="h",
+    annotations = [
+                dict(
+                    x=0.5,
+                    y=1.05,
+                    xref='paper',
+                    yref='paper',
+                    xanchor='center',
+                    text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
+                    showarrow = False
+                )]
+                 )
+plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+print("> " + name_fig)
+
+if show_charts:
+    fig.show()
+
+
+# In[1564]:
+
+
+df_region
+
+
+# In[1565]:
+
+
+
+for val in ["hosp_regpop", "hosp", "rea", "rea_regpop"]:
+    ni, nj = 5, 4
+    i, j = 1, 1
+
+    df_region[val+"_new"] = df_region[val].diff()
+    max_value = df_region[val].max()
+    
+    regions_ordered = df_region[df_region['jour'] == dates[-1]].sort_values(by=[val], ascending=False)["regionName"].values
+    regions_ordered = list(dict.fromkeys(list(regions_ordered)))[:]
+    
+    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles=[ "<b>"+ str(r) +"</b>" for r in (regions_ordered[:11] + [""] + regions_ordered[11:14]+[""]+regions_ordered[14:])], vertical_spacing = 0.06, horizontal_spacing = 0.01)
+    #&#8681;
+    
+    type_ppl = "hospitalisées"
+    if "rea" in val:
+        type_ppl = "en réanimation"
+        
+    for region in regions_ordered:
+        data_r = df_region[df_region["regionName"] == region]
+        
+        data_r[val + "_new"] = data_r[val].diff()
+        ordered_values = df_region.sort_values(by=[val + "_new"], ascending=False)[val + "_new"]
+        max_value_diff = ordered_values.quantile(.90)
+        
+        fig.add_trace(go.Bar(x=data_r["jour"], y=data_r[val],
+                            marker=dict(color = data_r[val + "_new"], coloraxis="coloraxis"), ),
+                      i, j)
+
+        fig.update_xaxes(title_text="", range=["2020-03-15", "2020-05-01"], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, nticks=10, linewidth=1, linecolor='white', row=i, col=j)
+        fig.update_yaxes(title_text="", range=[0, max_value], gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
+
+        j+=1
+        if j == nj+1 or ((i >= 3) & (j == nj)):
+            i+=1
+            j=1
+            
+        """if j == nj+1:
+            i+=1
+            j=1"""
+
+    for i in fig['layout']['annotations']:
+        i['font'] = dict(size=15)
+
+    #for annotation in fig['layout']['annotations']: 
+            #annotation ['x'] = 0.5
+    by_million_title = ""
+    by_million_legend = ""
+    if "pop" in val:
+        by_million_title = "pour 1 million d'habitants, "
+        by_million_legend = "pour 1M. d'hab."
+
+    fig.update_layout(
+            
+        margin=dict(
+            l=0,
+            r=15,
+            b=0,
+            t=170,
+            pad=0
+        ),
+        bargap=0,
+        #paper_bgcolor='#f7faff',#faf9ed
+        #plot_bgcolor='#f7faff',#fcf8ed f0e8d5
+        coloraxis=dict(colorscale=["green", "#ffc832", "#cf0000"], cmin=-max_value_diff, cmax=max_value_diff), 
+                    coloraxis_colorbar=dict(
+                        title="Solde quotidien de<br>pers. {}<br>{}<br> &#8205; ".format(type_ppl, by_million_legend),
+                        thicknessmode="pixels", thickness=15,
+                        lenmode="pixels", len=700,
+                        yanchor="bottom", y=0.05, xanchor="left", x=0.85,
+                        ticks="outside", tickprefix="  ", ticksuffix=" hosp.",
+                        nticks=15,
+                        tickfont=dict(size=12),
+                        titlefont=dict(size=15)),
+                      
+                    showlegend=False,
+    
+                     title={
+                        'text': "COVID19 : <b>nombre de personnes {}</b><br><sub>{}par ordre décroissant des hospitalisations actuelles - guillaumerozier.fr</sub>".format(type_ppl, by_million_title),
+                        'y':0.97,
+                        'x':0.5,
+                        'xref':"paper",
+                         'yref':"container",
+                        'xanchor': 'center',
+                        'yanchor': 'middle'},
+                        titlefont = dict(
+                        size=35,
+                        )
+    )
+
+    fig["layout"]["annotations"] += ( dict(
+                            x=0.9,
+                            y=0.015,
+                            xref='paper',
+                            yref='paper',
+                            xanchor='center',
+                            yanchor='top',
+                            text='Source :<br>Santé Publique France',
+                            showarrow = False,
+                            font=dict(size=12), 
+                            opacity=0.5
+                        ),)
+    
+    name_fig = "subplots_" + val 
+    fig.write_image("images/charts/france/{}.png".format(name_fig), scale=2, width=1300, height=1600)
+
+    fig["layout"]["annotations"] += (
+                    dict(
+                        x=0.5,
+                        y=1,
+                        xref='paper',
+                        yref='paper',
+                        xanchor='center',
+                        text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
+                        showarrow = False
+                        ),
+                        )
+    plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+    print("> " + name_fig)
+
+
+    #fig.show()
+
+
+# In[4]:
+
+
+
+import numpy as np
+for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
+    ni, nj = 12, 9
+    i, j = 1, 1
+
+    #df_region[val+"_new"] = df_region[val].diff()
+    max_value = df[val].max()
+    
+    #deps_ordered = df[df['jour'] == dates[-1]].sort_values(by=[val], ascending=False)["departmentName"].values
+    #deps_ordered = list(dict.fromkeys(list(deps_ordered)))[:]
+    deps_ordered = np.array(list(dict.fromkeys(list(df["departmentName"].values)))[:])
+    deps_ordered_nb = np.array(list(dict.fromkeys(list(df["dep"].values)))[:])
+    
+    deps_ordered_nb = np.char.replace(deps_ordered_nb, "2A", "200")
+    deps_ordered_nb = np.char.replace(deps_ordered_nb, "2B", "201")
+    
+    ind_deps = np.argsort(deps_ordered_nb.astype(int))
+    
+    deps_ordered_nb = deps_ordered_nb[ind_deps]
+    deps_ordered = deps_ordered[ind_deps]
+    
+    deps_ordered_nb = deps_ordered_nb.astype(str)
+    
+    deps_ordered_nb = np.char.replace(deps_ordered_nb, "200", "2A")
+    deps_ordered_nb = np.char.replace(deps_ordered_nb, "201", "2B")
+    
+    titles = []
+    k=0
+    for case in range(1, ni * nj - 1):
+        if case in [80, 81, 89, 90, 98, 99]:
+            titles += [""] 
+        else:
+            titles += ["<b>" + deps_ordered_nb[k] + "</b> - " + deps_ordered[k]]
+            k+=1
+
+    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles= titles, vertical_spacing = 0.025, horizontal_spacing = 0.002)
+    #&#8681;
+    
+    mean_bars = df.groupby('jour').mean().reset_index()
+    
+    type_ppl = "hospitalisées"
+    if "rea" in val:
+        type_ppl = "en réanimation"
+    max_values_diff=[]
+    
+    fig2 = go.Figure()
+    for dep1 in tqdm(deps_ordered):
+        data_dep = df[df["departmentName"] == dep1]
+        fig2.add_trace(go.Bar(x=data_dep["jour"], y=data_dep[val], marker=dict(color="grey", opacity=0.1)
+                        ))
+        fig2.update_layout(
+            barmode='overlay')
+        
+    
+    for dep in tqdm(deps_ordered):
+        data_dep = df[df["departmentName"] == dep]
+        
+        data_dep[val + "_new"] = data_dep[val].diff()
+        ordered_values = data_dep.sort_values(by=[val + "_new"], ascending=False)[val + "_new"]
+        max_values_diff += [ordered_values.quantile(.90)]
+            
+        fig.add_trace(go.Bar(x=data_dep["jour"], y=data_dep[val],
+                            marker=dict(color = data_dep[val + "_new"], coloraxis="coloraxis"), ),
+                      i, j)
+        
+        """fig.add_trace(go.Bar(x=mean_bars["jour"], y=mean_bars[val], marker=dict(color="rgba(230,230,230,0.1)", line_color='grey', opacity=0.1)
+                        ),
+                      i, j)"""
+        """for dep2 in deps_ordered:
+            fig.add_trace(go.Bar(x=data_dep["jour"], y=data_dep[val], marker=dict(color="rgba(230,230,230,0.1)", line_color='grey', opacity=0.1)
+                        ),
+                      i, j)"""
+        for trace in fig2.data:
+            fig.add_trace(trace, i, j)
+        
+        fig.update_xaxes(title_text="", range=["2020-03-15", "2020-05-01"], gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=7), tickangle=0, nticks=6, linewidth=0, linecolor='white', row=i, col=j)
+        fig.update_yaxes(title_text="", range=[0, max_value], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j)
+
+        j+=1
+        if j == nj+1 or ((i >= 9) & (j >= nj-1)): 
+            i+=1
+            j=1
+            
+        """if j == nj+1:
+            i+=1
+            j=1"""
+
+    for i in fig['layout']['annotations']:
+        i['font'] = dict(size=12)
+
+    #for annotation in fig['layout']['annotations']: 
+            #annotation ['x'] = 0.5
+    by_million_title = ""
+    by_million_legend = ""
+    if "pop" in val:
+        by_million_title = "pour 100 000 habitants, "
+        by_million_legend = "pour 100k hab."
+        
+    max_value_diff = np.mean(max_values_diff) * 1.7
+    fig.update_layout(
+        barmode='overlay',
+        margin=dict(
+            l=0,
+            r=15,
+            b=0,
+            t=160,
+            pad=0
+        ),
+        bargap=0,
+        paper_bgcolor='#fcf8ed',#faf9ed
+        plot_bgcolor='#fcf8ed',#fcf8ed f0e8d5
+        coloraxis=dict(colorscale=["green", "#ffc832", "#cf0000"], cmin=-max_value_diff, cmax=max_value_diff), 
+                    coloraxis_colorbar=dict(
+                        title="Solde quotidien de<br>pers. {}<br>{}<br> &#8205; ".format(type_ppl, by_million_legend),
+                        thicknessmode="pixels", thickness=15,
+                        lenmode="pixels", len=500,
+                        yanchor="bottom", y=0.05, xanchor="left", x=0.87,
+                        ticks="outside", tickprefix="  ", ticksuffix=" hosp.",
+                        nticks=5,
+                        tickfont=dict(size=12),
+                        titlefont=dict(size=15)),
+                      
+                    showlegend=False,
+    
+                     title={
+                        'text': "COVID19 : <b>nombre de personnes {}</b>".format(type_ppl, by_million_title),
+                        'y':0.98,
+                        'x':0.5,
+                        'xref':"paper",
+                        'yref':"container",
+                        'xanchor': 'center',
+                        'yanchor': 'middle'},
+                        titlefont = dict(
+                            size=40,
+                        )
+    )
+
+    fig["layout"]["annotations"] += ( dict(
+                            x=0.9,
+                            y=0.015,
+                            xref='paper',
+                            yref='paper',
+                            xanchor='center',
+                            yanchor='top',
+                            text='Source :<br>Santé Publique France',
+                            showarrow = False,
+                            font=dict(size=12), 
+                            opacity=0.5
+                        ),
+                            dict(
+                            x=0.5,
+                            y=1.03,
+                            xref='paper',
+                            yref='paper',
+                            xanchor='center',
+                            yanchor='middle',
+                            text='pour 100 000 habitants de chaque département - guillaumerozier.fr',
+                            showarrow = False,
+                            font=dict(size=25), 
+                            opacity=1
+                        ),
+                                    )
+    
+    name_fig = "subplots_dep_" + val 
+    fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1650, height=2300)
+
+    fig["layout"]["annotations"] += (
+                    dict(
+                        x=0.5,
+                        y=1,
+                        xref='paper',
+                        yref='paper',
+                        xanchor='center',
+                        text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
+                        showarrow = False
+                        ),
+                        )
+    plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+    print("> " + name_fig)
+
+
+    #fig.show()
+
+
+# In[1567]:
+
+
+
+fig = make_subplots(rows=2, cols=1, shared_yaxes=True, subplot_titles=["Nombre de personnes<b> hospitalisées</b>", "Nombre de personnes en <b>réanimation</b>"], vertical_spacing = 0.15, horizontal_spacing = 0.1)
+
+fig1 = px.bar(x=df_france['jour'], y=df_france['hosp'],
+             color=df_france['hosp_new'], color_continuous_scale=["green", "#ffc832", "#cf0000"], range_color=(df_france['hosp_new'].min(), df_france['hosp_new'].max())
+            )
+fig2 = px.bar(x=df_france['jour'], y=df_france['rea'],
+             color=df_france['rea_new'], color_continuous_scale=["green", "#ffc832", "#cf0000"], range_color=(-2500, 2500)
+            )
+trace1 = fig1['data'][0]
+trace2 = fig2['data'][0]
+
+"""fig.add_trace(trace1, row=1, col=1)
+fig.add_trace(trace2, row=2, col=1)"""
+
+fig.add_trace(go.Bar(x=df_france['jour'], y=df_france['hosp'],
+                    marker=dict(color =df_france['hosp_new'], coloraxis="coloraxis1"), ),
+              1, 1)
+fig.add_trace(go.Bar(x=df_france['jour'], y=df_france['rea'],
+                    marker=dict(color =df_france['rea_new'], coloraxis="coloraxis2"), ),
+              2, 1)
+
+fig.update_xaxes(title_text="", range=["2020-03-15", "2020-05-01"], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, nticks=10, linewidth=1, linecolor='white', row=1, col=1)
+fig.update_yaxes(title_text="", gridcolor='white', linewidth=1, linecolor='white', row=1, col=1)
+
+fig.update_xaxes(title_text="", range=["2020-03-15", "2020-05-01"], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, nticks=10, linewidth=1, linecolor='white', row=2, col=1)
+fig.update_yaxes(title_text="", gridcolor='white', linewidth=1, linecolor='white', row=2, col=1)
+
+
+for i in fig['layout']['annotations']:
+    i['font'] = dict(size=25)
+
+fig.update_layout(
+    margin=dict(
+        l=0,
+        r=150,
+        b=0,
+        t=90,
+        pad=0
+    ),
+    bargap=0,
+    coloraxis1=dict(colorscale=["green", "#ffc832", "#cf0000"], cmin=-df_france['hosp_new'].max(), cmax=df_france['hosp_new'].max(),
+                   colorbar=dict(
+                        title="Solde quotidien de<br>pers. hospitalisées<br> &#8205; ",
+                        thickness=15,
+                        lenmode="pixels", len=400,
+                        yanchor="middle", y=0.79, xanchor="left", x=1.05,
+                        ticks="outside", tickprefix="  ", ticksuffix=" pers.",
+                        nticks=15,
+                        tickfont=dict(size=12),
+                        titlefont=dict(size=15))),
+    coloraxis2=dict(colorscale=["green", "#ffc832", "#cf0000"], cmin=-df_france['rea_new'].max(), cmax=df_france['rea_new'].max(),
+                   colorbar=dict(
+                        title="Solde quotidien de<br>pers. en réanimation<br> &#8205; ",
+                        thicknessmode="pixels", thickness=15,
+                        lenmode="pixels", len=400,
+                        yanchor="middle", y=0.22, xanchor="left", x=1.05,
+                        ticks="outside", tickprefix="  ", ticksuffix=" pers.",
+                        nticks=15,
+                        tickfont=dict(size=12),
+                        titlefont=dict(size=15))), 
+
+
+                showlegend=False,
+
+)
+
+fig["layout"]["annotations"] += ( dict(
+                        x=0.5,
+                        y=0.5,
+                        xref='paper',
+                        yref='paper',
+                        xanchor='center',
+                        yanchor='middle',
+                        text='guillaumerozier.fr - {}'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),
+                        showarrow = False,
+                        font=dict(size=15), 
+                        opacity=0.8
+                    ),)
+
+name_fig = "hosp_rea_bar"
+fig.write_image("images/charts/france/{}.png".format(name_fig), scale=2, width=1100, height=1200)
+
+fig["layout"]["annotations"] += (
+                dict(
+                    x=0.5,
+                    y=1,
+                    xref='paper',
+                    yref='paper',
+                    xanchor='center',
+                    text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
+                    showarrow = False
+                    ),
+                    )
+plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+print("> " + name_fig)
+
+
+#fig.show()
+
+
+# In[1568]:
+
+
+
+data_r_lastd = df[df["jour"] == dates[-1]]
+data_r_lastd = data_r_lastd.groupby("regionName").sum().reset_index()
+
+data_r_lastd.sort_values(by=['hosp'], ascending=False)
+
+
+# In[1569]:
+
+
+data_r = df[df["regionName"] == region]
+data_r["hosp_new"] = data_r["hosp"].diff()
+data_r
+
+
+# In[1570]:
+
+
+fig = go.Figure()
+
+fig.add_trace(go.Bar(
+    x = df_france_last15["jour"],
+    y = df_france_last15["dc_new"],
+    name = "Nouveaux décès hosp.",
+    marker_color='black',
+    opacity=0.6
+))
+
+fig.add_trace(go.Bar(
+    x = df_france_last15["jour"],
+    y = df_france_last15["rea_new"],
+    name = "<b>Variation</b> réanimations",
+    marker_color='red',
+    opacity=0.6
+))
+
+fig.add_trace(go.Bar(
+    x = df_france_last15["jour"],
+    y = df_france_last15["hosp_nonrea_new"],
+    name = "<b>Variation</b> autres hospit.",
+    marker_color='grey',
+    opacity=0.6
+))
+
+fig.add_trace(go.Bar(
+    x = df_france_last15["jour"],
+    y = df_france_last15["rad_new"],
+    name = "Nouv. retours à domicile",
+    marker_color='green',
+    opacity=0.6
+))
+
+# Here we modify the tickangle of the xaxis, resulting in rotated labels.
+fig.update_layout(
+    barmode='group',
+    title={
+                'text': "<b>COVID-19 : variation quotidienne en France</b>",
+                'y':0.95,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'},
+                titlefont = dict(
+                size=20),
+    xaxis=dict(
+        title='',
+        tickformat='%d/%m',
+        nticks=100),
+    yaxis_title="Nb. de personnes",
+    
+    annotations = [
+                dict(
+                    x=0,
+                    y=1.05,
+                    xref='paper',
+                    yref='paper',
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                )]
+                 )
+
+name_fig = "var_journ"
+fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1400, height=800)
+
+fig.update_layout(
+    legend_orientation="h",
+    annotations = [
+                dict(
+                    x=0.5,
+                    y=1.05,
+                    xref='paper',
+                    yref='paper',
+                    xanchor='center',
+                    text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
+                    showarrow = False
+                )]
+                 )
+plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+print("> " + name_fig)
+if show_charts:
+    fig.show()
+
+
+# In[1571]:
+
+
+
+df_region_sumj = df_region.groupby('jour').sum().reset_index()
+df_region_sumj = pd.melt(df_region_sumj, id_vars=['jour'], value_vars=['rad', 'rea', 'dc', 'hosp_nonrea'])
+df_region_sumj.drop(df_region_sumj[df_region_sumj['jour'].isin(['Guyane', 'Mayote', 'La Réunion', 'Guadeloupe', 'Martinique'])].index, inplace = True)
+df_bar = df_region_sumj
+
+data = df_bar[df_bar["variable"] == "dc"]
+fig = go.Figure(go.Bar(x=data['jour'], y=data['value'], text=data['value'], textposition='auto', name='Décès hosp.', marker_color='#000000', opacity=0.8))
+
+data = df_bar[df_bar["variable"] == "rea"]
+fig.add_trace(go.Bar(x=data['jour'], y=data['value'], text=data['value'], textposition='auto', name='Réanimation', marker_color='#FF0000', opacity=0.8))
+
+data = df_bar[df_bar["variable"] == "hosp_nonrea"]
+fig.add_trace(go.Bar(x=data['jour'], y=data['value'], text= data['value'], textposition='auto', name='Autre hospitalisation', marker_color='#FFA200', opacity=0.8))
+
+if len(df_confirmed[df_confirmed["date"].isin([dates[-1]])]) > 0:
+    data = df_confirmed[df_confirmed["date"].isin(dates)].reset_index()
+    sum_df = df_bar[df_bar["variable"] == "dc"]['value'].reset_index() + df_bar[df_bar["variable"] == "rea"]['value'].reset_index() +  df_bar[df_bar["variable"] == "hosp_nonrea"]['value'].reset_index() + df_bar[df_bar["variable"] == "rad"]['value'].reset_index()
+    fig.add_trace(go.Bar(x=data['date'], y=data['France'] - sum_df['value'], text = data['France'] - sum_df['value'], textposition='auto', name='Non hospitalisés', marker_color='grey', opacity=0.8))
+
+data = df_bar[df_bar["variable"] == "rad"]
+
+fig.add_trace(go.Bar(x=data['jour'], y=data['value'], text= data['value'], textposition='auto', name='Retour à domicile', marker_color='green', opacity=0.8))
+fig.update_yaxes(title="Nb. de cas")
+
+fig.update_layout(
+            barmode='stack',
+            title={
+                'text': "Évolution de la <b>situation des malades</b> du Covid-19",
+                'y':0.95,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'},
+            titlefont = dict(
+                size=20),
+            xaxis=dict(
+                title='',
+                tickformat='%d/%m',
+                nticks=len(dates)+5
+            ),
+            annotations = [
+                dict(
+                    x=0,
+                    y=1.05,
+                    xref='paper',
+                    yref='paper',
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),
+                    showarrow = False
+                )]
+)
+
+name_fig = "situation_cas"
+fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1100, height=700)
+
+fig.update_layout(
+    legend_orientation="h",
+    annotations = [
+                dict(
+                    x=0.5,
+                    y=1.05,
+                    xref='paper',
+                    yref='paper',
+                    xanchor='center',
+                    text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
+                    showarrow = False
+                )]
+                 )
+plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+print("> " + name_fig)
+if show_charts:
+    fig.show()
 
 
 # <br>
@@ -117,11 +1064,81 @@ df_region = df.groupby(['regionName', 'jour']).sum().reset_index()
 # 
 # ## Line charts
 
-# In[150]:
+# In[ ]:
 
 
 
-fig = px.line(x=df_region['jour'], y=df_region['dc'], color=df_region["regionName"], color_discrete_sequence=colors).update_traces(mode='lines+markers')
+
+
+# In[1572]:
+
+
+df_france = df.groupby('jour').sum().reset_index()
+
+#fig = go.Figure()
+fig = make_subplots(specs=[[{"secondary_y": True}]])
+fig.add_trace(go.Scatter(x=df_france['jour'], y=df_france['rea'],
+                    mode='lines+markers',
+                    name="Réanimations", #(<i>axe de gauche</i>)
+                    line=dict(width=2),
+                    marker_size=8,
+                            ))
+fig.add_trace(go.Scatter(x=df_france['jour'], y=df_france['dc'],
+                    mode='lines+markers',
+                    name="décès hospitaliers cumulés", #(<i>axe de droite</i>)
+                    line=dict(width=2),
+                    marker_size=8,
+                    
+                            ),
+             #secondary_y=True
+             )
+fig.add_trace(go.Scatter(x=df_france['jour'], y=df_france['hosp_nonrea'],
+                    mode='lines+markers',
+                    name="Autres hospitalisations", #(<i>axe de gauche</i>)
+                    line=dict(width=2),
+                    marker_size=8,
+                            ))
+    
+#fig = px.line(, color_discrete_sequence=colors).update_traces(mode='lines+markers', marker_size=7.5, line=dict(width=2.5))
+fig.update_layout(
+    legend_orientation="v",
+    title={
+                'text': "Nombre d'<b>hospitalisations et réanimations</b> et <b>décès</b> ", #(<i>Attention ! Axes distincs</i>)
+                'y':0.95,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'},
+        titlefont = dict(
+                size=20),
+        annotations = [
+                dict(
+                    x=0,
+                    y=1,
+                    xref='paper',
+                    yref='paper',
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                )]
+                 )
+fig.update_xaxes(title="Jour")
+fig.update_yaxes(title="Nb. de personnes (réa et hosp)")
+fig.update_yaxes(title="Nb. de décès hosp.", secondary_y=True)
+
+name_fig = "dc_hosp_rea_line"
+fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1100, height=700)
+
+
+plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+
+if show_charts:
+    fig.show()
+print("> " + name_fig)
+
+
+# In[1573]:
+
+
+
+fig = px.line(x=df_region['jour'], y=df_region['dc'], color=df_region["regionName"], color_discrete_sequence=colors).update_traces(mode='lines+markers', marker_size=7.5, line=dict(width=2.5))
 fig.update_layout(
     title={
                 'text': "Nombre de <b>décès cumulés</b>",
@@ -137,27 +1154,27 @@ fig.update_layout(
                     y=1,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
                  )
 fig.update_xaxes(title="Jour")
-fig.update_yaxes(title="Nb. de décès cumulés")
+fig.update_yaxes(title="Nb. de décès hosp. cumulés")
 
 name_fig = "dc_cum_line"
 fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1100, height=700)
 
 
 plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
-
+print("> " + name_fig)
 if show_charts:
     fig.show()
 
 
-# In[151]:
+# In[1574]:
 
 
 
-fig = px.line(x=df_region['jour'], y=df_region['dc_new'], color=df_region["regionName"], color_discrete_sequence=colors).update_traces(mode='lines+markers')
+fig = px.line(x = df_new_region['jour'], y = df_new_region['incid_dc'], color = df_new_region["regionName"], color_discrete_sequence=colors).update_traces(mode='lines+markers', marker_size=7.5, line=dict(width=2.5))
 fig.update_layout(
     title={
                 'text': "Nombre de <b>décès quotidiens</b>",
@@ -173,29 +1190,29 @@ fig.update_layout(
                     y=1,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
                  )
 fig.update_xaxes(title="Jour")
-fig.update_yaxes(title="Nb. de décès en 24h")
+fig.update_yaxes(title="Nb. de décès hosp. en 24h")
 
 name_fig = "dc_journ_line"
 fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1100, height=700)
 
 
 plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
-
+print("> " + name_fig)
 if show_charts:
     fig.show()
 
 
 # ### Hospitalisations
 
-# In[152]:
+# In[1575]:
 
 
 
-fig = px.line(x=df_region['jour'], y=df_region['hosp'], color=df_region["regionName"], color_discrete_sequence=colors).update_traces(mode='lines+markers')
+fig = px.line(x=df_region['jour'], y=df_region['hosp'], color=df_region["regionName"], color_discrete_sequence=colors).update_traces(mode='lines+markers', marker_size=7.5, line=dict(width=2.5))
 fig.update_layout(
     title={
                 'text': "Nombre de <b>patients hospitalisés</b>",
@@ -211,7 +1228,7 @@ fig.update_layout(
                     y=1,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
                  )
 fig.update_xaxes(title="Jour")
@@ -222,16 +1239,16 @@ fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1
 
 
 plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
-
+print("> " + name_fig)
 if show_charts:
     fig.show()
 
 
-# In[153]:
+# In[1576]:
 
 
 
-fig = px.line(x=df_region['jour'], y=df_region['hosp_new'], color=df_region["regionName"], color_discrete_sequence=colors).update_traces(mode='lines+markers')
+fig = px.line(x=df_region['jour'], y=df_region['hosp_new'], color=df_region["regionName"], color_discrete_sequence=colors).update_traces(mode='lines+markers', marker_size=7.5, line=dict(width=2.5))
 fig.update_layout(
     title={
                 'text': "<b>Variation des hospitalisations</b> (entrées - sorties)",
@@ -247,28 +1264,64 @@ fig.update_layout(
                     y=1,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
                  )
 fig.update_xaxes(title="Jour")
 fig.update_yaxes(title="Nb. de nouveaux patients hospitalisés")
 
-name_fig = "hosp_journ_line"
+name_fig = "hosp_variation_journ_line"
 fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1100, height=700)
 
 
 plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+print("> " + name_fig)
+if show_charts:
+    fig.show()
 
+
+# In[1577]:
+
+
+
+fig = px.line(x = df_new_region['jour'], y = df_new_region['incid_hosp'], color = df_new_region["regionName"], color_discrete_sequence=colors).update_traces(mode='lines+markers', marker_size=7.5, line=dict(width=2.5))
+fig.update_layout(
+    title={
+                'text': "<b>Nouvelles admissions en hospitalisation</b>",
+                'y':0.95,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'},
+        titlefont = dict(
+                size=20),
+        annotations = [
+                dict(
+                    x=0,
+                    y=1,
+                    xref='paper',
+                    yref='paper',
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                )]
+                 )
+fig.update_xaxes(title="Jour")
+fig.update_yaxes(title="Admissions hospitalisations")
+
+name_fig = "hosp_admissions_journ_line"
+fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1100, height=700)
+
+
+plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+print("> " + name_fig)
 if show_charts:
     fig.show()
 
 
 # ### Réanimations par région
 
-# In[154]:
+# In[1578]:
 
 
-fig = px.line(x=df_region['jour'], y=df_region['rea'], color=df_region["regionName"], color_discrete_sequence=colors).update_traces(mode='lines+markers')
+fig = px.line(x=df_region['jour'], y=df_region['rea'], color=df_region["regionName"], color_discrete_sequence=colors).update_traces(mode='lines+markers', marker_size=7.5, line=dict(width=2.5))
 fig.update_layout(
     title={
                 'text': "Nombre de <b>patients en réanimation</b>",
@@ -284,7 +1337,7 @@ fig.update_layout(
                     y=1,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier (Twitter).'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
                  )
 fig.update_xaxes(title="Jour")
@@ -294,14 +1347,14 @@ name_fig = "rea_line"
 fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1100, height=700)
 
 plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
-
+print("> " + name_fig)
 if show_charts:
     fig.show()
 
 
 # ### Réanimations : Rhin
 
-# In[155]:
+# In[1579]:
 
 
 df_rhin = df[df["dep"].isin(["67", "68"])]
@@ -322,7 +1375,7 @@ fig.update_layout(
                     y=1,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier (Twitter).'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
                  )
 fig.update_xaxes(title="Jour")
@@ -331,14 +1384,14 @@ fig.update_yaxes(title="Nb. de patients en réa. ou soins intensifs")
 name_fig = "rea_rhin"
 fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1100, height=700)
 plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
-
+print("> " + name_fig)
 if show_charts:
     fig.show()
 
 
 # ### Réanimations par département
 
-# In[156]:
+# In[1580]:
 
 
 df_last_d = df[df['jour'] == dates[-1]]
@@ -350,7 +1403,8 @@ for dep in deps_ordered:
     fig.add_trace(go.Scatter(x=df['jour'], y=df[df["dep"] == dep]["rea"],
                     mode='lines+markers',
                     name=dep,
-                    line=dict(width=1.5)
+                    line=dict(width=2),
+                    marker_size=8,
                             ))
 
 fig.update_layout(
@@ -368,7 +1422,7 @@ fig.update_layout(
                     y=1,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier (Twitter).'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
                  )
 fig.update_xaxes(title="")
@@ -390,7 +1444,65 @@ fig.update_layout(
                 )]
                  )
 plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+print("> " + name_fig)
+if show_charts:
+    fig.show()
 
+
+# In[1581]:
+
+
+df_last_d = df[df['jour'] == dates[-1]]
+#deps_ordered = df_last_d.sort_values(by=['rea'], ascending=False)["dep"].values
+deps_ordered = df_last_d.sort_values(by=['dep'], ascending=True)["dep"].values
+
+fig = go.Figure()
+for dep in deps_ordered:
+    fig.add_trace(go.Scatter(x=df['jour'], y=df[df["dep"] == dep]["hosp"],
+                    mode='lines+markers',
+                    name=dep,
+                    line=dict(width=2),
+                    marker_size=8,
+                            ))
+
+fig.update_layout(
+    title={
+                'text': "Nb. de <b>patients hospitalisés</b> par département",
+                'y':0.95,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'},
+    titlefont = dict(
+                size=20),
+    annotations = [
+                dict(
+                    x=0,
+                    y=1,
+                    xref='paper',
+                    yref='paper',
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                )]
+                 )
+fig.update_xaxes(title="")
+fig.update_yaxes(title="Nb. de patients hospitalisés")
+
+name_fig = "hosp_dep"
+fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1100, height=700)
+
+fig.update_layout(
+    annotations = [
+                dict(
+                    x=0.5,
+                    y=1.05,
+                    xref='paper',
+                    yref='paper',
+                    xanchor='center',
+                    text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
+                    showarrow = False
+                )]
+                 )
+plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+print("> " + name_fig)
 if show_charts:
     fig.show()
 
@@ -399,7 +1511,7 @@ if show_charts:
 # 
 # ### Hospitalisations par habitant / région
 
-# In[157]:
+# In[1582]:
 
 
 """
@@ -419,7 +1531,7 @@ fig.update_layout(
                     y=1,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier (Twitter).'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
                  )
 fig.update_xaxes(title="Jour")
@@ -450,22 +1562,33 @@ if show_charts:
 # 
 # ### Capacité réanimation
 
-# In[158]:
+# In[1583]:
 
 
 
 df_rean = df.groupby('jour').sum().reset_index()
-df_rean["lim_rea"] = [14000 for i in range(len(dates))]
-df_rean = pd.melt(df_rean, id_vars=['jour'], value_vars=['rea', 'lim_rea'])
+df_rean["lim_rea_prev"] = [14000 for i in range(len(dates))]
+df_rean["lim_rea"] = [10000 for i in range(len(dates))]
+df_rean = pd.melt(df_rean, id_vars=['jour'], value_vars=['rea', 'lim_rea', 'lim_rea_prev'])
 
 fig = go.Figure()
 fig.add_trace(go.Scatter(x=df_rean['jour'], y=df_rean[df_rean['variable'] == 'rea']['value'],
                     mode='lines+markers',
-                    name='Nb. patients réa.'))
+                    name='Nb. patients réa.',
+                    line=dict(width=4),
+                    marker_size=11,))
+
+fig.add_trace(go.Scatter(x=df_rean['jour'], y=df_rean[df_rean['variable'] == 'lim_rea_prev']['value'],
+                    mode='lines',
+                    name='Capacité max. prévue',
+                    line=dict(width=4),
+                    marker_size=11,))
 
 fig.add_trace(go.Scatter(x=df_rean['jour'], y=df_rean[df_rean['variable'] == 'lim_rea']['value'],
                     mode='lines',
-                    name='Nombre de lits réa.'))
+                    name='Capacité approx. actuelle',
+                    line=dict(width=4),
+                    marker_size=11,))
 
 fig.update_layout(
     title={
@@ -482,14 +1605,15 @@ fig.update_layout(
                     y=1.05,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier (Twitter).'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
                  )
 
 name_fig = "capacite_rea"
-fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1100, height=700)
+fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1000, height=700)
 
 fig.update_layout(
+    legend_orientation="h",
     annotations = [
                 dict(
                     x=0.5,
@@ -502,7 +1626,7 @@ fig.update_layout(
                 )]
                  )
 plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
-
+print("> " + name_fig)
 if show_charts:
     fig.show()
 
@@ -511,7 +1635,7 @@ if show_charts:
 # 
 # ### Décès cumulés (région)
 
-# In[159]:
+# In[1584]:
 
 
 fig = px.line(x=df_region['jour'], y=df_region['dc'], color=df_region["regionName"], labels={'color':'Région'}, color_discrete_sequence=colors).update_traces(mode='lines+markers')
@@ -531,11 +1655,11 @@ fig.update_layout(
                     y=1,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier (Twitter).'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
                  )
 fig.update_xaxes(title="Jour")
-fig.update_yaxes(title="Nb. de décès cumulés")
+fig.update_yaxes(title="Nb. de décès hosp. cumulés")
 
 name_fig = "dc_cum_line"
 fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1100, height=700)
@@ -553,7 +1677,54 @@ fig.update_layout(
                 )]
                  )
 plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+print("> " + name_fig)
+if show_charts:
+    fig.show()
 
+
+# In[1585]:
+
+
+fig = px.line(x=df_new_region['jour'], y=df_new_region['incid_dc'], color=df_new_region["regionName"], labels={'color':'Région'}, color_discrete_sequence=colors).update_traces(mode='lines+markers')
+fig.update_layout(
+    title={
+                'text': "<b>Nouveaux décès</b> par région",
+                'y':0.95,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'},
+        titlefont = dict(
+        size=20),
+    
+        annotations = [
+                dict(
+                    x=0,
+                    y=1,
+                    xref='paper',
+                    yref='paper',
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                )]
+                 )
+fig.update_xaxes(title="Jour")
+fig.update_yaxes(title="Nb. de décès hosp.")
+
+name_fig = "dc_nouv_line"
+fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1100, height=700)
+
+fig.update_layout(
+    annotations = [
+                dict(
+                    x=0.5,
+                    y=1.05,
+                    xref='paper',
+                    yref='paper',
+                    xanchor='center',
+                    text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
+                    showarrow = False
+                )]
+                 )
+plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+print("> " + name_fig)
 if show_charts:
     fig.show()
 
@@ -562,7 +1733,7 @@ if show_charts:
 # 
 # ### Décès cumulés par habitant (région)
 
-# In[160]:
+# In[1586]:
 
 
 """
@@ -583,7 +1754,7 @@ fig.update_layout(
                     y=1,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier (Twitter).'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
                  )
 
@@ -622,7 +1793,7 @@ if show_charts:
 # 
 # ### Décès cumulés par région / temps
 
-# In[161]:
+# In[1587]:
 
 
 fig = px.bar(x=df_region['jour'], y = df_region['dc'], color=df_region["regionName"], labels={'color':'Région'}, color_discrete_sequence=colors, opacity=0.9)
@@ -642,7 +1813,7 @@ fig.update_layout(
                     y=1.05,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier (Twitter).'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
     
                  )
@@ -666,7 +1837,7 @@ fig.update_layout(
                 )]
                  )
 plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
-
+print("> " + name_fig)
 if show_charts:
     fig.show()
 
@@ -675,7 +1846,7 @@ if show_charts:
 # 
 # ### Décès cumulés par région / 3 derniers jours
 
-# In[162]:
+# In[1588]:
 
 
 
@@ -736,7 +1907,7 @@ fig.update_layout(
                     y=1.05,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier (Twitter).'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
                  )
 
@@ -756,7 +1927,7 @@ fig.update_layout(
                 )]
                  )
 plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
-
+print("> " + name_fig)
 if show_charts:
     fig.show()
 
@@ -765,7 +1936,7 @@ if show_charts:
 # 
 # ### Décès cumulés VS. Décès cumulés par habitant / région
 
-# In[163]:
+# In[1589]:
 
 
 fig = go.Figure()
@@ -811,7 +1982,7 @@ fig.update_layout(
                     y=1.05,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier (Twitter).'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
                  )
 fig.update_yaxes(title_text="Nb. décès cumulés", secondary_y=False)
@@ -833,7 +2004,7 @@ fig.update_layout(
                 )]
                  )
 plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
-
+print("> " + name_fig)
 if show_charts:
     fig.show()
 
@@ -842,83 +2013,11 @@ if show_charts:
 # 
 # ### Situation des malades / temps
 
-# In[164]:
-
-
-df_region_sumj = df_region.groupby('jour').sum().reset_index()
-df_region_sumj = pd.melt(df_region_sumj, id_vars=['jour'], value_vars=['rad', 'rea', 'dc', 'hosp_nonrea'])
-df_region_sumj.drop(df_region_sumj[df_region_sumj['jour'].isin(['Guyane', 'Mayote', 'La Réunion', 'Guadeloupe', 'Martinique'])].index, inplace = True)
-df_bar = df_region_sumj
-data = df_bar[df_bar["variable"] == "dc"]
-fig = go.Figure(go.Bar(x=data['jour'], y=data['value'], text=data['value'], textposition='auto', name='Décès', marker_color='#000000', opacity=0.8))
-
-data = df_bar[df_bar["variable"] == "rea"]
-fig.add_trace(go.Bar(x=data['jour'], y=data['value'], text=data['value'], textposition='auto', name='Réanimation', marker_color='#FF0000', opacity=0.8))
-
-data = df_bar[df_bar["variable"] == "hosp_nonrea"]
-fig.add_trace(go.Bar(x=data['jour'], y=data['value'], text= data['value'], textposition='auto', name='Autre hospitalisation', marker_color='#FFA200', opacity=0.8))
-
-if len(df_confirmed[df_confirmed["date"].isin([dates[-1]])]) > 0:
-    data = df_confirmed[df_confirmed["date"].isin(dates)].reset_index()
-    sum_df = df_bar[df_bar["variable"] == "dc"]['value'].reset_index() + df_bar[df_bar["variable"] == "rea"]['value'].reset_index() +  df_bar[df_bar["variable"] == "hosp_nonrea"]['value'].reset_index() + df_bar[df_bar["variable"] == "rad"]['value'].reset_index()
-    fig.add_trace(go.Bar(x=data['date'], y=data['France'] - sum_df['value'], text = data['France'] - sum_df['value'], textposition='auto', name='Non hospitalisés', marker_color='grey', opacity=0.8))
-
-data = df_bar[df_bar["variable"] == "rad"]
-fig.add_trace(go.Bar(x=data['jour'], y=data['value'], text= data['value'], textposition='auto', name='Retour à domicile', marker_color='green', opacity=0.8))
-fig.update_yaxes(title="Nb. de cas")
-
-fig.update_layout(
-            barmode='stack',
-            title={
-                'text': "Évolution de la <b>situation des malades</b> du Covid-19",
-                'y':0.95,
-                'x':0.5,
-                'xanchor': 'center',
-                'yanchor': 'top'},
-            titlefont = dict(
-                size=20),
-            xaxis=dict(
-                title='',
-                tickformat='%d/%m',
-                nticks=len(dates)+5
-            ),
-            annotations = [
-                dict(
-                    x=0,
-                    y=1.05,
-                    xref='paper',
-                    yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier (Twitter).'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),
-                    showarrow = False
-                )]
-)
-
-name_fig = "situation_cas"
-fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1100, height=700)
-
-fig.update_layout(
-    annotations = [
-                dict(
-                    x=0.5,
-                    y=1.05,
-                    xref='paper',
-                    yref='paper',
-                    xanchor='center',
-                    text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
-                    showarrow = False
-                )]
-                 )
-plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
-
-if show_charts:
-    fig.show()
-
-
 # <br>
 # 
 # ### Situation des malades / région
 
-# In[165]:
+# In[1590]:
 
 
 #df_region_sumj = df_region.groupby('regionName').sum().reset_index()
@@ -928,7 +2027,7 @@ df_region_sumj = pd.melt(df_region_sumj, id_vars=['regionName'], value_vars=['ra
 df_region_sumj.drop(df_region_sumj[df_region_sumj['regionName'].isin(['Guyane', 'Mayote', 'La Réunion', 'Guadeloupe', 'Martinique'])].index, inplace = True)
 
 
-# In[166]:
+# In[1591]:
 
 
 data = df_region_sumj[df_region_sumj["variable"] == "dc"]
@@ -965,7 +2064,7 @@ fig.update_layout(
                     y=1.05,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier (Twitter).'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    
                     showarrow = False
                 )]
 )
@@ -987,7 +2086,7 @@ fig.update_layout(
                 )]
                  )
 plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
-
+print("> " + name_fig)
 if show_charts:
     fig.show()
 
@@ -996,7 +2095,7 @@ if show_charts:
 # 
 # ### Situation des malades par habitant / région
 
-# In[167]:
+# In[1592]:
 
 
 df_region_sumj = df_region[df_region['jour'] == dates[-1]]
@@ -1004,7 +2103,7 @@ df_region_sumj = pd.melt(df_region_sumj, id_vars=['regionName'], value_vars=['ra
 df_region_sumj.drop(df_region_sumj[df_region_sumj['regionName'].isin(['Guyane', 'Mayote', 'La Réunion', 'Guadeloupe', 'Martinique'])].index, inplace = True)
 
 
-# In[168]:
+# In[1593]:
 
 
 data = df_region_sumj[df_region_sumj["variable"] == "dc_pop"]
@@ -1041,7 +2140,7 @@ fig.update_layout(
                     y=1.05,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier (Twitter).'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),
                     showarrow = False
                 )]
 )
@@ -1063,7 +2162,7 @@ fig.update_layout(
                 )]
                  )
 plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
-
+print("> " + name_fig)
 if show_charts:
     fig.show()
 
@@ -1072,96 +2171,6 @@ if show_charts:
 # 
 # ### Évolution qutotidienne / temps
 
-# In[169]:
-
-
-
-df_46 = pd.melt(df, id_vars=['jour'], value_vars=['dc_new', 'rad_new'])
-df_46 = df.groupby(["jour"]).sum().reset_index()
-#df_46 = df_46[ df_46["jour"].isin(dates[-12:]) ]
-
-fig = go.Figure()
-
-fig.add_trace(go.Bar(
-    x = df_46["jour"],
-    y = df_46["dc_new"],
-    name = "Nouveaux décès",
-    marker_color='black',
-    opacity=0.6
-))
-
-fig.add_trace(go.Bar(
-    x = df_46["jour"],
-    y = df_46["rea_new"],
-    name = "Admissions réanimation",
-    marker_color='red',
-    opacity=0.6
-))
-
-fig.add_trace(go.Bar(
-    x = df_46["jour"],
-    y = df_46["hosp_nonrea_new"],
-    name = "Admi. autre hospitalisation",
-    marker_color='grey',
-    opacity=0.6
-))
-
-fig.add_trace(go.Bar(
-    x = df_46["jour"],
-    y = df_46["rad_new"],
-    name = "Nouv. retours à domicile",
-    marker_color='green',
-    opacity=0.6
-))
-
-# Here we modify the tickangle of the xaxis, resulting in rotated labels.
-fig.update_layout(
-    barmode='group',
-    title={
-                'text': "<b>COVID-19 : évolution quotidienne en France</b>",
-                'y':0.95,
-                'x':0.5,
-                'xanchor': 'center',
-                'yanchor': 'top'},
-                titlefont = dict(
-                size=20),
-    xaxis=dict(
-        title='',
-        tickformat='%d/%m',
-        nticks=100),
-    yaxis_title="Nb. de personnes",
-    
-    annotations = [
-                dict(
-                    x=0,
-                    y=1.05,
-                    xref='paper',
-                    yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier (Twitter).'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
-                )]
-                 )
-
-name_fig = "evol_journ"
-fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1400, height=650)
-
-fig.update_layout(
-    annotations = [
-                dict(
-                    x=0.5,
-                    y=1.05,
-                    xref='paper',
-                    yref='paper',
-                    xanchor='center',
-                    text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
-                    showarrow = False
-                )]
-                 )
-plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
-
-if show_charts:
-    fig.show()
-
-
 # <br>
 # <br>
 # <br>
@@ -1169,7 +2178,7 @@ if show_charts:
 # 
 # # Expérimentations
 
-# In[170]:
+# In[1594]:
 
 
 """
@@ -1204,7 +2213,7 @@ fig.update_layout(
                     y=1,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier (Twitter).'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
                  )
 fig.update_xaxes(title="")

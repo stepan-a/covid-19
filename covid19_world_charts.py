@@ -4,13 +4,21 @@
 # # COVID-19 Analysis
 # Guillaume Rozier, 2020
 
-# In[ ]:
+# In[87]:
 
 
+"""
+
+LICENSE MIT
+2020
+Guillaume Rozier
+Website : http://www.guillaumerozier.fr
+Mail : guillaume.rozier@telecomnancy.net
+
+"""
 
 
-
-# In[21]:
+# In[88]:
 
 
 import requests
@@ -41,7 +49,7 @@ today = datetime.now().strftime("%Y-%m-%d %H:%M")
 "build : " + today
 
 
-# In[22]:
+# In[89]:
 
 
 upload = False
@@ -49,7 +57,7 @@ show = False
 export = True
 
 
-# In[23]:
+# In[90]:
 
 
 
@@ -76,7 +84,7 @@ if len(sys.argv) >= 4:
 
 # ##### Functions
 
-# In[24]:
+# In[91]:
 
 
 def compute_offset(df, col_of_reference, col_to_align, countries):
@@ -108,7 +116,7 @@ def compute_offset(df, col_of_reference, col_to_align, countries):
 
 # #### Download data
 
-# In[25]:
+# In[92]:
 
 
 def download_data():
@@ -141,7 +149,7 @@ def download_data():
 
 # #### Import data and merge
 
-# In[26]:
+# In[93]:
 
 
 def import_files(): 
@@ -161,7 +169,7 @@ def import_files():
     return df_confirmed_csse, df_deaths_csse, df_confirmed_perso, df_deaths_perso
 
 
-# In[27]:
+# In[94]:
 
 
 def data_prep_csse(df0):
@@ -181,7 +189,7 @@ def data_prep_csse(df0):
 #"build : " + today
 
 
-# In[28]:
+# In[95]:
 
 
 def data_merge(data_confirmed, df_confirmed_perso, data_deaths, df_deaths_perso):
@@ -197,10 +205,13 @@ def data_merge(data_confirmed, df_confirmed_perso, data_deaths, df_deaths_perso)
     "build : " + today
     #data_confirmed['date']
     #df_deaths_perso.iloc[-1]
+    
+    #for c in countries:
+     #    data_deaths[c+"_new"] = data_deaths[c].diff()
     return data_confirmed, data_deaths
 
 
-# In[29]:
+# In[96]:
 
 
 def rolling(df):
@@ -249,10 +260,13 @@ def final_data_prep(data_confirmed, data_confirmed_rolling, data_deaths, data_de
     date_int = [i for i in range(len(data_deaths))]
     data_deaths["date_int"] = date_int
     
+    #for c in countries:
+     #    data_deaths[c+"_new"] = data_deaths[c].diff()
+        #data_deaths.loc[vals.index, c+"_new"] = vals
     return data_confirmed, data_confirmed_rolling, data_deaths, data_deaths_rolling
 
 
-# In[30]:
+# In[97]:
 
 
 #print(data_confirmed_rolling.tail)
@@ -260,7 +274,7 @@ def final_data_prep(data_confirmed, data_confirmed_rolling, data_deaths, data_de
 
 # #### Informations on countries (population, offset)
 
-# In[31]:
+# In[98]:
 
 
 
@@ -285,7 +299,7 @@ def offset_compute_export(data_confirmed, data_deaths):
     "build : " + today
 
 
-# In[32]:
+# In[99]:
 
 
 def final_df_exports(data_confirmed, data_deaths):
@@ -299,7 +313,7 @@ def data_import():
     return pd.read_csv('data/data_confirmed.csv'), pd.read_csv('data/data_deaths.csv'), countries
 
 
-# In[33]:
+# In[100]:
 
 
 def update_data():
@@ -339,10 +353,10 @@ def update_data():
 
 # ## Function
 
-# In[37]:
+# In[101]:
 
 
-def chart(data, data_rolling, countries, by_million_inh = False, align_curves = False, last_d = 15, offset_name = 'offset_confirmed', type_ppl = "confirmed cases", name_fig="", since=False, min_rate=0, log=False):
+def chart(data, data_rolling, countries, by_million_inh = False, align_curves = False, last_d = 15, offset_name = 'offset_confirmed', type_ppl = "confirmed cases", name_fig="", since=False, min_rate=0, log=False, new=""):
     today = datetime.now().strftime("%Y-%m-%d %H:%M")
     ### Symbols
     symbols = []
@@ -372,7 +386,7 @@ def chart(data, data_rolling, countries, by_million_inh = False, align_curves = 
     ind = np.argsort(countries_last_val)
     countries_array = np.array(countries_array)
     countries_array = countries_array[ind][::-1]
-    
+        
     for c in countries_array:
 
         if align_curves:
@@ -395,7 +409,7 @@ def chart(data, data_rolling, countries, by_million_inh = False, align_curves = 
         
         if since:
             date = 'date_int'
-            res = list(map(lambda i: i> min_rate, data[c].values / pop))
+            res = list(map(lambda i: i> min_rate, data[c+new].values / pop))
             offset2 = 0
             if True in res:
                 ind = res.index(True) 
@@ -412,8 +426,14 @@ def chart(data, data_rolling, countries, by_million_inh = False, align_curves = 
                 
 
         x = data[date][ -last_d - offset: offset2]
-        y = data[c][-last_d - offset3:] / pop
+        y = data[c+new][-last_d - offset3:] / pop
         
+        if offset != 0:
+            name_legend = '{} [delayed by {} days]'.format(c, -offset)
+        else:
+            name_legend = '{} {}'.format(c, since_str_leg)
+        txt=["" for i in range(len(data_rolling[c][-last_d - offset3:]))]
+        txt[-1] = c
         fig.add_trace(go.Scatter(x = x, y = y,
                         mode='markers',
                         marker_color = colors[countries[c]['color']],
@@ -423,24 +443,16 @@ def chart(data, data_rolling, countries, by_million_inh = False, align_curves = 
                         #marker_line_width=2,
                         opacity=1,
                         showlegend=True,
-                        name=''.format("")))
+                        name = name_legend))
         
-        if offset != 0:
-            name_legend = '{} [delayed by {} days]'.format(c, -offset)
-        else:
-            name_legend = '{} {}'.format(c, since_str_leg)
-        txt=["" for i in range(len(data_rolling[c][-last_d - offset3:]))]
-        txt[-1] = c
-
-        fig.add_trace(go.Scatter(x = data_rolling[date][ -last_d - offset : offset2], y = data_rolling[c][-last_d - offset3:] / pop,
+        fig.add_trace(go.Scatter(x = data_rolling[date][ -last_d - offset : offset2], y = data_rolling[c+new][-last_d - offset3:] / pop,
                         mode='lines',
                         marker_color = colors[countries[c]['color']],
                         opacity = 1,
                         legendgroup=c,
-                        showlegend=True,
+                        showlegend=False,
                         line=dict(width=2),
                         name = name_legend))
-       
         i += 1
         j += 1
         
@@ -558,10 +570,10 @@ def chart(data, data_rolling, countries, by_million_inh = False, align_curves = 
 
 # ## Function calls
 
-# In[38]:
+# In[102]:
 
 
-#update_data()
+update_data()
 data_confirmed, data_deaths, countries = data_import()
 
 for log in False, True:
@@ -594,7 +606,7 @@ for log in False, True:
           data = data_confirmed, 
           data_rolling = data_confirmed, 
           by_million_inh = True, 
-          last_d = 15, 
+          last_d = 40, 
           align_curves = True,
           offset_name = 'offset_confirmed',
           name_fig = name,
@@ -641,6 +653,21 @@ for log in False, True:
           name_fig = name,
           log=log
          )
+    
+    """name = "deaths_new_since"
+    print(name)
+    chart(countries = countries,
+          new = "_new",
+          data = data_deaths,
+          data_rolling = data_deaths, 
+          by_million_inh = False, 
+          last_d = round(len(data_deaths)/2),
+          type_ppl = "deaths",
+          name_fig = name,
+          since=True,
+          min_rate=10,
+          log=log
+         )"""
 
     name = "deaths_per_1m_inhabitant"
     print(name)
@@ -660,7 +687,7 @@ for log in False, True:
           data = data_deaths, 
           data_rolling = data_deaths, 
           by_million_inh = True, 
-          last_d = 20, 
+          last_d = 35, 
           align_curves = True,
           offset_name = 'offset_deaths',
           type_ppl = "deaths",
@@ -699,30 +726,61 @@ for log in False, True:
     
 
 
-# In[ ]:
+# In[103]:
 
 
+data_deaths
 
 
+# In[104]:
 
-# ## Other chart
 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
+# Define parameters
+t_max = 100
+dt = .1
+t = np.linspace(0, t_max, int(t_max/dt) + 1)
+N = 10000
+init_vals = 1 - 1/N, 1/N, 0, 0
+alpha = 0.2
+beta = 1.75
+gamma = 0.5
+rho = 0.5
+params = alpha, beta, gamma, rho
+# Run simulation
+
+
+# In[105]:
+
+
+def seir_model_with_soc_dist(init_vals, params, t):
+    S_0, E_0, I_0, R_0 = init_vals
+    S, E, I, R = [S_0], [E_0], [I_0], [R_0]
+    alpha, beta, gamma, rho = params
+    dt = t[1] - t[0]
+    for _ in t[1:]:
+        next_S = S[-1] - (rho*beta*S[-1]*I[-1])*dt
+        next_E = E[-1] + (rho*beta*S[-1]*I[-1] - alpha*E[-1])*dt
+        next_I = I[-1] + (alpha*E[-1] - gamma*I[-1])*dt
+        next_R = R[-1] + (gamma*I[-1])*dt
+        S.append(next_S)
+        E.append(next_E)
+        I.append(next_I)
+        R.append(next_R)
+    return np.stack([S, E, I, R]).T
+
+
+# In[106]:
+
+
+results = seir_model_with_soc_dist(init_vals, params, t)
+
 
 # # Dashboard
 
-# In[ ]:
+# In[107]:
 
 
-import chart_studio.dashboard_objs as dashboard
+"""import chart_studio.dashboard_objs as dashboard
 import IPython.display
 from IPython.display import Image
 
@@ -803,20 +861,20 @@ my_dboard['settings']['title'] = 'COVID-19 Stats - @guillaumerozier - data: worl
 
 if show:
     my_dboard.get_preview()
-print("done")
+print("done")"""
 
 
-# In[ ]:
+# In[108]:
 
 
-import chart_studio.plotly as py
+"""import chart_studio.plotly as py
 
-py.dashboard_ops.upload(my_dboard, 'COVID-19 Europe Dashboard', auto_open=False)
+py.dashboard_ops.upload(my_dboard, 'COVID-19 Europe Dashboard', auto_open=False)"""
 
 
 # ### Total cases (world)
 
-# In[ ]:
+# In[109]:
 
 
 """
@@ -854,9 +912,10 @@ print("> graph 2 built")
 """
 
 
-# In[ ]:
+# In[110]:
 
 
+"""
 # -*- coding: utf-8 -*-
 import dash
 import dash_core_components as dcc
@@ -889,4 +948,5 @@ app.layout = html.Div(children=[
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+"""
 

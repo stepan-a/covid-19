@@ -1,7 +1,21 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[29]:
+# In[100]:
+
+
+"""
+
+LICENSE MIT
+2020
+Guillaume Rozier
+Website : http://www.guillaumerozier.fr
+Mail : guillaume.rozier@telecomnancy.net
+
+"""
+
+
+# In[101]:
 
 
 from covid19_france_charts import import_data
@@ -17,25 +31,25 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 # ## Data import
 
-# In[7]:
+# In[102]:
 
 
 df, df_confirmed, dates = import_data()
 
 
-# In[11]:
+# In[103]:
 
 
 dict_insee = pd.read_excel('data/france/deces_quotidiens_departement.xlsx', header=[3], index_col=None, sheet_name=None, usecols='A:H', nrows=31)
-dict_insee.pop('France sauf 13')
+dict_insee.pop('France')
 dict_insee.pop('Documentation')
 
 for key in dict_insee:
     dict_insee[key]["dep"] = [key for i in range(len(dict_insee[key]))]
     
 df_insee = pd.concat(dict_insee)
-df_insee = df_insee.rename(columns={"Total des décès (2)": "dc20", "Total des décès (2).1": "dc19", "Total des décès (2).2": "dc18", "Date d'événement": "jour"})
-df_insee = df_insee.drop(columns=['Remontées dématérialisées (1) (*)', 'Remontées dématérialisées (1) (**)', 'Remontées dématérialisées (1) (*)', 'Remontées dématérialisées (1)', 'Taux de dématérialisation   (1)/(2)'])
+df_insee = df_insee.rename(columns={"Ensemble des communes": "dc20", "Ensemble des communes.1": "dc19", "Ensemble des communes.2": "dc18", "Date d'événement": "jour"})
+df_insee = df_insee.drop(columns=['Communes à envoi dématérialisé au 1er avril 2020 (1)', 'Communes à envoi dématérialisé au 1er avril 2020 (1)', 'Communes à envoi dématérialisé au 1er avril 2020 (1)', 'Unnamed: 7'])
 df_insee["moy1819"] = (df_insee["dc19"] + df_insee["dc20"])/2
 df_insee["surmortalite20"] = (df_insee["dc20"] - df_insee["moy1819"])/df_insee["moy1819"]*100
 df_insee['jour'] = pd.to_datetime(df_insee['jour'])
@@ -44,12 +58,93 @@ df_insee['jour'] = df_insee['jour'].dt.strftime('%Y-%m-%d')
 dates_insee = list(dict.fromkeys(list(df_insee.dropna()['jour'].values))) 
 
 
+# In[104]:
+
+
+df_insee_france = df_insee.groupby('jour').sum().reset_index()
+df_insee_france["surmortalite20"] = (df_insee_france["dc20"] - df_insee_france["moy1819"])/df_insee_france["moy1819"]
+
+
+# In[ ]:
+
+
+
+
+
+# In[105]:
+
+
+"""import plotly.graph_objects as go
+import plotly
+fig = go.Figure()
+
+fig.add_trace(go.Scatter(
+    x = df_insee_france["jour"],
+    y = df_insee_france["surmortalite20"],
+    name = "Bilan autre hosp",
+    marker_color='black',
+    mode="lines+markers",
+    opacity=1
+))
+
+
+# Here we modify the tickangle of the xaxis, resulting in rotated labels.
+fig.update_layout(
+    legend_orientation="v",
+    barmode='relative',
+    title={
+                'text': "Variation de la <b>mortalité en mars 2020</b> par rapport à 2018 et 2019",
+                'y':0.95,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'},
+                titlefont = dict(
+                size=20),
+    xaxis=dict(
+        title='',
+        tickformat='%d/%m'),
+    yaxis_title="Surmortalité (%)",
+    
+    annotations = [
+                dict(
+                    x=0,
+                    y=1.05,
+                    xref='paper',
+                    yref='paper',
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier (Twitter).'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                )]
+                 )
+
+fig.update_layout(
+    yaxis = go.layout.YAxis(
+        tickformat = '%'
+    ),
+    annotations = [
+                dict(
+                    x=0.5,
+                    y=1.05,
+                    xref='paper',
+                    yref='paper',
+                    xanchor='center',
+                    text='',
+                    showarrow = False
+                )]
+                 )
+
+name_fig = "insee_surmortalite"
+fig.write_image("images/charts/france/{}.png".format(name_fig), scale=2, width=1200, height=800)
+plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+print("> " + name_fig)
+
+fig.show()"""
+
+
 # <br>
 # <br>
 # 
 # ## Function definition
 
-# In[18]:
+# In[106]:
 
 
 with open('data/france/dep.geojson') as response:
@@ -211,7 +306,7 @@ def build_gif(file_gif, imgs_folder, dates):
 # 
 # ## Function calls
 
-# In[30]:
+# In[107]:
 
 
 # GIF carte nb réanimations par habitant
@@ -221,7 +316,7 @@ map_gif(dates, imgs_folder, df = df, type_ppl = "rea_deppop", legend_title="réa
 build_gif(file_gif = "images/charts/france/dep-map.gif", imgs_folder = "images/charts/france/dep-map-img/{}.png", dates=dates)
 
 
-# In[ ]:
+# In[108]:
 
 
 
@@ -232,7 +327,7 @@ map_gif(dates[1:], imgs_folder, df = df, type_ppl = "dc_deppop", legend_title="d
 build_gif(file_gif = "images/charts/france/dep-map-dc-cum.gif", imgs_folder = "images/charts/france/dep-map-img-dc-cum/{}.png", dates=dates[1:])
 
 
-# In[ ]:
+# In[109]:
 
 
 # GIF carte décès quotidiens 
@@ -242,14 +337,14 @@ map_gif(dates[1:], imgs_folder, df = df, type_ppl = "dc_new_deppop", legend_titl
 build_gif(file_gif = "images/charts/france/dep-map-dc-journ.gif", imgs_folder = "images/charts/france/dep-map-img-dc-journ/{}.png", dates=dates[1:])
 
 
-# In[ ]:
+# In[110]:
 
 
-# INSEE
+"""# INSEE
 # GIF mortalité par rapport à 2018 et 2019
 imgs_folder = "images/charts/france/dep-map-surmortalite-img/{}.png"
 ppl = "surmortalite20"
 sub = 'Comparaison de la <b>mortalité journalière</b> entre 2020 <br>et les deux années précédentes.'
-map_gif(dates_insee, imgs_folder, df = df_insee.dropna(), type_ppl = ppl, legend_title="Sur-mortalité (%)", min_scale=-80, max_scale=80, colorscale = ["green", "white", "red"], subtitle = sub)
-build_gif(file_gif = "images/charts/france/dep-map-surmortalite.gif", imgs_folder = imgs_folder, dates=dates_insee)
+map_gif(dates_insee, imgs_folder, df = df_insee.dropna(), type_ppl = ppl, legend_title="Sur-mortalité (%)", min_scale=-50, max_scale=50, colorscale = ["green", "white", "red"], subtitle = sub)
+build_gif(file_gif = "images/charts/france/dep-map-surmortalite.gif", imgs_folder = imgs_folder, dates=dates_insee)"""
 
