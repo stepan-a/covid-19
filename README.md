@@ -9,6 +9,7 @@ For more information and comments in French, you can follow me on Twitter: [@gui
 **An all new website has been built which contains many and detailed graphs, comments and articles about France and the World! 
 Check it out now: [CovidTracker (guillaumerozier.fr)](http://www.guillaumerozier.fr)!**
 
+<a href="http://www.guillaumerozier.fr"><p align="center" ><img width="70%" src="images/covidtracker.png"></p></a>
 
 # Repository structure
 
@@ -46,7 +47,6 @@ covid-19
 ```
 
 
-# New Dashboard: [CovidTracker](http://www.guillaumerozier.fr)
 
 # Data Sources
 You can find 2 datasets:
