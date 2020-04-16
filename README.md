@@ -16,8 +16,10 @@ Check it out now: [CovidTracker (guillaumerozier.fr)](http://www.guillaumerozier
 ```
 covid-19
 │   README.md
-│   |   covid-19.ipynb  ->  the Jupyter notebook that builds world charts
-|   |   covid-19-France.ipynb  ->  the Jupyter notebook that builds world charts
+│   |   covid-19_world_charts.ipynb  ->  the Jupyter notebook that builds world charts
+|   |   covid-19_france_charts.ipynb  ->  the Jupyter notebook that builds french charts
+|   |   covid-19_france_maps.ipynb  ->  the Jupyter notebook that builds french maps
+|   |   ---
 |   |   Please ignore everything else
 |
 └───data  ->  datasets from CSSE, WHO, INSEE, and more.
