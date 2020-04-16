@@ -12,8 +12,8 @@ Check it out now: [CovidTracker (guillaumerozier.fr)](http://www.guillaumerozier
 <a href="http://www.guillaumerozier.fr"><p align="center" ><img width="70%" src="images/covidtracker.png"></p></a>
 
 # Requirements
-Please see the imports in each Jupyter Notebook.\
-Here are the main requirements: Plotly, Orca, Pandas, requests, imageio, json...
+Please see the imports in each Jupyter Notebook. Nothing crazy.\
+Here are the main requirements: Python3, Plotly, Orca, Pandas, requests, imageio, json... (you can install all of them with `pip3`)
 
 # Repository structure
 
