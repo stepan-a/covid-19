@@ -9,15 +9,23 @@ For more information and comments in French, you can follow me on Twitter: [@gui
 **An all new website has been built which contains many and detailed graphs, comments and articles about France and the World! 
 Check it out now: [CovidTracker (guillaumerozier.fr)](http://www.guillaumerozier.fr)!**
 
+<a href="http://www.guillaumerozier.fr"><p align="center" ><img width="70%" src="images/covidtracker.png"></p></a>
+
+# Requirements
+Please see the imports in each Jupyter Notebook. Nothing crazy.\
+Here are the main requirements: Python3, Plotly, Orca, Pandas, requests, imageio, json... (you can install all of them with `pip3`)
 
 # Repository structure
 
 ```
 covid-19
-│   README.md
-│   |   covid-19.ipynb  ->  the Jupyter notebook that builds world charts
-|   |   covid-19-France.ipynb  ->  the Jupyter notebook that builds world charts
-|   |   Please ignore everything else
+└─── README.md
+|
+└─── covid-19_world_charts.ipynb  ->  the Jupyter notebook that builds world charts
+|
+└─── covid-19_france_charts.ipynb  ->  the Jupyter notebook that builds french charts
+|
+└─── covid-19_france_maps.ipynb  ->  the Jupyter notebook that builds french maps
 |
 └───data  ->  datasets from CSSE, WHO, INSEE, and more.
 │   │   total_cases_csse.csv  ->  CSV file containing total confirmed cases from CSSE.
@@ -46,7 +54,6 @@ covid-19
 ```
 
 
-# New Dashboard: [CovidTracker](http://www.guillaumerozier.fr)
 
 # Data Sources
 You can find 2 datasets:
