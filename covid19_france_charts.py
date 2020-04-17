@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[430]:
+# # COVID-19 French Charts
+# Guillaume Rozier, 2020
+
+# In[161]:
 
 
 """
@@ -12,10 +15,18 @@ Guillaume Rozier
 Website : http://www.guillaumerozier.fr
 Mail : guillaume.rozier@telecomnancy.net
 
+README:s
+This file contains scripts that download data from data.gouv.fr and then process it to build many graphes.
+I'm currently cleaning the code, please ask me if something is not clear enough.
+
+The charts are exported to 'charts/images/france'.
+Data is download to/imported from 'data/france'.
+Requirements: please see the imports below (use pip3 to install them).
+
 """
 
 
-# In[431]:
+# In[216]:
 
 
 from multiprocessing import Pool
@@ -30,126 +41,28 @@ from datetime import timedelta
 from tqdm import tqdm
 import imageio
 import json
-
 import locale
+import france_data_management import download_data
+
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
-
-colors = px.colors.qualitative.D3 + px.colors.qualitative.Dark24 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.colors.qualitative.Plotly + px.colors.qualitative.Alphabet
-
-
-# In[432]:
-
-
+colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.colors.qualitative.Plotly + px.colors.qualitative.Dark24 + px.colors.qualitative.Alphabet
 show_charts = False
 
 
-# In[433]:
+# # Data download and import
 
+# In[215]:
 
-def download_data():
-    pbar = tqdm(total=8)
-    url_metadata = "https://www.data.gouv.fr/fr/organizations/sante-publique-france/datasets-resources.csv"
-    url_geojson = "https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/departements.geojson"
-    pbar.update(1)
-    metadata = requests.get(url_metadata)
-    pbar.update(2)
-    geojson = requests.get(url_geojson)
-    pbar.update(3)
-    with open('data/france/metadata.csv', 'wb') as f:
-        f.write(metadata.content)
-    pbar.update(4)
-    with open('data/france/dep.geojson', 'wb') as f:
-        f.write(geojson.content)
-    pbar.update(5)
-    df_metadata = pd.read_csv('data/france/metadata.csv', sep=";")
-    url_data = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-covid19")]["url"].values[0]
-    url_data_new = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-nouveaux")]["url"].values[0]
-    url_tests = df_metadata[df_metadata['url'].str.contains("/donnees-tests-covid19-labo-quotidien")]["url"].values[0]
-    
-    pbar.update(6)
-    data = requests.get(url_data)
-    data_new = requests.get(url_data_new)
-    data_tests = requests.get(url_tests)
-    
-    pbar.update(7)
-    with open('data/france/donnes-hospitalieres-covid19.csv', 'wb') as f:
-        f.write(data.content)
-        
-    with open('data/france/donnes-hospitalieres-covid19-nouveaux.csv', 'wb') as f:
-        f.write(data_new.content)
-        
-    with open('data/france/donnes-tests-covid19-quotidien.csv', 'wb') as f:
-        f.write(data_tests.content)
-        
-    pbar.update(8)
 
 download_data()
 
 
-# In[ ]:
+# In[164]:
 
 
 
 
-
-# In[435]:
-
-
-def import_data():
-    
-    pbar = tqdm(total=4)
-    pbar.update(1)
-    df = pd.read_csv('data/france/donnes-hospitalieres-covid19.csv', sep=";")
-    df_new = pd.read_csv('data/france/donnes-hospitalieres-covid19-nouveaux.csv', sep=";")
-    df_tests = pd.read_csv('data/france/donnes-tests-covid19-quotidien.csv', sep=";")
-    
-    df_regions = pd.read_csv('data/france/departments_regions_france_2016.csv', sep=",")
-    df_reg_pop = pd.read_csv('data/france/population_grandes_regions.csv', sep=",")
-    df_dep_pop = pd.read_csv('data/france/dep-pop.csv', sep=";")
-    
-    ###
-    df = df.merge(df_regions, left_on='dep', right_on='departmentCode')
-    df = df.merge(df_reg_pop, left_on='regionName', right_on='regionName')
-    df = df.merge(df_dep_pop, left_on='dep', right_on='dep')
-    df = df[df["sexe"] == 0]
-    df['hosp_nonrea'] = df['hosp'] - df['rea']
-    
-    df_new = df_new.merge(df_regions, left_on='dep', right_on='departmentCode')
-    df_new = df_new.merge(df_reg_pop, left_on='regionName', right_on='regionName')
-    df_new = df_new.merge(df_dep_pop, left_on='dep', right_on='dep')
-    df_new['incid_hosp_nonrea'] = df_new['incid_hosp'] - df_new['incid_rea']
-    
-    pbar.update(2)
-    
-    df['rea_pop'] = df['rea']/df['regionPopulation']*100000
-    df['rea_deppop'] = df['rea']/df['departmentPopulation']*100000
-    
-    df['rad_pop'] = df['rad']/df['regionPopulation']*100000
-    
-    df['dc_pop'] = df['dc']/df['regionPopulation']*100000
-    df['dc_deppop'] = df['dc']/df['departmentPopulation']*100000
-    
-    df['hosp_pop'] = df['hosp']/df['regionPopulation']*100000
-    df['hosp_deppop'] = df['hosp']/df['departmentPopulation']*100000
-    
-    df['hosp_nonrea_pop'] = df['hosp_nonrea']/df['regionPopulation']*100000
-    pbar.update(3)
-    df_confirmed = pd.read_csv('data/data_confirmed.csv')
-    pbar.update(4)
-    
-    deps = list(dict.fromkeys(list(df['departmentCode'].values))) 
-    for d in deps:
-        for col in ["dc", "rad", "rea", "hosp_nonrea", "hosp"]:
-            vals = df[df["dep"] == d][col].diff()
-            df.loc[vals.index,col+"_new"] = vals
-            df.loc[vals.index,col+"_new_deppop"] = vals / df.loc[vals.index,"departmentPopulation"]*100000
-    dates = list(dict.fromkeys(list(df['jour'].values))) 
-    
-    df_tests = df_tests.drop(['nb_test_h', 'nb_pos_h', 'nb_test_f', 'nb_pos_f'], axis=1)
-    df_tests = df_tests[df_tests['clage_covid'] == "0"]
-    return df, df_confirmed, dates, df_new, df_tests
-
-df, df_confirmed, dates, df_new, df_tests = import_data()
+df, df_confirmed, dates, df_new, df_tests = data.import_data()
 
 df_region = df.groupby(['regionName', 'jour', 'regionPopulation']).sum().reset_index()
 df_region["hosp_regpop"] = df_region["hosp"] / df_region["regionPopulation"]*1000000 
@@ -163,42 +76,31 @@ df_france = df.groupby('jour').sum().reset_index()
 regions = list(dict.fromkeys(list(df['regionName'].values))) 
 
 
-# In[436]:
+# In[165]:
 
 
-df_region[df_region["regionName"] == "Auvergne-Rhône-Alpes"]["hosp"]
-df_region[df_region["regionName"] == "Auvergne-Rhône-Alpes"]["regionPopulation"]
-
-
-# In[437]:
-
-
-df[df["dep"] == "73"]["hosp"]
-
-
-# In[438]:
-
-
+#Calcul sorties de réa
+# Dataframe intermédiaire (décalée d'une ligne pour le calcul)
 df_new_tot = df_new.groupby(["jour"]).sum().reset_index()
-
 last_row = df_new_tot.iloc[-1]
 df_new_tot = df_new_tot.shift()
 df_new_tot = df_new_tot.append(last_row, ignore_index=True)
 
-#Calcul sorties de réa
+# Nouvelle dataframe contenant le résultat
 df_new_tot["incid_dep_rea"] = df_france["rea"] - df_france["rea"].shift() - df_new_tot["incid_rea"]
 df_new_tot["incid_dep_hosp_nonrea"] = df_france["hosp_nonrea"] - df_france["hosp_nonrea"].shift() - df_new_tot["incid_hosp_nonrea"]
 
+# On ne garde que les 19 derniers jours (rien d'intéressant avant)
 df_new_tot_last15 = df_new_tot[ df_new_tot["jour"].isin(dates[-19:]) ]
-
 df_france_last15 = df_france[ df_france["jour"].isin(dates[-19:]) ]
-
 df_tests_tot_last15 = df_tests_tot[ df_tests_tot["jour"].isin(dates[-19:]) ]
 
 
+# # Graphes: bar charts
+
 # ## Variation journée
 
-# In[439]:
+# In[166]:
 
 
 #VAR JOURN
@@ -216,7 +118,7 @@ fig.add_trace(go.Bar(
 fig.add_trace(go.Bar(
     x = df_france_last15["jour"],
     y = df_france_last15["rea_new"],
-    name = "<b>Variation</b> réanimations",
+    name = "<b>Variation</b> des réanimations",
     marker_color='red',
     opacity=0.6
 ))
@@ -224,7 +126,7 @@ fig.add_trace(go.Bar(
 fig.add_trace(go.Bar(
     x = df_france_last15["jour"],
     y = df_france_last15["hosp_nonrea_new"],
-    name = "<b>Variation</b> autres hospit.",
+    name = "<b>Variation</b> des hosp. (hors réa.)",
     marker_color='grey',
     opacity=0.6
 ))
@@ -239,6 +141,7 @@ fig.add_trace(go.Bar(
 
 # Here we modify the tickangle of the xaxis, resulting in rotated labels.
 fig.update_layout(
+
     barmode='group',
     title={
                 'text': "<b>COVID-19 : variation quotidienne en France</b>",
@@ -268,6 +171,7 @@ name_fig = "var_journ"
 fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1400, height=800)
 
 fig.update_layout(
+
     legend_orientation="h",
     annotations = [
                 dict(
@@ -286,12 +190,6 @@ if show_charts:
     fig.show()
 
 
-# In[440]:
-
-
-df_tests
-
-
 # In[ ]:
 
 
@@ -300,7 +198,7 @@ df_tests
 
 # ## Evolution jorunée
 
-# In[441]:
+# In[167]:
 
 
 #EVOL JOURN
@@ -341,6 +239,8 @@ fig.add_trace(go.Bar(
 
 # Here we modify the tickangle of the xaxis, resulting in rotated labels.
 fig.update_layout(
+    #paper_bgcolor='#fffbed',#fcf8ed #faf9ed
+    #plot_bgcolor='#f5f0e4',#f5f0e4 fcf8ed f0e8d5
     barmode='group',
     title={
                 'text': "<b>COVID-19 : évolution quotidienne en France</b>",
@@ -388,7 +288,9 @@ if show_charts:
     fig.show()
 
 
-# In[442]:
+# ## Tests Covid
+
+# In[168]:
 
 
 # TESTS
@@ -416,8 +318,10 @@ fig.add_trace(go.Bar(
 # Here we modify the tickangle of the xaxis, resulting in rotated labels.
 fig.update_layout(
     barmode='stack',
+    #paper_bgcolor='#fffdf5',#fcf8ed #faf9ed
+    #plot_bgcolor='#f5f0e4',#f5f0e4 fcf8ed f0e8d5
     title={
-                'text': "<b>COVID-19 : tests en laboratoire de ville/b>",
+                'text': "<b>COVID-19 : tests en laboratoire de ville</b>",
                 'y':0.95,
                 'x':0.5,
                 'xanchor': 'center',
@@ -464,7 +368,7 @@ if show_charts:
 
 # ## Entrées/Sortires hosp et réa
 
-# In[443]:
+# In[169]:
 
 
 fig = go.Figure()
@@ -480,7 +384,7 @@ fig.add_trace(go.Bar(
 fig.add_trace(go.Bar(
     x = df_new_tot_last15["jour"],
     y = df_new_tot_last15["incid_hosp_nonrea"],
-    name = "Admissions autre hispitalisation",
+    name = "Admissions hospitalisation (hors réa.)",
     marker_color='red',
     opacity=0.5
 ))
@@ -496,7 +400,7 @@ fig.add_trace(go.Bar(
 fig.add_trace(go.Bar(
     x = df_new_tot_last15["jour"],
     y = df_new_tot_last15["incid_dep_hosp_nonrea"],
-    name = "Sorties autre hospitalisation",
+    name = "Sorties hospitalisation (hors réa.)",
     marker_color='green',
     opacity=0.5
 ))
@@ -504,7 +408,7 @@ fig.add_trace(go.Bar(
 fig.add_trace(go.Scatter(
     x = df_france["jour"],
     y = df_france["rea_new"],
-    name = "Bilan réa",
+    name = "Solde quotidien réanimation",
     marker_color='black',
     mode="lines+markers",
     opacity=0.8
@@ -513,7 +417,7 @@ fig.add_trace(go.Scatter(
 fig.add_trace(go.Scatter(
     x = df_france["jour"],
     y = df_france["hosp_nonrea_new"],
-    name = "Bilan autre hosp",
+    name = "Solde quotidien hosp. (hors réa.)",
     marker_color='black',
     mode="lines+markers",
     opacity=0.4
@@ -522,6 +426,8 @@ fig.add_trace(go.Scatter(
 
 # Here we modify the tickangle of the xaxis, resulting in rotated labels.
 fig.update_layout(
+    #paper_bgcolor='#fffdf5',#fcf8ed #faf9ed
+    #plot_bgcolor='#f5f0e4',#f5f0e4 fcf8ed f0e8d5
     legend_orientation="v",
     barmode='relative',
     title={
@@ -581,14 +487,17 @@ if show_charts:
     fig.show()
 
 
-# In[444]:
+# ## Entrées/Sorties hosp et réa - rolling mean (4 days)
+# La moyenne glissante sur 4 jours permet de lisser les effets liés aux week-ends (moins de saisies de données, donc il y a un trou) et d'évaluer la tendance.
+
+# In[170]:
 
 
 fig = go.Figure()
 #fig = make_subplots(specs=[[{"secondary_y": True}]])
 fig.add_trace(go.Bar(
     x = df_new_tot_last15["jour"],
-    y = df_new_tot_last15["incid_rea"].rolling(window=6).mean(),
+    y = df_new_tot_last15["incid_rea"].rolling(window=4).mean(),
     name = "Admissions réanimation",
     marker_color='red',
     opacity=0.8
@@ -596,15 +505,15 @@ fig.add_trace(go.Bar(
 
 fig.add_trace(go.Bar(
     x = df_new_tot_last15["jour"],
-    y = df_new_tot_last15["incid_hosp_nonrea"].rolling(window=6).mean(),
-    name = "Admissions autre hispitalisation",
+    y = df_new_tot_last15["incid_hosp_nonrea"].rolling(window=4).mean(),
+    name = "Admissions hospitalisation (hors réa.)",
     marker_color='red',
     opacity=0.5
 ))
 
 fig.add_trace(go.Bar(
     x = df_new_tot_last15["jour"],
-    y = df_new_tot_last15["incid_dep_rea"].rolling(window=6).mean(),
+    y = df_new_tot_last15["incid_dep_rea"].rolling(window=4).mean(),
     name = "Sorties réanimation",
     marker_color='green',
     opacity=0.8
@@ -612,16 +521,16 @@ fig.add_trace(go.Bar(
 
 fig.add_trace(go.Bar(
     x = df_new_tot_last15["jour"],
-    y = df_new_tot_last15["incid_dep_hosp_nonrea"].rolling(window=6).mean(),
-    name = "Sorties autre hospitalisation",
+    y = df_new_tot_last15["incid_dep_hosp_nonrea"].rolling(window=4).mean(),
+    name = "Sorties hospitalisation (hors réa.)",
     marker_color='green',
     opacity=0.5
 ))
 
 fig.add_trace(go.Scatter(
     x = df_france["jour"],
-    y = df_france["rea_new"].rolling(window=6).mean(),
-    name = "Bilan réa",
+    y = df_france["rea_new"].rolling(window=4).mean(),
+    name = "Solde réanimation",
     marker_color='black',
     mode="lines+markers",
     opacity=0.8
@@ -629,8 +538,8 @@ fig.add_trace(go.Scatter(
 
 fig.add_trace(go.Scatter(
     x = df_france["jour"],
-    y = df_france["hosp_nonrea_new"].rolling(window=6).mean(),
-    name = "Bilan autre hosp",
+    y = df_france["hosp_nonrea_new"].rolling(window=4).mean(),
+    name = "Solde hosp. (hors réa.)",
     marker_color='black',
     mode="lines+markers",
     opacity=0.4
@@ -698,7 +607,9 @@ if show_charts:
     fig.show()
 
 
-# In[445]:
+# ## Hospitalisations (bar chart)
+
+# In[171]:
 
 
 fig = go.Figure()
@@ -772,13 +683,15 @@ if show_charts:
     fig.show()
 
 
-# In[446]:
+# ## Subplots : régions
+# Ce script génère 4 graphiques contenant les graphiques de :
+# - nb d'hospitalisés,
+# - nb d'hospitalisés par habitant des régions,
+# - nb de réanimations,
+# - nb de réanimations par habitant des régions,
+# et ce pour toutes les régions françaises
 
-
-df_region
-
-
-# In[447]:
+# In[172]:
 
 
 
@@ -932,7 +845,21 @@ for val in ["hosp_regpop", "hosp", "rea", "rea_regpop"]:
     #fig.show()
 
 
-# In[448]:
+# ## Subplots : départements
+# Ce script génère 4 graphiques contenant les graphiques de :
+# - nb d'hospitalisés par habitant des départements,
+# et ce pour toutes les régions françaises
+
+# In[173]:
+
+
+
+
+
+# ## Subplots : départements - classé par régions
+# Idem précédent mais les départements sont rangés dans leurs régions, et les régions classées par ordre décroissant du nb de personnes
+
+# In[174]:
 
 
 
@@ -946,32 +873,35 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     
     #deps_ordered = df[df['jour'] == dates[-1]].sort_values(by=[val], ascending=False)["departmentName"].values
     #deps_ordered = list(dict.fromkeys(list(deps_ordered)))[:]
-    deps_ordered = np.array(list(dict.fromkeys(list(df["departmentName"].values)))[:])
-    deps_ordered_nb = np.array(list(dict.fromkeys(list(df["dep"].values)))[:])
     
-    deps_ordered_nb = np.char.replace(deps_ordered_nb, "2A", "200")
-    deps_ordered_nb = np.char.replace(deps_ordered_nb, "2B", "201")
-    
-    ind_deps = np.argsort(deps_ordered_nb.astype(int))
-    
-    deps_ordered_nb = deps_ordered_nb[ind_deps]
-    deps_ordered = deps_ordered[ind_deps]
-    
-    deps_ordered_nb = deps_ordered_nb.astype(str)
-    
-    deps_ordered_nb = np.char.replace(deps_ordered_nb, "200", "2A")
-    deps_ordered_nb = np.char.replace(deps_ordered_nb, "201", "2B")
     
     titles = []
     k=0
-    for case in range(1, ni * nj - 1):
+    deps_by_reg=[]
+    case=1
+    for reg in regions_ordered:
+        deps_ordered = df[(df['regionName']==reg) & (df['jour'] == dates[-1])].sort_values(by=val, ascending=False)
+        
+        deps_by_reg += [[deps_ordered['dep'].values, deps_ordered['departmentName'].values]]
+        
+        for d in range(len(deps_ordered)):
+            if case in [80, 89, 98]:
+                titles += ["", ""]
+                titles += ["" + deps_ordered['dep'].values[d] + " - " + deps_ordered['departmentName'].values[d] + ""]
+                case+=3
+            else:
+                titles += ["" + deps_ordered['dep'].values[d] + " - " + deps_ordered['departmentName'].values[d] + ""]
+                case+=1
+        k+=1
+        
+    """for case in range(1, ni * nj - 1):
         if case in [80, 81, 89, 90, 98, 99]:
             titles += [""] 
         else:
             titles += ["<b>" + deps_ordered_nb[k] + "</b> - " + deps_ordered[k]]
-            k+=1
+            k+=1"""
 
-    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles= titles, vertical_spacing = 0.025, horizontal_spacing = 0.002)
+    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles= titles, vertical_spacing = 0.030, horizontal_spacing = 0.002)
     #&#8681;
     
     df_nonobj = df.select_dtypes(exclude=['object'])
@@ -987,38 +917,61 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     max_values_diff=[]
         
     
-    for dep in tqdm(deps_ordered):
-        data_dep = df[df["departmentName"] == dep]
-        
-        data_dep[val + "_new"] = data_dep[val].diff()
-        ordered_values = data_dep.sort_values(by=[val + "_new"], ascending=False)[val + "_new"]
-        max_values_diff += [ordered_values.quantile(.90)]
-        
-        for data_quant in vals_quantiles:
-            fig.add_trace(go.Bar(x=data_quant["jour"], y=data_quant[val], marker=dict(color="grey", opacity=0.1) #rgba(230,230,230,0.5)
-                        ),
-                      i, j)
-        
-        
-        fig.add_trace(go.Bar(x=data_dep["jour"], y=data_dep[val],
-                            marker=dict(color = data_dep[val + "_new"], coloraxis="coloraxis"), ),
-                      i, j)
-        
-        fig.update_xaxes(title_text="", range=["2020-03-15", "2020-05-01"], gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=7), tickangle=0, nticks=6, linewidth=0, linecolor='white', row=i, col=j)
-        fig.update_yaxes(title_text="", range=[0, max_value], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j)
+    for reg in tqdm(deps_by_reg):
+        for dep in reg[1]:
 
-        j+=1
-        if j == nj+1 or ((i >= 9) & (j >= nj-1)): 
-            i+=1
-            j=1
-            
-        """if j == nj+1:
-            i+=1
-            j=1"""
+            data_dep = df[df["departmentName"] == dep]
 
+            data_dep[val + "_new"] = data_dep[val].diff()
+            ordered_values = data_dep.sort_values(by=[val + "_new"], ascending=False)[val + "_new"]
+            max_values_diff += [ordered_values.quantile(.90)]
+
+            for data_quant in vals_quantiles:
+                fig.add_trace(go.Bar(x=data_quant["jour"], y=data_quant[val], marker=dict(color="grey", opacity=0.1) #rgba(230,230,230,0.5)
+                            ),
+                          i, j)
+
+
+            fig.add_trace(go.Bar(x=data_dep["jour"], y=data_dep[val],
+                                marker=dict(color = data_dep[val + "_new"], coloraxis="coloraxis"), ),
+                          i, j)
+
+            fig.update_xaxes(title_text="", range=["2020-03-15", "2020-05-01"], gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=7), tickangle=0, nticks=6, linewidth=0, linecolor='white', row=i, col=j)
+            fig.update_yaxes(title_text="", range=[0, max_value], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j)
+
+            j+=1
+            if j == nj+1 or ((i >= 9) & (j >= nj-1)): 
+                i+=1
+                j=1
+
+    cnt = 0
+    reg = 0
+    annotations_to_add = ()
     for i in fig['layout']['annotations']:
-        i['font'] = dict(size=14)
-
+        if len(i['text']) > 1:
+            
+            if ((reg==0) & (cnt==0)) or (cnt == len(deps_by_reg[reg][0])):
+                if (cnt == len(deps_by_reg[reg][0])):
+                    reg +=1
+                    cnt = 0
+            annotations_to_add += ( dict(         
+                            x=i['x'],
+                            y=str(float(i['y'])+0.006),
+                            xref= 'paper',
+                            yref= 'paper',
+                            xanchor= 'center',
+                            yanchor= 'bottom',
+                            align='left',
+                            text= "<b>" + regions_ordered[reg] + "</b>",
+                            showarrow = False,
+                            font=dict(size=11, color = str(colors[reg])), 
+                            opacity=1
+                        ),)    
+            i['font'] = dict(size=11, color = str(colors[reg]))
+            i['align'] = 'center'
+            cnt+=1
+    
+        
     #for annotation in fig['layout']['annotations']: 
             #annotation ['x'] = 0.5
     by_million_title = ""
@@ -1103,9 +1056,9 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                             font=dict(size=30), 
                             opacity=1
                         ),
-                                    )
+                                    ) + annotations_to_add
     
-    name_fig = "subplots_dep_" + val 
+    name_fig = "subplots_dep__class-par-reg" + val 
     fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1600, height=2300)
 
     fig["layout"]["annotations"] += (
@@ -1126,13 +1079,9 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()
 
 
-# In[ ]:
+# ## Hospitalisations et réanimations (bar charts subplot)
 
-
-
-
-
-# In[449]:
+# In[175]:
 
 
 
@@ -1236,17 +1185,10 @@ print("> " + name_fig)
 #fig.show()
 
 
-# In[450]:
+# ## Situation cas (bar chart)
+# Où en sont les personnes atteintes du Covid (retour à domicile, décédées, en réa, hosp ou autre)
 
-
-
-data_r_lastd = df[df["jour"] == dates[-1]]
-data_r_lastd = data_r_lastd.groupby("regionName").sum().reset_index()
-
-data_r_lastd.sort_values(by=['hosp'], ascending=False)
-
-
-# In[451]:
+# In[176]:
 
 
 
@@ -1327,15 +1269,11 @@ if show_charts:
 # <br>
 # <br>
 # 
-# ## Line charts
+# # Line charts
 
-# In[ ]:
+# ## Décès hospitalisations et réanimations (line chart)
 
-
-
-
-
-# In[452]:
+# In[177]:
 
 
 df_france = df.groupby('jour').sum().reset_index()
@@ -1399,7 +1337,9 @@ if show_charts:
 print("> " + name_fig)
 
 
-# In[453]:
+# ## Décès cumulés (line chart)
+
+# In[178]:
 
 
 
@@ -1435,7 +1375,7 @@ if show_charts:
     fig.show()
 
 
-# In[454]:
+# In[179]:
 
 
 
@@ -1471,9 +1411,9 @@ if show_charts:
     fig.show()
 
 
-# ### Hospitalisations
+# ## Hospitalisations
 
-# In[455]:
+# In[180]:
 
 
 
@@ -1509,7 +1449,9 @@ if show_charts:
     fig.show()
 
 
-# In[456]:
+# ## Hospitalisations (entrées - sorties) (line chart)
+
+# In[181]:
 
 
 
@@ -1545,7 +1487,9 @@ if show_charts:
     fig.show()
 
 
-# In[457]:
+# ## Admissions en hospitalisation (line chart)
+
+# In[182]:
 
 
 
@@ -1581,9 +1525,9 @@ if show_charts:
     fig.show()
 
 
-# ### Réanimations par région
+# ## Réanimations par région (line chart)
 
-# In[458]:
+# In[183]:
 
 
 fig = px.line(x=df_region['jour'], y=df_region['rea'], color=df_region["regionName"], color_discrete_sequence=colors).update_traces(mode='lines+markers', marker_size=7.5, line=dict(width=2.5))
@@ -1617,9 +1561,9 @@ if show_charts:
     fig.show()
 
 
-# ### Réanimations : Rhin
+# ## Réanimations : Rhin (line chart)
 
-# In[459]:
+# In[184]:
 
 
 df_rhin = df[df["dep"].isin(["67", "68"])]
@@ -1654,9 +1598,9 @@ if show_charts:
     fig.show()
 
 
-# ### Réanimations par département
+# ## Réanimations par département (line chart)
 
-# In[460]:
+# In[185]:
 
 
 df_last_d = df[df['jour'] == dates[-1]]
@@ -1714,7 +1658,9 @@ if show_charts:
     fig.show()
 
 
-# In[461]:
+# ## Hospitalisations par département (line chart)
+
+# In[186]:
 
 
 df_last_d = df[df['jour'] == dates[-1]]
@@ -1774,9 +1720,9 @@ if show_charts:
 
 # <br>
 # 
-# ### Hospitalisations par habitant / région
+# ## Hospitalisations par habitant / région
 
-# In[462]:
+# In[187]:
 
 
 """
@@ -1825,9 +1771,9 @@ if show_charts:
 
 # <br>
 # 
-# ### Capacité réanimation
+# ## Capacité réanimation (line chart)
 
-# In[463]:
+# In[188]:
 
 
 
@@ -1898,9 +1844,9 @@ if show_charts:
 
 # <br>
 # 
-# ### Décès cumulés (région)
+# ## Décès cumulés (région)
 
-# In[464]:
+# In[189]:
 
 
 fig = px.line(x=df_region['jour'], y=df_region['dc'], color=df_region["regionName"], labels={'color':'Région'}, color_discrete_sequence=colors).update_traces(mode='lines+markers')
@@ -1947,7 +1893,9 @@ if show_charts:
     fig.show()
 
 
-# In[465]:
+# ## Nouveaux décès quotidiens (line chart)
+
+# In[190]:
 
 
 fig = px.line(x=df_new_region['jour'], y=df_new_region['incid_dc'], color=df_new_region["regionName"], labels={'color':'Région'}, color_discrete_sequence=colors).update_traces(mode='lines+markers')
@@ -1996,9 +1944,9 @@ if show_charts:
 
 # <br>
 # 
-# ### Décès cumulés par habitant (région)
+# ## Décès cumulés par habitant (région)
 
-# In[466]:
+# In[191]:
 
 
 """
@@ -2052,13 +2000,13 @@ if show_charts:
 # <br>
 # <br>
 # 
-# # Bar charts
+# # Other bar charts
 
 # <br>
 # 
-# ### Décès cumulés par région / temps
+# ## Décès cumulés par région / temps
 
-# In[467]:
+# In[192]:
 
 
 fig = px.bar(x=df_region['jour'], y = df_region['dc'], color=df_region["regionName"], labels={'color':'Région'}, color_discrete_sequence=colors, opacity=0.9)
@@ -2109,9 +2057,9 @@ if show_charts:
 
 # <br>
 # 
-# ### Décès cumulés par région / 3 derniers jours
+# ## Décès cumulés par région / 3 derniers jours
 
-# In[468]:
+# In[193]:
 
 
 
@@ -2199,9 +2147,9 @@ if show_charts:
 
 # <br>
 # 
-# ### Décès cumulés VS. Décès cumulés par habitant / région
+# ## Décès cumulés VS. Décès cumulés par habitant / région
 
-# In[469]:
+# In[194]:
 
 
 fig = go.Figure()
@@ -2276,13 +2224,9 @@ if show_charts:
 
 # <br>
 # 
-# ### Situation des malades / temps
+# ## Situation des malades / région
 
-# <br>
-# 
-# ### Situation des malades / région
-
-# In[470]:
+# In[195]:
 
 
 #df_region_sumj = df_region.groupby('regionName').sum().reset_index()
@@ -2292,7 +2236,7 @@ df_region_sumj = pd.melt(df_region_sumj, id_vars=['regionName'], value_vars=['ra
 df_region_sumj.drop(df_region_sumj[df_region_sumj['regionName'].isin(['Guyane', 'Mayote', 'La Réunion', 'Guadeloupe', 'Martinique'])].index, inplace = True)
 
 
-# In[471]:
+# In[196]:
 
 
 data = df_region_sumj[df_region_sumj["variable"] == "dc"]
@@ -2358,9 +2302,9 @@ if show_charts:
 
 # <br>
 # 
-# ### Situation des malades par habitant / région
+# ## Situation des malades par habitant / région
 
-# In[472]:
+# In[197]:
 
 
 df_region_sumj = df_region[df_region['jour'] == dates[-1]]
@@ -2368,7 +2312,7 @@ df_region_sumj = pd.melt(df_region_sumj, id_vars=['regionName'], value_vars=['ra
 df_region_sumj.drop(df_region_sumj[df_region_sumj['regionName'].isin(['Guyane', 'Mayote', 'La Réunion', 'Guadeloupe', 'Martinique'])].index, inplace = True)
 
 
-# In[473]:
+# In[198]:
 
 
 data = df_region_sumj[df_region_sumj["variable"] == "dc_pop"]
@@ -2433,17 +2377,13 @@ if show_charts:
 
 
 # <br>
-# 
-# ### Évolution qutotidienne / temps
-
-# <br>
 # <br>
 # <br>
 # <br>
 # 
-# # Expérimentations
+# # Expérimentations (brouillon)
 
-# In[474]:
+# In[199]:
 
 
 """

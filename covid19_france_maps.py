@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[100]:
+# # COVID-19 French Maps
+# Guillaume Rozier, 2020
+
+# In[12]:
 
 
 """
@@ -12,10 +15,16 @@ Guillaume Rozier
 Website : http://www.guillaumerozier.fr
 Mail : guillaume.rozier@telecomnancy.net
 
+README:s
+This file contains script that generate France maps and GIFs. 
+Single images are exported to folders in 'charts/image/france'. GIFs are exported to 'charts/image/france'.
+I'm currently cleaning this file, please ask me is something is not clear enough!
+Requirements: please see the imports below (use pip3 to install them).
+
 """
 
 
-# In[101]:
+# In[25]:
 
 
 from covid19_france_charts import import_data
@@ -31,15 +40,17 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 # ## Data import
 
-# In[102]:
+# In[14]:
 
 
-df, df_confirmed, dates = import_data()
+# Import data from Santé publique France
+df, df_confirmed, dates, _, _ = import_data()
 
 
-# In[103]:
+# In[15]:
 
 
+# Download and import data from INSEE
 dict_insee = pd.read_excel('data/france/deces_quotidiens_departement.xlsx', header=[3], index_col=None, sheet_name=None, usecols='A:H', nrows=31)
 dict_insee.pop('France')
 dict_insee.pop('Documentation')
@@ -58,85 +69,11 @@ df_insee['jour'] = df_insee['jour'].dt.strftime('%Y-%m-%d')
 dates_insee = list(dict.fromkeys(list(df_insee.dropna()['jour'].values))) 
 
 
-# In[104]:
+# In[16]:
 
 
 df_insee_france = df_insee.groupby('jour').sum().reset_index()
 df_insee_france["surmortalite20"] = (df_insee_france["dc20"] - df_insee_france["moy1819"])/df_insee_france["moy1819"]
-
-
-# In[ ]:
-
-
-
-
-
-# In[105]:
-
-
-"""import plotly.graph_objects as go
-import plotly
-fig = go.Figure()
-
-fig.add_trace(go.Scatter(
-    x = df_insee_france["jour"],
-    y = df_insee_france["surmortalite20"],
-    name = "Bilan autre hosp",
-    marker_color='black',
-    mode="lines+markers",
-    opacity=1
-))
-
-
-# Here we modify the tickangle of the xaxis, resulting in rotated labels.
-fig.update_layout(
-    legend_orientation="v",
-    barmode='relative',
-    title={
-                'text': "Variation de la <b>mortalité en mars 2020</b> par rapport à 2018 et 2019",
-                'y':0.95,
-                'x':0.5,
-                'xanchor': 'center',
-                'yanchor': 'top'},
-                titlefont = dict(
-                size=20),
-    xaxis=dict(
-        title='',
-        tickformat='%d/%m'),
-    yaxis_title="Surmortalité (%)",
-    
-    annotations = [
-                dict(
-                    x=0,
-                    y=1.05,
-                    xref='paper',
-                    yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier (Twitter).'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
-                )]
-                 )
-
-fig.update_layout(
-    yaxis = go.layout.YAxis(
-        tickformat = '%'
-    ),
-    annotations = [
-                dict(
-                    x=0.5,
-                    y=1.05,
-                    xref='paper',
-                    yref='paper',
-                    xanchor='center',
-                    text='',
-                    showarrow = False
-                )]
-                 )
-
-name_fig = "insee_surmortalite"
-fig.write_image("images/charts/france/{}.png".format(name_fig), scale=2, width=1200, height=800)
-plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
-print("> " + name_fig)
-
-fig.show()"""
 
 
 # <br>
@@ -144,7 +81,7 @@ fig.show()"""
 # 
 # ## Function definition
 
-# In[106]:
+# In[17]:
 
 
 with open('data/france/dep.geojson') as response:
@@ -306,7 +243,7 @@ def build_gif(file_gif, imgs_folder, dates):
 # 
 # ## Function calls
 
-# In[107]:
+# In[18]:
 
 
 # GIF carte nb réanimations par habitant
@@ -316,7 +253,7 @@ map_gif(dates, imgs_folder, df = df, type_ppl = "rea_deppop", legend_title="réa
 build_gif(file_gif = "images/charts/france/dep-map.gif", imgs_folder = "images/charts/france/dep-map-img/{}.png", dates=dates)
 
 
-# In[108]:
+# In[19]:
 
 
 
@@ -327,7 +264,7 @@ map_gif(dates[1:], imgs_folder, df = df, type_ppl = "dc_deppop", legend_title="d
 build_gif(file_gif = "images/charts/france/dep-map-dc-cum.gif", imgs_folder = "images/charts/france/dep-map-img-dc-cum/{}.png", dates=dates[1:])
 
 
-# In[109]:
+# In[20]:
 
 
 # GIF carte décès quotidiens 
@@ -337,14 +274,85 @@ map_gif(dates[1:], imgs_folder, df = df, type_ppl = "dc_new_deppop", legend_titl
 build_gif(file_gif = "images/charts/france/dep-map-dc-journ.gif", imgs_folder = "images/charts/france/dep-map-img-dc-journ/{}.png", dates=dates[1:])
 
 
-# In[110]:
+# In[21]:
 
 
-"""# INSEE
+"""
+# INSEE
 # GIF mortalité par rapport à 2018 et 2019
 imgs_folder = "images/charts/france/dep-map-surmortalite-img/{}.png"
 ppl = "surmortalite20"
 sub = 'Comparaison de la <b>mortalité journalière</b> entre 2020 <br>et les deux années précédentes.'
 map_gif(dates_insee, imgs_folder, df = df_insee.dropna(), type_ppl = ppl, legend_title="Sur-mortalité (%)", min_scale=-50, max_scale=50, colorscale = ["green", "white", "red"], subtitle = sub)
 build_gif(file_gif = "images/charts/france/dep-map-surmortalite.gif", imgs_folder = imgs_folder, dates=dates_insee)"""
+
+
+# In[22]:
+
+
+# Line chart évolution de la mortalité
+
+"""import plotly.graph_objects as go
+import plotly
+fig = go.Figure()
+
+fig.add_trace(go.Scatter(
+    x = df_insee_france["jour"],
+    y = df_insee_france["surmortalite20"],
+    name = "Bilan autre hosp",
+    marker_color='black',
+    mode="lines+markers",
+    opacity=1
+))
+
+
+# Here we modify the tickangle of the xaxis, resulting in rotated labels.
+fig.update_layout(
+    legend_orientation="v",
+    barmode='relative',
+    title={
+                'text': "Variation de la <b>mortalité en mars 2020</b> par rapport à 2018 et 2019",
+                'y':0.95,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'},
+                titlefont = dict(
+                size=20),
+    xaxis=dict(
+        title='',
+        tickformat='%d/%m'),
+    yaxis_title="Surmortalité (%)",
+    
+    annotations = [
+                dict(
+                    x=0,
+                    y=1.05,
+                    xref='paper',
+                    yref='paper',
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : @guillaumerozier (Twitter).'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                )]
+                 )
+
+fig.update_layout(
+    yaxis = go.layout.YAxis(
+        tickformat = '%'
+    ),
+    annotations = [
+                dict(
+                    x=0.5,
+                    y=1.05,
+                    xref='paper',
+                    yref='paper',
+                    xanchor='center',
+                    text='',
+                    showarrow = False
+                )]
+                 )
+
+name_fig = "insee_surmortalite"
+fig.write_image("images/charts/france/{}.png".format(name_fig), scale=2, width=1200, height=800)
+plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+print("> " + name_fig)
+
+fig.show()"""
 

@@ -1,15 +1,35 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[4]:
+# In[1]:
 
 
-import datetime
+"""
+
+LICENSE MIT
+2020
+Guillaume Rozier
+Website : http://www.guillaumerozier.fr
+Mail : guillaume.rozier@telecomnancy.net
+
+README:
+This file contains a script that automatically update data. In the morning it update World data, and it updates French data as soon as they are released by Santé publique France.
+"""
+
+
+# In[123]:
+
+
+import datetime as dt
 import time
 import subprocess
 import requests
+import re
 
+### FUNCTION DEFINITIONS ###
 url_metadata = "https://www.data.gouv.fr/fr/organizations/sante-publique-france/datasets-resources.csv"
+metadata = requests.get(url_metadata)
+content = str(metadata.content)
 
 def update_repo():
     subprocess.run(["sudo", "git", "fetch", "--all"])
@@ -22,41 +42,80 @@ def push(type_data):
     subprocess.run(["git", "push"])
     print("pushed")
     
-while True:
-    x = datetime.datetime.now()
-    h = x.strftime("%H")
-    m = x.strftime("%M")
+def get_datetime_spf():
+    metadata = requests.get(url_metadata)
+    content = str(metadata.content)
+    re_result = re.search("donnees-hospitalieres-nouveaux-covid19-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{2}h[0-9]{2}.csv", content)
+    re_date = re.match(".*covid19-([0-9]{4})-([0-9]{2})-([0-9]{2})-([0-9]{2})h([0-9]{2}).csv", re_result[0])
+    datetime_object = dt.datetime.strptime(re_date[1] + re_date[2] + re_date[3] + re_date[4] + re_date[4], '%Y%m%d%H%M')
+    return datetime_object
+
+def try_update_france():
+    datetime_spf = get_datetime_spf
     
-    if (h == '05') & (m =='00'):
+    if ( (dt.datetime.now() - datetime_spf).seconds/3600 <= 1): # Si le fichier SPF date d'il y à moins d'1h
+        metadata = requests.get(url_metadata)
+        content = str(metadata.content)
+        
+        print("starting France update: {}:{}".format(str(now.hour), str(now.minute)))
+        update_repo()
+
+        # Mise à jour des graphiques
+        subprocess.run(["sudo", "python3", "covid19_france_charts.py"])
+        push("France")
+        print("update France: " + str(now.hour) + ":" + str(now.minute))
+
+        subprocess.run(["sudo", "python3", "covid19_france_maps.py"])
+        push("France GIF")
+        print("update France GIF: " + str(now.hour) + ":" + str(now.minute))
+    return datetime_spf
+
+    
+### MAIN FUNCTION ###
+datetime_spf = get_datetime_spf()
+world_update = dt.datetime.now()
+
+k = 1
+l = 0
+print("will enter loop")
+
+while True:
+    now = dt.datetime.now() 
+    if l%100:
+        print("+100 itérations " + str(now))
+    l+=1
+    
+    if (now.hour >= 4) & (now.hour <= 7) & (world_update.day != now.day):
+        print("starting world update: {}:{}".format(str(now.hour), str(now.minute)))
+        # S'il est 05h05
+        
+        world_update = now
+        
+        # mise à jour des graphiques world
         update_repo()
         subprocess.run(["sudo", "python3", "covid19_world_charts.py"])
         push("World")
-        print("update World" + str(h) + " " + str(m))
+        print("update World pushed: " + str(now.hour) + ":" + str(now.minute))
         
+        # ... et France (certains en dépendent)
         subprocess.run(["sudo", "python3", "covid19_france_charts.py"])
         push("France")
-        print("update France" + str(h) + " " + str(m))
+        print("update France pushed: " + str(now.hour) + ":" + str(now.minute))
         time.sleep(30)
-    
-    if ((h == '18') & (m =='59')):
-        data_today = False
-        update_repo()
+        
             
-        while not data_today:
-            metadata = requests.get(url_metadata)
-
-            if "donnees-hospitalieres-covid19-2020-{}-{}".format(x.strftime("%m"), x.strftime("%d")) in str(metadata.content):
-                data_today = True
-                
-                subprocess.run(["sudo", "python3", "covid19_france_charts.py"])
-                push("France")
-                print("update France" + str(h) + " " + str(m))
-
-                subprocess.run(["sudo", "python3", "covid19_france_maps.py"])
-                push("France GIF")
-                print("update France GIF" + str(h) + " " + str(m))
-
+    if ( (((now.hour == 18) & (now.minute >= 59)) or ((now.hour >= 19) & (now.hour<= 20))) ):
+        while ( (((now.hour == 18) & (now.minute >= 59)) or ((now.hour >= 19) & (now.hour<= 20))) & ( (now - datetime_spf).seconds/3600 > 2.5 ) ):
+            # Si l'heure comprise entre 18h59 et 21h59, ET les données PAS à jour depuis plus de 2h30
+            now = dt.datetime.now()
+            datetime_spf = try_update_france()
             time.sleep(20)
+            
+    else: # S'il n'est pas entre 18h59 et 21h59
+        if( (now - datetime_spf).seconds/3600 > 20 ): # S'il s'est écoulé plus de 20h depuis la dernière update
+            if (k%20 == 0): #Check 1 fois toutes les 20 sec * 30 (environ 10 min)
+                datetime_spf = try_update_france()
+            k += 1
             
     time.sleep(30)
 

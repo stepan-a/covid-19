@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # COVID-19 Analysis
+# # COVID-19 World Charts
 # Guillaume Rozier, 2020
 
-# In[87]:
+# In[3]:
 
 
 """
@@ -15,10 +15,15 @@ Guillaume Rozier
 Website : http://www.guillaumerozier.fr
 Mail : guillaume.rozier@telecomnancy.net
 
+This file contains scripts that download data from CSSE (John Hopkins) Github Repository and then process it to build many graphes.
+I'm currently cleaning the code, please come back soon it will be easier to read and edit it!
+
+The charts are exported to 'charts/images/'.
+Data is download to/imported from 'data/'.
 """
 
 
-# In[88]:
+# In[4]:
 
 
 import requests
@@ -41,15 +46,16 @@ from plotly.validators.scatter.marker import SymbolValidator
 
 colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.colors.qualitative.Plotly + px.colors.qualitative.Dark24 + px.colors.qualitative.Alphabet
 
-#random.shuffle(colors)
+#If you want to uplaod charts to your Plotly account (and switch "upload" to True just below):
+#chart_studio.tools.set_credentials_file(username='', api_key='')
 
-chart_studio.tools.set_credentials_file(username='worldice', api_key='2iXFe4Ch2oPo1dpaBj8p')
 today = datetime.now().strftime("%Y-%m-%d %H:%M")
-
 "build : " + today
 
 
-# In[89]:
+# If you want to display charts here, please change "show" variable to True:
+
+# In[5]:
 
 
 upload = False
@@ -57,34 +63,28 @@ show = False
 export = True
 
 
-# In[90]:
+# In[6]:
 
 
 
-"""if len(sys.argv) == 1:
-    print("Error.\n Usage: covid-19 arg1 arg2 arg3")
-    print("arg1: upload? (True/False)\n arg2: show charts? (True/False)\n arg3: export charts as png?")
-    sys.exit()
-"""
-    
 if len(sys.argv) >= 2:
-    if (sys.argv[1]).lower() == "true":
-        upload = True
-    
+   if (sys.argv[1]).lower() == "true":
+       upload = True
+   
 if len(sys.argv) >= 3:
-    if (sys.argv[2]).lower() == "true":
-        show = True
+   if (sys.argv[2]).lower() == "true":
+       show = True
 
 if len(sys.argv) >= 4:
-    if (sys.argv[3]).lower() == "true":
-        export = True
-    
+   if (sys.argv[3]).lower() == "true":
+       export = True
+   
 "build : " + today
 
 
-# ##### Functions
+# ## Functions
 
-# In[91]:
+# In[7]:
 
 
 def compute_offset(df, col_of_reference, col_to_align, countries):
@@ -112,11 +112,11 @@ def compute_offset(df, col_of_reference, col_to_align, countries):
 
 
 # 
-# ### DATA
+# ## DATA
 
 # #### Download data
 
-# In[92]:
+# In[8]:
 
 
 def download_data():
@@ -149,7 +149,7 @@ def download_data():
 
 # #### Import data and merge
 
-# In[93]:
+# In[9]:
 
 
 def import_files(): 
@@ -169,7 +169,7 @@ def import_files():
     return df_confirmed_csse, df_deaths_csse, df_confirmed_perso, df_deaths_perso
 
 
-# In[94]:
+# In[10]:
 
 
 def data_prep_csse(df0):
@@ -189,7 +189,7 @@ def data_prep_csse(df0):
 #"build : " + today
 
 
-# In[95]:
+# In[11]:
 
 
 def data_merge(data_confirmed, df_confirmed_perso, data_deaths, df_deaths_perso):
@@ -211,7 +211,7 @@ def data_merge(data_confirmed, df_confirmed_perso, data_deaths, df_deaths_perso)
     return data_confirmed, data_deaths
 
 
-# In[96]:
+# In[12]:
 
 
 def rolling(df):
@@ -266,7 +266,7 @@ def final_data_prep(data_confirmed, data_confirmed_rolling, data_deaths, data_de
     return data_confirmed, data_confirmed_rolling, data_deaths, data_deaths_rolling
 
 
-# In[97]:
+# In[13]:
 
 
 #print(data_confirmed_rolling.tail)
@@ -274,7 +274,7 @@ def final_data_prep(data_confirmed, data_confirmed_rolling, data_deaths, data_de
 
 # #### Informations on countries (population, offset)
 
-# In[98]:
+# In[14]:
 
 
 
@@ -299,7 +299,7 @@ def offset_compute_export(data_confirmed, data_deaths):
     "build : " + today
 
 
-# In[99]:
+# In[15]:
 
 
 def final_df_exports(data_confirmed, data_deaths):
@@ -313,7 +313,7 @@ def data_import():
     return pd.read_csv('data/data_confirmed.csv'), pd.read_csv('data/data_deaths.csv'), countries
 
 
-# In[100]:
+# In[16]:
 
 
 def update_data():
@@ -345,15 +345,10 @@ def update_data():
 
 # # Graphs
 
-# In[ ]:
-
-
-
-
-
 # ## Function
+# This fonction builds and export graphs.
 
-# In[101]:
+# In[17]:
 
 
 def chart(data, data_rolling, countries, by_million_inh = False, align_curves = False, last_d = 15, offset_name = 'offset_confirmed', type_ppl = "confirmed cases", name_fig="", since=False, min_rate=0, log=False, new=""):
@@ -569,8 +564,9 @@ def chart(data, data_rolling, countries, by_million_inh = False, align_curves = 
 
 
 # ## Function calls
+# This block contains calls to above function for every chart.
 
-# In[102]:
+# In[18]:
 
 
 update_data()
@@ -726,13 +722,10 @@ for log in False, True:
     
 
 
-# In[103]:
+# # EXPERIMENTATIONS (SEIR model)
+# Currently not working.
 
-
-data_deaths
-
-
-# In[104]:
+# In[19]:
 
 
 # Define parameters
@@ -749,7 +742,7 @@ params = alpha, beta, gamma, rho
 # Run simulation
 
 
-# In[105]:
+# In[20]:
 
 
 def seir_model_with_soc_dist(init_vals, params, t):
@@ -769,184 +762,8 @@ def seir_model_with_soc_dist(init_vals, params, t):
     return np.stack([S, E, I, R]).T
 
 
-# In[106]:
+# In[21]:
 
 
 results = seir_model_with_soc_dist(init_vals, params, t)
-
-
-# # Dashboard
-
-# In[107]:
-
-
-"""import chart_studio.dashboard_objs as dashboard
-import IPython.display
-from IPython.display import Image
-
-my_dboard = dashboard.Dashboard()
-
-box_cases = {
-    'type': 'box',
-    'boxType': 'plot',
-    'fileId': 'worldice:12',
-    'title': 'scatter-for-dashboard'
-}
-box_cases_million = {
-    'type': 'box',
-    'boxType': 'plot',
-    'fileId': 'worldice:326',
-    'title': 'scatter-for-dashboard'
-}
-box_cases_aligned = {
-    'type': 'box',
-    'boxType': 'plot',
-    'fileId': 'worldice:328',
-    'title': 'scatter-for-dashboard'
-}
-box_cases_since = {
-    'type': 'box',
-    'boxType': 'plot',
-    'fileId': 'worldice:330',
-    'title': 'scatter-for-dashboard'
-}
-
-
-box_deaths = {
-    'type': 'box',
-    'boxType': 'plot',
-    'fileId': 'worldice:5',
-    'title': 'scatter-for-dashboard'
-}
-box_deaths_million = {
-    'type': 'box',
-    'boxType': 'plot',
-    'fileId': 'worldice:333',
-    'title': 'scatter-for-dashboard'
-}
-box_deaths_aligned = {
-    'type': 'box',
-    'boxType': 'plot',
-    'fileId': 'worldice:335',
-    'title': 'scatter-for-dashboard'
-}
-box_deaths_since = {
-    'type': 'box',
-    'boxType': 'plot',
-    'fileId': 'worldice:337',
-    'title': 'scatter-for-dashboard'
-}
-
-
-text_for_box="ha"
-box_text = {
-    'type': 'box',
-    'boxType': 'text',
-    'text': text_for_box,
-    'title': 'Markdown Options for Text Box'
-}
-
-my_dboard.insert(box_cases, 1)
-my_dboard.insert(box_cases_million, 'below', 1)
-my_dboard.insert(box_cases_aligned, 'below', 2)
-my_dboard.insert(box_cases_since, 'below', 3)
-
-my_dboard.insert(box_deaths, 'below', 4)
-my_dboard.insert(box_deaths_million, 'below', 5)
-my_dboard.insert(box_deaths_aligned, 'below', 6)
-my_dboard.insert(box_deaths_since, 'below', 7)
-
-my_dboard['layout']['size'] = 10000
-my_dboard['settings']['title'] = 'COVID-19 Stats - @guillaumerozier - data: worldometer'
-
-if show:
-    my_dboard.get_preview()
-print("done")"""
-
-
-# In[108]:
-
-
-"""import chart_studio.plotly as py
-
-py.dashboard_ops.upload(my_dboard, 'COVID-19 Europe Dashboard', auto_open=False)"""
-
-
-# ### Total cases (world)
-
-# In[109]:
-
-
-"""
-fig = go.Figure()
-
-last_d = len(df_confirmed)
-
-for col in df_confirmed.columns[2:]:
-    fig.add_trace(go.Scatter(x=df_confirmed['date'][-last_d:], y=df_confirmed[col][-last_d:],
-                    mode='lines+markers',
-                    name='{}'.format(col)))
-
-fig.update_layout(
-    title="COVID-19 total cases over time",
-    xaxis_title="Time (day)",
-    yaxis_title="COVID-19 total confirmed cases",
-    annotations = [dict(xref='paper',
-        yref='paper',
-        x=0, y=1.1,
-        showarrow=False,
-        text ='Last update: {} ; Last data: {}'.format(today, df_confirmed['date'].values[-1]))]
-)
-fig.update_xaxes(nticks = last_d)
-plotly.offline.plot(fig, filename = 'cases.html', auto_open=False)
-#fig.write_image('cases.png')
-if upload:
-    py.plot(fig, filename = 'cases', auto_open=False)
-    
-if show:
-    fig.show()
-    
-if export:
-    fig.write_image("images/cases.png", scale=8, width=1000, height=600)
-print("> graph 2 built")
-"""
-
-
-# In[110]:
-
-
-"""
-# -*- coding: utf-8 -*-
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
-
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-
-app.layout = html.Div(children=[
-    html.H1(children='Hello Dash'),
-
-    html.Div(children='''
-        Dash: A web application framework for Python.
-    '''),
-
-    dcc.Graph(
-        id='example-graph',
-        figure={
-            'data': [
-                {'x': [1, 2, 3], 'y': [4, 1, 2], 'type': 'bar', 'name': 'SF'},
-                {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
-            ],
-            'layout': {
-                'title': 'Dash Data Visualization'
-            }
-        }
-    )
-])
-
-if __name__ == '__main__':
-    app.run_server(debug=True)
-"""
 
