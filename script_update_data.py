@@ -51,7 +51,7 @@ def get_datetime_spf():
     return datetime_object
 
 def try_update_france():
-    datetime_spf = get_datetime_spf
+    datetime_spf = get_datetime_spf()
     
     if ( (dt.datetime.now() - datetime_spf).seconds/3600 <= 1): # Si le fichier SPF date d'il y à moins d'1h
         metadata = requests.get(url_metadata)
@@ -63,6 +63,10 @@ def try_update_france():
         # Mise à jour des graphiques
         subprocess.run(["sudo", "python3", "covid19_france_charts.py"])
         push("France")
+        print("update France: " + str(now.hour) + ":" + str(now.minute))
+        
+        subprocess.run(["sudo", "python3", "covid19_france_local_charts.py"])
+        push("France local subplots")
         print("update France: " + str(now.hour) + ":" + str(now.minute))
 
         subprocess.run(["sudo", "python3", "covid19_france_maps.py"])
@@ -81,7 +85,7 @@ print("will enter loop")
 
 while True:
     now = dt.datetime.now() 
-    if l%100:
+    if l%100 == 0:
         print("+100 itérations " + str(now))
     l+=1
     

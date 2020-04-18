@@ -4,7 +4,7 @@
 # # COVID-19 French Maps
 # Guillaume Rozier, 2020
 
-# In[12]:
+# In[44]:
 
 
 """
@@ -24,34 +24,35 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[25]:
+# In[45]:
 
 
-from covid19_france_charts import import_data
+import france_data_management as data
 import pandas as pd
 from tqdm import tqdm
 import json
 import plotly.express as px
 from datetime import datetime
 import imageio
+import multiprocessing
 import locale
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 
 # ## Data import
 
-# In[14]:
+# In[46]:
 
 
 # Import data from Santé publique France
-df, df_confirmed, dates, _, _ = import_data()
+df, df_confirmed, dates, _, _ = data.import_data()
 
 
-# In[15]:
+# In[47]:
 
 
 # Download and import data from INSEE
-dict_insee = pd.read_excel('data/france/deces_quotidiens_departement.xlsx', header=[3], index_col=None, sheet_name=None, usecols='A:H', nrows=31)
+dict_insee = pd.read_excel('data/france/deces_quotidiens_departement.xlsx', header=[3], index_col=None, sheet_name=None, usecols='A:H', nrows=37)
 dict_insee.pop('France')
 dict_insee.pop('Documentation')
 
@@ -69,11 +70,17 @@ df_insee['jour'] = df_insee['jour'].dt.strftime('%Y-%m-%d')
 dates_insee = list(dict.fromkeys(list(df_insee.dropna()['jour'].values))) 
 
 
-# In[16]:
+# In[48]:
 
 
 df_insee_france = df_insee.groupby('jour').sum().reset_index()
 df_insee_france["surmortalite20"] = (df_insee_france["dc20"] - df_insee_france["moy1819"])/df_insee_france["moy1819"]
+
+
+# In[49]:
+
+
+df_insee_france[df_insee_france["jour"] == "2020-04-06"]
 
 
 # <br>
@@ -81,7 +88,7 @@ df_insee_france["surmortalite20"] = (df_insee_france["dc20"] - df_insee_france["
 # 
 # ## Function definition
 
-# In[17]:
+# In[50]:
 
 
 with open('data/france/dep.geojson') as response:
@@ -243,38 +250,73 @@ def build_gif(file_gif, imgs_folder, dates):
 # 
 # ## Function calls
 
-# In[18]:
+# In[51]:
 
 
-# GIF carte nb réanimations par habitant
-imgs_folder = "images/charts/france/dep-map-img/{}.png"
-sub = 'Nombre de <b>personnes en réanimation</b> <br>par habitant de chaque département.'
-map_gif(dates, imgs_folder, df = df, type_ppl = "rea_deppop", legend_title="réan./100k hab", min_scale = 0, max_scale=-1, colorscale ="Reds", subtitle=sub)
-build_gif(file_gif = "images/charts/france/dep-map.gif", imgs_folder = "images/charts/france/dep-map-img/{}.png", dates=dates)
+def dep_map():
+    # GIF carte nb réanimations par habitant
+    imgs_folder = "images/charts/france/dep-map-img/{}.png"
+    sub = 'Nombre de <b>personnes en réanimation</b> <br>par habitant de chaque département.'
+    map_gif(dates, imgs_folder, df = df, type_ppl = "rea_deppop", legend_title="réan./100k hab", min_scale = 0, max_scale=-1, colorscale ="Reds", subtitle=sub)
+    build_gif(file_gif = "images/charts/france/dep-map.gif", imgs_folder = "images/charts/france/dep-map-img/{}.png", dates=dates)
 
 
-# In[19]:
+# In[52]:
 
 
-
-# GIF carte décès cumulés par habitant
-imgs_folder = "images/charts/france/dep-map-img-dc-cum/{}.png"
-sub = 'Nombre de <b>décès cumulés</b> <br>par habitant de chaque département.'
-map_gif(dates[1:], imgs_folder, df = df, type_ppl = "dc_deppop", legend_title="décès/100k hab", min_scale = 0, max_scale=-1, colorscale ="Reds", subtitle=sub)
-build_gif(file_gif = "images/charts/france/dep-map-dc-cum.gif", imgs_folder = "images/charts/france/dep-map-img-dc-cum/{}.png", dates=dates[1:])
-
-
-# In[20]:
+def dep_map_dc_cum():
+    # GIF carte décès cumulés par habitant
+    imgs_folder = "images/charts/france/dep-map-img-dc-cum/{}.png"
+    sub = 'Nombre de <b>décès cumulés</b> <br>par habitant de chaque département.'
+    map_gif(dates[1:], imgs_folder, df = df, type_ppl = "dc_deppop", legend_title="décès/100k hab", min_scale = 0, max_scale=-1, colorscale ="Reds", subtitle=sub)
+    build_gif(file_gif = "images/charts/france/dep-map-dc-cum.gif", imgs_folder = "images/charts/france/dep-map-img-dc-cum/{}.png", dates=dates[1:])
 
 
-# GIF carte décès quotidiens 
-imgs_folder = "images/charts/france/dep-map-img-dc-journ/{}.png"
-sub = 'Nombre de <b>décès quotidien</b> <br>par habitant de chaque département.'
-map_gif(dates[1:], imgs_folder, df = df, type_ppl = "dc_new_deppop", legend_title="décès/100k hab", min_scale = 0, max_scale=-1, colorscale ="Reds", subtitle=sub)
-build_gif(file_gif = "images/charts/france/dep-map-dc-journ.gif", imgs_folder = "images/charts/france/dep-map-img-dc-journ/{}.png", dates=dates[1:])
+# In[53]:
 
 
-# In[21]:
+def dep_map_dc_journ():
+    # GIF carte décès quotidiens 
+    imgs_folder = "images/charts/france/dep-map-img-dc-journ/{}.png"
+    sub = 'Nombre de <b>décès quotidien</b> <br>par habitant de chaque département.'
+    map_gif(dates[1:], imgs_folder, df = df, type_ppl = "dc_new_deppop", legend_title="décès/100k hab", min_scale = 0, max_scale=-1, colorscale ="Reds", subtitle=sub)
+    build_gif(file_gif = "images/charts/france/dep-map-dc-journ.gif", imgs_folder = "images/charts/france/dep-map-img-dc-journ/{}.png", dates=dates[1:])
+
+
+# In[58]:
+
+
+dep_map()
+dep_map_dc_cum()
+dep_map_dc_journ()
+
+
+# In[55]:
+
+
+"""def bestfunction(unefonc):
+    unefonc()
+    time.sleep(5)"""
+    
+"""pool = multiprocessing.Pool(processes=4) 
+pool.apply_async(bestfunction, [dep_map(), dep_map_dc_cum(), dep_map_dc_journ()])"""
+
+"""processes = []
+for i in (dep_map, dep_map_dc_cum, dep_map_dc_journ):
+    p = multiprocessing.Process(target = bestfunction, args=(i,))
+    processes.append(p)
+    p.start()
+
+for process in processes:
+    process.join()
+"""
+
+"""p = multiprocessing.Process(target=bestfunction, args=(dep_map(), dep_map_dc_cum(), dep_map_dc_journ()))
+p.start()
+p.join()"""
+
+
+# In[56]:
 
 
 """
@@ -287,12 +329,12 @@ map_gif(dates_insee, imgs_folder, df = df_insee.dropna(), type_ppl = ppl, legend
 build_gif(file_gif = "images/charts/france/dep-map-surmortalite.gif", imgs_folder = imgs_folder, dates=dates_insee)"""
 
 
-# In[22]:
+# In[57]:
 
 
-# Line chart évolution de la mortalité
+"""# Line chart évolution de la mortalité
 
-"""import plotly.graph_objects as go
+import plotly.graph_objects as go
 import plotly
 fig = go.Figure()
 

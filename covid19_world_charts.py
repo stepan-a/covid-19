@@ -4,7 +4,7 @@
 # # COVID-19 World Charts
 # Guillaume Rozier, 2020
 
-# In[3]:
+# In[498]:
 
 
 """
@@ -23,7 +23,7 @@ Data is download to/imported from 'data/'.
 """
 
 
-# In[4]:
+# In[499]:
 
 
 import requests
@@ -55,7 +55,7 @@ today = datetime.now().strftime("%Y-%m-%d %H:%M")
 
 # If you want to display charts here, please change "show" variable to True:
 
-# In[5]:
+# In[500]:
 
 
 upload = False
@@ -63,7 +63,7 @@ show = False
 export = True
 
 
-# In[6]:
+# In[501]:
 
 
 
@@ -84,7 +84,7 @@ if len(sys.argv) >= 4:
 
 # ## Functions
 
-# In[7]:
+# In[502]:
 
 
 def compute_offset(df, col_of_reference, col_to_align, countries):
@@ -116,7 +116,7 @@ def compute_offset(df, col_of_reference, col_to_align, countries):
 
 # #### Download data
 
-# In[8]:
+# In[503]:
 
 
 def download_data():
@@ -124,12 +124,13 @@ def download_data():
     #url_deaths = "https://cowid.netlify.com/data/total_deaths.csv"
     url_confirmed_csse = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"    
     url_deaths_csse = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"    
-
+    url_france_data = "https://raw.githubusercontent.com/opencovid19-fr/data/master/dist/chiffres-cles.csv"
 
     #r_confirmed = requests.get(url_confirmed)
     #r_deaths = requests.get(url_deaths)
     r_confirmed_csse = requests.get(url_confirmed_csse)
     r_deaths_csse = requests.get(url_deaths_csse)
+    r_france_data = requests.get(url_france_data)
 
     #with open('data/total_cases_who.csv', 'wb') as f:
         #f.write(r_confirmed.content)
@@ -142,6 +143,9 @@ def download_data():
 
     with open('data/total_deaths_csse.csv', 'wb') as f:
         f.write(r_deaths_csse.content)
+    
+    with open('data/france_data.csv', 'wb') as f:
+        f.write(r_france_data.content)
 
     print("> data downloaded")
     #"build : " + today
@@ -149,7 +153,7 @@ def download_data():
 
 # #### Import data and merge
 
-# In[9]:
+# In[504]:
 
 
 def import_files(): 
@@ -164,12 +168,13 @@ def import_files():
     # Perso data
     df_confirmed_perso = pd.read_csv('data/total_cases_perso.csv')
     df_deaths_perso = pd.read_csv('data/total_deaths_perso.csv')
+    df_france_data = pd.read_csv('data/france_data.csv')
 
     print("> data imported")
-    return df_confirmed_csse, df_deaths_csse, df_confirmed_perso, df_deaths_perso
+    return df_confirmed_csse, df_deaths_csse, df_confirmed_perso, df_deaths_perso, df_france_data
 
 
-# In[10]:
+# In[505]:
 
 
 def data_prep_csse(df0):
@@ -189,13 +194,34 @@ def data_prep_csse(df0):
 #"build : " + today
 
 
-# In[11]:
+# In[506]:
 
 
-def data_merge(data_confirmed, df_confirmed_perso, data_deaths, df_deaths_perso):
+def data_merge(data_confirmed, df_confirmed_perso, data_deaths, df_deaths_perso, df_france_data):
+    """data_confirmed['date'] = data_confirmed['date'].astype('datetime64[ns]') 
+    data_deaths['date'] = data_deaths['date'].astype('datetime64[ns]') 
+
+    df_france_data = df_france_data[df_france_data['granularite']=='pays']
+    df_france_data_deaths = pd.DataFrame()
+    df_france_data_deaths['date'] = df_france_data['date']
+    df_france_data_deaths['France'] = df_france_data['deces']
+    df_france_data_deaths = df_france_data_deaths.dropna().drop_duplicates(subset=['date'], keep='last').reset_index()
+    df_france_data_deaths['date'] = df_france_data_deaths['date'].astype('datetime64[ns]') 
+    #data_deaths = pd.merge(df_france_data_deaths, data_deaths, how='outer').drop_duplicates(subset=['date'])
+    #data_deaths = pd.merge(data_deaths[['date','France']], df_france_data_deaths, how='left') 
+    data_deaths.set_index('date').join(df_france_data_deaths.set_index('date'))
+    
+    df_france_data_confirmed = pd.DataFrame()
+    df_france_data_confirmed['date'] = df_france_data['date']
+    df_france_data_confirmed['France'] = df_france_data['cas_confirmes']
+    df_france_data_confirmed = df_france_data_confirmed.dropna().drop_duplicates(subset=['date']).reset_index()
+    df_france_data_confirmed['date'] = df_france_data_confirmed['date'].astype('datetime64[ns]') 
+    data_confirmed = pd.merge(data_confirmed, df_france_data_confirmed, how='outer').drop_duplicates(subset=['date'], keep='last')
+    """
     data_confirmed = pd.merge(data_confirmed, df_confirmed_perso, how='outer').drop_duplicates(subset='date')
     data_deaths = pd.merge(data_deaths, df_deaths_perso, how='outer').drop_duplicates(subset='date')
 
+    #######
     #date_int = [i for i in range(len(data_confirmed))]
     #data_confirmed["date_int"] = date_int
 
@@ -211,7 +237,7 @@ def data_merge(data_confirmed, df_confirmed_perso, data_deaths, df_deaths_perso)
     return data_confirmed, data_deaths
 
 
-# In[12]:
+# In[507]:
 
 
 def rolling(df):
@@ -249,10 +275,10 @@ def rolling(df):
 def final_data_prep(data_confirmed, data_confirmed_rolling, data_deaths, data_deaths_rolling):
     # Date conversion
     data_confirmed['date'] = data_confirmed['date'].astype('datetime64[ns]') 
-    data_confirmed_rolling['date'] = data_confirmed_rolling['date'].astype('datetime64[ns]') 
+    #data_confirmed_rolling['date'] = data_confirmed_rolling['date'].astype('datetime64[ns]') 
 
     data_deaths['date'] = data_deaths['date'].astype('datetime64[ns]') 
-    data_deaths_rolling['date'] = data_deaths_rolling['date'].astype('datetime64[ns]') 
+    #data_deaths_rolling['date'] = data_deaths_rolling['date'].astype('datetime64[ns]') 
 
     date_int = [i for i in range(len(data_confirmed))]
     data_confirmed["date_int"] = date_int
@@ -260,13 +286,10 @@ def final_data_prep(data_confirmed, data_confirmed_rolling, data_deaths, data_de
     date_int = [i for i in range(len(data_deaths))]
     data_deaths["date_int"] = date_int
     
-    #for c in countries:
-     #    data_deaths[c+"_new"] = data_deaths[c].diff()
-        #data_deaths.loc[vals.index, c+"_new"] = vals
     return data_confirmed, data_confirmed_rolling, data_deaths, data_deaths_rolling
 
 
-# In[13]:
+# In[508]:
 
 
 #print(data_confirmed_rolling.tail)
@@ -274,7 +297,7 @@ def final_data_prep(data_confirmed, data_confirmed_rolling, data_deaths, data_de
 
 # #### Informations on countries (population, offset)
 
-# In[14]:
+# In[509]:
 
 
 
@@ -299,7 +322,7 @@ def offset_compute_export(data_confirmed, data_deaths):
     "build : " + today
 
 
-# In[15]:
+# In[510]:
 
 
 def final_df_exports(data_confirmed, data_deaths):
@@ -313,27 +336,79 @@ def data_import():
     return pd.read_csv('data/data_confirmed.csv'), pd.read_csv('data/data_deaths.csv'), countries
 
 
-# In[16]:
+# In[511]:
 
 
 def update_data():
     # Data update:
     download_data()
-    df_confirmed_csse, df_deaths_csse, df_confirmed_perso, df_deaths_perso = import_files()
+    df_confirmed_csse, df_deaths_csse, df_confirmed_perso, df_deaths_perso, df_france_data = import_files()
 
     df_confirmed_csse = data_prep_csse(df_confirmed_csse)
     df_deaths_csse = data_prep_csse(df_deaths_csse)
 
-    data_confirmed, data_deaths = data_merge(df_confirmed_csse, df_confirmed_perso, df_deaths_csse, df_deaths_perso)
+    data_confirmed, data_deaths = data_merge(df_confirmed_csse, df_confirmed_perso, df_deaths_csse, df_deaths_perso, df_france_data)
 
-    data_confirmed_rolling = rolling(data_confirmed)
-    data_deaths_rolling = rolling(data_deaths)
+    #data_confirmed_rolling = rolling(data_confirmed)
+    #data_deaths_rolling = rolling(data_deaths)
 
-    data_confirmed, data_confirmed_rolling, data_deaths, data_deaths_rolling = final_data_prep(data_confirmed, data_confirmed_rolling, data_deaths, data_deaths_rolling)
-
+    data_confirmed, data_confirmed_rolling, data_deaths, data_deaths_rolling = final_data_prep(data_confirmed, "data_confirmed_rolling", data_deaths, "data_deaths_rolling")
+    
     offset_compute_export(data_confirmed, data_deaths)
 
     final_df_exports(data_confirmed, data_deaths)
+
+
+# In[512]:
+
+
+"""df_confirmed_csse, df_deaths_csse, df_confirmed_perso, df_deaths_perso, df_france_data = import_files()
+
+df_confirmed_csse = data_prep_csse(df_confirmed_csse)
+df_deaths_csse = data_prep_csse(df_deaths_csse)
+df_confirmed_csse['date'] = df_confirmed_csse['date'].astype('datetime64[ns]') 
+
+df_france_data = df_france_data[df_france_data['granularite']=='pays']
+
+
+
+df_france_data_deaths = pd.DataFrame()
+df_france_data_deaths['date'] = df_france_data['date']
+df_france_data_deaths['France'] = df_france_data['deces']
+df_france_data_deaths = df_france_data_deaths.dropna().drop_duplicates(subset=['date']).reset_index()
+#df_france_data_deaths['date'] = df_france_data_deaths['date'].astype('datetime64[ns]') 
+data_confirmed = pd.merge(data_deaths_csse, df_france_data_deaths, how='outer')
+
+
+
+df_france_data_confirmed = pd.DataFrame()
+df_france_data_confirmed['date'] = df_france_data['date']
+df_france_data_confirmed['France'] = df_france_data['cas_confirmes']
+df_france_data_confirmed = df_france_data_confirmed.dropna().drop_duplicates(subset=['date']).reset_index()
+df_france_data_confirmed['date'] = df_france_data_confirmed['date'].astype('datetime64[ns]') 
+data_confirmed = pd.merge(df_confirmed_csse, df_france_data_confirmed, how='outer')"""
+
+
+# In[514]:
+
+
+"""download_data()
+df_confirmed_csse, df_deaths_csse, df_confirmed_perso, df_deaths_perso, df_france_data = import_files()
+
+df_confirmed_csse = data_prep_csse(df_confirmed_csse)
+df_deaths_csse = data_prep_csse(df_deaths_csse)
+
+#data_confirmed['date'] = data_confirmed['date'].astype('datetime64[ns]') 
+data_deaths['date'] = data_deaths['date'].astype('datetime64[ns]') 
+
+
+df_france_data_confirmed = pd.DataFrame()
+df_france_data_confirmed['date'] = df_france_data['date']
+df_france_data_confirmed['France_corr'] = df_france_data['cas_confirmes']
+df_france_data_confirmed = df_france_data_confirmed.dropna().drop_duplicates(subset=['date']).reset_index()
+#df_france_data_confirmed['date'] = df_france_data_confirmed['date'].astype('datetime64[ns]') 
+data_confirmed = pd.merge(data_confirmed, df_france_data_confirmed, how='outer').drop_duplicates(subset=['date'], keep='last')
+data_confirmed.join(df_france_data_confirmed.set_index('date'), lsuffix='_caller', rsuffix='_other', on="date")"""
 
 
 # 
@@ -348,7 +423,7 @@ def update_data():
 # ## Function
 # This fonction builds and export graphs.
 
-# In[17]:
+# In[515]:
 
 
 def chart(data, data_rolling, countries, by_million_inh = False, align_curves = False, last_d = 15, offset_name = 'offset_confirmed', type_ppl = "confirmed cases", name_fig="", since=False, min_rate=0, log=False, new=""):
@@ -566,7 +641,7 @@ def chart(data, data_rolling, countries, by_million_inh = False, align_curves = 
 # ## Function calls
 # This block contains calls to above function for every chart.
 
-# In[18]:
+# In[516]:
 
 
 update_data()
@@ -725,7 +800,7 @@ for log in False, True:
 # # EXPERIMENTATIONS (SEIR model)
 # Currently not working.
 
-# In[19]:
+# In[517]:
 
 
 # Define parameters
@@ -742,7 +817,7 @@ params = alpha, beta, gamma, rho
 # Run simulation
 
 
-# In[20]:
+# In[518]:
 
 
 def seir_model_with_soc_dist(init_vals, params, t):
@@ -762,7 +837,7 @@ def seir_model_with_soc_dist(init_vals, params, t):
     return np.stack([S, E, I, R]).T
 
 
-# In[21]:
+# In[519]:
 
 
 results = seir_model_with_soc_dist(init_vals, params, t)
