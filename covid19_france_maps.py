@@ -4,7 +4,7 @@
 # # COVID-19 French Maps
 # Guillaume Rozier, 2020
 
-# In[44]:
+# In[29]:
 
 
 """
@@ -24,7 +24,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[45]:
+# In[30]:
 
 
 import france_data_management as data
@@ -41,14 +41,14 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 # ## Data import
 
-# In[46]:
+# In[31]:
 
 
 # Import data from Santé publique France
 df, df_confirmed, dates, _, _ = data.import_data()
 
 
-# In[47]:
+# In[32]:
 
 
 # Download and import data from INSEE
@@ -70,14 +70,14 @@ df_insee['jour'] = df_insee['jour'].dt.strftime('%Y-%m-%d')
 dates_insee = list(dict.fromkeys(list(df_insee.dropna()['jour'].values))) 
 
 
-# In[48]:
+# In[33]:
 
 
 df_insee_france = df_insee.groupby('jour').sum().reset_index()
 df_insee_france["surmortalite20"] = (df_insee_france["dc20"] - df_insee_france["moy1819"])/df_insee_france["moy1819"]
 
 
-# In[49]:
+# In[34]:
 
 
 df_insee_france[df_insee_france["jour"] == "2020-04-06"]
@@ -88,7 +88,7 @@ df_insee_france[df_insee_france["jour"] == "2020-04-06"]
 # 
 # ## Function definition
 
-# In[50]:
+# In[35]:
 
 
 with open('data/france/dep.geojson') as response:
@@ -250,7 +250,7 @@ def build_gif(file_gif, imgs_folder, dates):
 # 
 # ## Function calls
 
-# In[51]:
+# In[36]:
 
 
 def dep_map():
@@ -261,7 +261,7 @@ def dep_map():
     build_gif(file_gif = "images/charts/france/dep-map.gif", imgs_folder = "images/charts/france/dep-map-img/{}.png", dates=dates)
 
 
-# In[52]:
+# In[37]:
 
 
 def dep_map_dc_cum():
@@ -272,7 +272,7 @@ def dep_map_dc_cum():
     build_gif(file_gif = "images/charts/france/dep-map-dc-cum.gif", imgs_folder = "images/charts/france/dep-map-img-dc-cum/{}.png", dates=dates[1:])
 
 
-# In[53]:
+# In[38]:
 
 
 def dep_map_dc_journ():
@@ -283,7 +283,7 @@ def dep_map_dc_journ():
     build_gif(file_gif = "images/charts/france/dep-map-dc-journ.gif", imgs_folder = "images/charts/france/dep-map-img-dc-journ/{}.png", dates=dates[1:])
 
 
-# In[58]:
+# In[39]:
 
 
 dep_map()
@@ -291,7 +291,7 @@ dep_map_dc_cum()
 dep_map_dc_journ()
 
 
-# In[55]:
+# In[40]:
 
 
 """def bestfunction(unefonc):
@@ -316,7 +316,7 @@ p.start()
 p.join()"""
 
 
-# In[56]:
+# In[41]:
 
 
 """
@@ -329,7 +329,7 @@ map_gif(dates_insee, imgs_folder, df = df_insee.dropna(), type_ppl = ppl, legend
 build_gif(file_gif = "images/charts/france/dep-map-surmortalite.gif", imgs_folder = imgs_folder, dates=dates_insee)"""
 
 
-# In[57]:
+# In[42]:
 
 
 """# Line chart évolution de la mortalité

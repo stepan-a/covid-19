@@ -17,7 +17,7 @@ This file contains a script that automatically update data. In the morning it up
 """
 
 
-# In[123]:
+# In[2]:
 
 
 import datetime as dt
@@ -47,13 +47,19 @@ def get_datetime_spf():
     content = str(metadata.content)
     re_result = re.search("donnees-hospitalieres-nouveaux-covid19-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{2}h[0-9]{2}.csv", content)
     re_date = re.match(".*covid19-([0-9]{4})-([0-9]{2})-([0-9]{2})-([0-9]{2})h([0-9]{2}).csv", re_result[0])
-    datetime_object = dt.datetime.strptime(re_date[1] + re_date[2] + re_date[3] + re_date[4] + re_date[4], '%Y%m%d%H%M')
+    datetime_object = dt.datetime.strptime(re_date[1] + re_date[2] + re_date[3] + re_date[4] + re_date[5], '%Y%m%d%H%M')
     return datetime_object
 
 def try_update_france():
     datetime_spf = get_datetime_spf()
+    print("try update, now: "+ str(dt.datetime.now()))
+    print("datetime_spf: " + str(datetime_spf))
     
-    if ( (dt.datetime.now() - datetime_spf).seconds/3600 <= 1): # Si le fichier SPF date d'il y à moins d'1h
+    t1 = dt.datetime.now()
+    t2 = datetime_spf
+    print("diff t1 t2: {}".format(max(t1, t2) - min(t1, t2)) )
+    print("(max(t1, t2) - min(t1, t2)).total_seconds()/3600 = {}".format((max(t1, t2) - min(t1, t2)).total_seconds()/3600) )
+    if ( (max(t1, t2) - min(t1, t2)).total_seconds()/3600 <= 2 ): # Si le fichier SPF date d'il y à moins de 2h
         metadata = requests.get(url_metadata)
         content = str(metadata.content)
         
@@ -107,16 +113,19 @@ while True:
         print("update France pushed: " + str(now.hour) + ":" + str(now.minute))
         time.sleep(30)
         
-            
-    if ( (((now.hour == 18) & (now.minute >= 59)) or ((now.hour >= 19) & (now.hour<= 20))) ):
-        while ( (((now.hour == 18) & (now.minute >= 59)) or ((now.hour >= 19) & (now.hour<= 20))) & ( (now - datetime_spf).seconds/3600 > 2.5 ) ):
-            # Si l'heure comprise entre 18h59 et 21h59, ET les données PAS à jour depuis plus de 2h30
+    print(str(now.hour>=19))
+    print(str(now.hour))
+    if ( (((now.hour == 18) & (now.minute >= 58)) or ((now.hour >= 19) & (now.hour<= 20))) ):
+        print("if condition - now: {}, datetimes_spf: {}".format(now, datetime_spf))
+        while ( (((now.hour == 18) & (now.minute >= 59)) or ((now.hour >= 19) & (now.hour<= 20))) & ( (now - datetime_spf).total_seconds()/3600 > 2.5 ) ):
+            print("while loop - now: {}, datetimes_spf: {}".format(now, datetime_spf))            # Si l'heure comprise entre 18h59 et 21h59, ET les données PAS à jour depuis plus de 2h30
             now = dt.datetime.now()
             datetime_spf = try_update_france()
+            
             time.sleep(20)
             
     else: # S'il n'est pas entre 18h59 et 21h59
-        if( (now - datetime_spf).seconds/3600 > 20 ): # S'il s'est écoulé plus de 20h depuis la dernière update
+        if( (now - datetime_spf).total_seconds()/3600 > 20 ): # S'il s'est écoulé plus de 20h depuis la dernière update
             if (k%20 == 0): #Check 1 fois toutes les 20 sec * 30 (environ 10 min)
                 datetime_spf = try_update_france()
             k += 1

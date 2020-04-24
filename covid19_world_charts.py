@@ -4,7 +4,7 @@
 # # COVID-19 World Charts
 # Guillaume Rozier, 2020
 
-# In[498]:
+# In[1]:
 
 
 """
@@ -23,7 +23,7 @@ Data is download to/imported from 'data/'.
 """
 
 
-# In[499]:
+# In[2]:
 
 
 import requests
@@ -55,7 +55,7 @@ today = datetime.now().strftime("%Y-%m-%d %H:%M")
 
 # If you want to display charts here, please change "show" variable to True:
 
-# In[500]:
+# In[3]:
 
 
 upload = False
@@ -63,7 +63,7 @@ show = False
 export = True
 
 
-# In[501]:
+# In[4]:
 
 
 
@@ -84,7 +84,7 @@ if len(sys.argv) >= 4:
 
 # ## Functions
 
-# In[502]:
+# In[5]:
 
 
 def compute_offset(df, col_of_reference, col_to_align, countries):
@@ -116,7 +116,7 @@ def compute_offset(df, col_of_reference, col_to_align, countries):
 
 # #### Download data
 
-# In[503]:
+# In[6]:
 
 
 def download_data():
@@ -153,7 +153,7 @@ def download_data():
 
 # #### Import data and merge
 
-# In[504]:
+# In[7]:
 
 
 def import_files(): 
@@ -174,7 +174,7 @@ def import_files():
     return df_confirmed_csse, df_deaths_csse, df_confirmed_perso, df_deaths_perso, df_france_data
 
 
-# In[505]:
+# In[8]:
 
 
 def data_prep_csse(df0):
@@ -194,7 +194,7 @@ def data_prep_csse(df0):
 #"build : " + today
 
 
-# In[506]:
+# In[9]:
 
 
 def data_merge(data_confirmed, df_confirmed_perso, data_deaths, df_deaths_perso, df_france_data):
@@ -237,7 +237,7 @@ def data_merge(data_confirmed, df_confirmed_perso, data_deaths, df_deaths_perso,
     return data_confirmed, data_deaths
 
 
-# In[507]:
+# In[10]:
 
 
 def rolling(df):
@@ -289,7 +289,7 @@ def final_data_prep(data_confirmed, data_confirmed_rolling, data_deaths, data_de
     return data_confirmed, data_confirmed_rolling, data_deaths, data_deaths_rolling
 
 
-# In[508]:
+# In[11]:
 
 
 #print(data_confirmed_rolling.tail)
@@ -297,7 +297,7 @@ def final_data_prep(data_confirmed, data_confirmed_rolling, data_deaths, data_de
 
 # #### Informations on countries (population, offset)
 
-# In[509]:
+# In[12]:
 
 
 
@@ -322,7 +322,7 @@ def offset_compute_export(data_confirmed, data_deaths):
     "build : " + today
 
 
-# In[510]:
+# In[13]:
 
 
 def final_df_exports(data_confirmed, data_deaths):
@@ -336,7 +336,7 @@ def data_import():
     return pd.read_csv('data/data_confirmed.csv'), pd.read_csv('data/data_deaths.csv'), countries
 
 
-# In[511]:
+# In[14]:
 
 
 def update_data():
@@ -359,7 +359,7 @@ def update_data():
     final_df_exports(data_confirmed, data_deaths)
 
 
-# In[512]:
+# In[15]:
 
 
 """df_confirmed_csse, df_deaths_csse, df_confirmed_perso, df_deaths_perso, df_france_data = import_files()
@@ -389,7 +389,7 @@ df_france_data_confirmed['date'] = df_france_data_confirmed['date'].astype('date
 data_confirmed = pd.merge(df_confirmed_csse, df_france_data_confirmed, how='outer')"""
 
 
-# In[514]:
+# In[16]:
 
 
 """download_data()
@@ -423,7 +423,7 @@ data_confirmed.join(df_france_data_confirmed.set_index('date'), lsuffix='_caller
 # ## Function
 # This fonction builds and export graphs.
 
-# In[515]:
+# In[17]:
 
 
 def chart(data, data_rolling, countries, by_million_inh = False, align_curves = False, last_d = 15, offset_name = 'offset_confirmed', type_ppl = "confirmed cases", name_fig="", since=False, min_rate=0, log=False, new=""):
@@ -641,7 +641,7 @@ def chart(data, data_rolling, countries, by_million_inh = False, align_curves = 
 # ## Function calls
 # This block contains calls to above function for every chart.
 
-# In[516]:
+# In[18]:
 
 
 update_data()
@@ -800,7 +800,7 @@ for log in False, True:
 # # EXPERIMENTATIONS (SEIR model)
 # Currently not working.
 
-# In[517]:
+# In[19]:
 
 
 # Define parameters
@@ -817,7 +817,7 @@ params = alpha, beta, gamma, rho
 # Run simulation
 
 
-# In[518]:
+# In[20]:
 
 
 def seir_model_with_soc_dist(init_vals, params, t):
@@ -837,7 +837,7 @@ def seir_model_with_soc_dist(init_vals, params, t):
     return np.stack([S, E, I, R]).T
 
 
-# In[519]:
+# In[21]:
 
 
 results = seir_model_with_soc_dist(init_vals, params, t)
