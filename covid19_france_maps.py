@@ -4,7 +4,7 @@
 # # COVID-19 French Maps
 # Guillaume Rozier, 2020
 
-# In[29]:
+# In[18]:
 
 
 """
@@ -24,7 +24,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[30]:
+# In[19]:
 
 
 import france_data_management as data
@@ -41,18 +41,18 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 # ## Data import
 
-# In[31]:
+# In[20]:
 
 
 # Import data from Santé publique France
 df, df_confirmed, dates, _, _ = data.import_data()
 
 
-# In[32]:
+# In[21]:
 
 
 # Download and import data from INSEE
-dict_insee = pd.read_excel('data/france/deces_quotidiens_departement.xlsx', header=[3], index_col=None, sheet_name=None, usecols='A:H', nrows=37)
+dict_insee = pd.read_excel('data/france/deces_quotidiens_departement.xlsx', header=[3], index_col=None, sheet_name=None, usecols='A:H', nrows=44)
 dict_insee.pop('France')
 dict_insee.pop('Documentation')
 
@@ -70,14 +70,14 @@ df_insee['jour'] = df_insee['jour'].dt.strftime('%Y-%m-%d')
 dates_insee = list(dict.fromkeys(list(df_insee.dropna()['jour'].values))) 
 
 
-# In[33]:
+# In[22]:
 
 
 df_insee_france = df_insee.groupby('jour').sum().reset_index()
 df_insee_france["surmortalite20"] = (df_insee_france["dc20"] - df_insee_france["moy1819"])/df_insee_france["moy1819"]
 
 
-# In[34]:
+# In[23]:
 
 
 df_insee_france[df_insee_france["jour"] == "2020-04-06"]
@@ -88,7 +88,7 @@ df_insee_france[df_insee_france["jour"] == "2020-04-06"]
 # 
 # ## Function definition
 
-# In[35]:
+# In[24]:
 
 
 with open('data/france/dep.geojson') as response:
@@ -230,7 +230,7 @@ def map_gif(dates, imgs_folder, df, type_ppl, legend_title, min_scale, max_scale
 
 def build_gif(file_gif, imgs_folder, dates):
     i=0
-    with imageio.get_writer(file_gif, mode='I', duration=0.3) as writer: 
+    with imageio.get_writer(file_gif, mode='I', duration=0.2) as writer: 
         for date in tqdm(dates):
             image = imageio.imread(imgs_folder.format(date))
             writer.append_data(image)
@@ -250,7 +250,7 @@ def build_gif(file_gif, imgs_folder, dates):
 # 
 # ## Function calls
 
-# In[36]:
+# In[25]:
 
 
 def dep_map():
@@ -261,7 +261,7 @@ def dep_map():
     build_gif(file_gif = "images/charts/france/dep-map.gif", imgs_folder = "images/charts/france/dep-map-img/{}.png", dates=dates)
 
 
-# In[37]:
+# In[26]:
 
 
 def dep_map_dc_cum():
@@ -272,7 +272,7 @@ def dep_map_dc_cum():
     build_gif(file_gif = "images/charts/france/dep-map-dc-cum.gif", imgs_folder = "images/charts/france/dep-map-img-dc-cum/{}.png", dates=dates[1:])
 
 
-# In[38]:
+# In[27]:
 
 
 def dep_map_dc_journ():
@@ -283,7 +283,7 @@ def dep_map_dc_journ():
     build_gif(file_gif = "images/charts/france/dep-map-dc-journ.gif", imgs_folder = "images/charts/france/dep-map-img-dc-journ/{}.png", dates=dates[1:])
 
 
-# In[39]:
+# In[28]:
 
 
 dep_map()
@@ -291,7 +291,7 @@ dep_map_dc_cum()
 dep_map_dc_journ()
 
 
-# In[40]:
+# In[ ]:
 
 
 """def bestfunction(unefonc):
@@ -316,7 +316,7 @@ p.start()
 p.join()"""
 
 
-# In[41]:
+# In[ ]:
 
 
 """
@@ -329,7 +329,7 @@ map_gif(dates_insee, imgs_folder, df = df_insee.dropna(), type_ppl = ppl, legend
 build_gif(file_gif = "images/charts/france/dep-map-surmortalite.gif", imgs_folder = imgs_folder, dates=dates_insee)"""
 
 
-# In[42]:
+# In[ ]:
 
 
 """# Line chart évolution de la mortalité

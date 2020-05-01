@@ -95,7 +95,7 @@ while True:
         print("+100 itérations " + str(now))
     l+=1
     
-    if (now.hour >= 4) & (now.hour <= 7) & (world_update.day != now.day):
+    if (now.hour >= 4) & (now.hour <= 12) & (world_update.day != now.day):
         print("starting world update: {}:{}".format(str(now.hour), str(now.minute)))
         # S'il est 05h05
         

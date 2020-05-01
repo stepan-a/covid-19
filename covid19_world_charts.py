@@ -4,7 +4,7 @@
 # # COVID-19 World Charts
 # Guillaume Rozier, 2020
 
-# In[1]:
+# In[337]:
 
 
 """
@@ -23,7 +23,7 @@ Data is download to/imported from 'data/'.
 """
 
 
-# In[2]:
+# In[338]:
 
 
 import requests
@@ -39,6 +39,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 import plotly
+from plotly.subplots import make_subplots
 import chart_studio.plotly as py
 import sys
 import matplotlib.pyplot as plt
@@ -55,7 +56,7 @@ today = datetime.now().strftime("%Y-%m-%d %H:%M")
 
 # If you want to display charts here, please change "show" variable to True:
 
-# In[3]:
+# In[339]:
 
 
 upload = False
@@ -63,7 +64,7 @@ show = False
 export = True
 
 
-# In[4]:
+# In[340]:
 
 
 
@@ -84,7 +85,7 @@ if len(sys.argv) >= 4:
 
 # ## Functions
 
-# In[5]:
+# In[341]:
 
 
 def compute_offset(df, col_of_reference, col_to_align, countries):
@@ -116,7 +117,7 @@ def compute_offset(df, col_of_reference, col_to_align, countries):
 
 # #### Download data
 
-# In[6]:
+# In[342]:
 
 
 def download_data():
@@ -153,7 +154,7 @@ def download_data():
 
 # #### Import data and merge
 
-# In[7]:
+# In[343]:
 
 
 def import_files(): 
@@ -174,7 +175,7 @@ def import_files():
     return df_confirmed_csse, df_deaths_csse, df_confirmed_perso, df_deaths_perso, df_france_data
 
 
-# In[8]:
+# In[344]:
 
 
 def data_prep_csse(df0):
@@ -194,7 +195,7 @@ def data_prep_csse(df0):
 #"build : " + today
 
 
-# In[9]:
+# In[345]:
 
 
 def data_merge(data_confirmed, df_confirmed_perso, data_deaths, df_deaths_perso, df_france_data):
@@ -237,7 +238,7 @@ def data_merge(data_confirmed, df_confirmed_perso, data_deaths, df_deaths_perso,
     return data_confirmed, data_deaths
 
 
-# In[10]:
+# In[346]:
 
 
 def rolling(df):
@@ -289,7 +290,7 @@ def final_data_prep(data_confirmed, data_confirmed_rolling, data_deaths, data_de
     return data_confirmed, data_confirmed_rolling, data_deaths, data_deaths_rolling
 
 
-# In[11]:
+# In[347]:
 
 
 #print(data_confirmed_rolling.tail)
@@ -297,7 +298,7 @@ def final_data_prep(data_confirmed, data_confirmed_rolling, data_deaths, data_de
 
 # #### Informations on countries (population, offset)
 
-# In[12]:
+# In[348]:
 
 
 
@@ -322,7 +323,7 @@ def offset_compute_export(data_confirmed, data_deaths):
     "build : " + today
 
 
-# In[13]:
+# In[349]:
 
 
 def final_df_exports(data_confirmed, data_deaths):
@@ -336,7 +337,7 @@ def data_import():
     return pd.read_csv('data/data_confirmed.csv'), pd.read_csv('data/data_deaths.csv'), countries
 
 
-# In[14]:
+# In[350]:
 
 
 def update_data():
@@ -359,7 +360,7 @@ def update_data():
     final_df_exports(data_confirmed, data_deaths)
 
 
-# In[15]:
+# In[351]:
 
 
 """df_confirmed_csse, df_deaths_csse, df_confirmed_perso, df_deaths_perso, df_france_data = import_files()
@@ -389,7 +390,7 @@ df_france_data_confirmed['date'] = df_france_data_confirmed['date'].astype('date
 data_confirmed = pd.merge(df_confirmed_csse, df_france_data_confirmed, how='outer')"""
 
 
-# In[16]:
+# In[352]:
 
 
 """download_data()
@@ -423,7 +424,7 @@ data_confirmed.join(df_france_data_confirmed.set_index('date'), lsuffix='_caller
 # ## Function
 # This fonction builds and export graphs.
 
-# In[17]:
+# In[353]:
 
 
 def chart(data, data_rolling, countries, by_million_inh = False, align_curves = False, last_d = 15, offset_name = 'offset_confirmed', type_ppl = "confirmed cases", name_fig="", since=False, min_rate=0, log=False, new=""):
@@ -638,10 +639,176 @@ def chart(data, data_rolling, countries, by_million_inh = False, align_curves = 
     return fig
 
 
+# In[354]:
+
+
+#update_data()
+#data_confirmed, data_deaths, countries = data_import()
+data_confirmed_t = data_confirmed.T
+data_confirmed_t.columns = data_confirmed_t.iloc[len(data_confirmed_t)-2]
+data_confirmed_t = data_confirmed_t.drop(data_confirmed_t.index[-1])
+data_confirmed_t = data_confirmed_t.drop(data_confirmed_t.index[-1])
+data_confirmed_t = data_confirmed_t.drop(data_confirmed_t.index[0])
+
+data_deaths_t = data_deaths.T
+data_deaths_t.columns = data_deaths_t.iloc[len(data_deaths_t)-2]
+data_deaths_t = data_deaths_t.drop(data_deaths_t.index[-1])
+data_deaths_t = data_deaths_t.drop(data_deaths_t.index[-1])
+data_deaths_t = data_deaths_t.drop(data_deaths_t.index[0])
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[355]:
+
+
+for (data, name_var) in [(data_deaths_t, "deaths"), (data_confirmed_t, "confirmed")]: 
+    name_suffix="confirmed"
+    type_ppl = "cas positifs"
+    
+    if "death" in name_var:
+        name_suffix="deaths"
+        type_ppl = "décès"
+        
+    ni, nj = 3, 5
+    i, j = 1, 1
+
+    dates = data.columns.values
+
+    data = data.sort_values(by=[dates[-1]], ascending=False)
+    data = data.diff(axis=1).rolling(axis=1, window=4).mean()
+
+    countries_ordered = list(data.index.values[:15])
+    #countries_ordered[:11] + [""] + countries_ordered[11:14] + [""] + countries_ordered[14:]
+    max_value = 0
+
+    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles = ["<b>" + c + "</b>" for c in countries_ordered], vertical_spacing = 0.06, horizontal_spacing = 0.01)
+
+    sub = "<sub>par ordre décroissant du cumul total, moyenne mobile sur 4 jours  •  guillaumerozier.fr</sub>"
+
+    max_value_diff = 0
+
+    for country in countries_ordered:
+
+        data_c = data.loc[country].rolling(window=7).mean()
+        fig.add_trace(go.Bar(x = data.loc[country].index, y = data_c,
+                            marker=dict(color = data_c.diff(), coloraxis="coloraxis"), ),
+                      i, j)
+        max_value = max(max_value, data_c.max())
+        max_value_diff = max(max_value_diff, data_c.diff().max())
+
+        rangemin = "2020-02-02"
+
+        fig.update_xaxes(title_text="", range=[rangemin, "2020-05-05"], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, nticks=10, linewidth=1, linecolor='white', row=i, col=j)
+        fig.update_yaxes(title_text="", range=[0, max_value], gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
+
+        j+=1
+        if j == nj+1 : #or ((i >= 3) & (j == nj))
+            i+=1
+            j=1
+
+
+    for i in fig['layout']['annotations']:
+        i['font'] = dict(size=20)
+
+    #for annotation in fig['layout']['annotations']: 
+            #annotation ['x'] = 0.5
+    by_million_title = ""
+    by_million_legend = ""
+
+    fig.update_layout(
+        barmode="overlay",
+        margin=dict(
+            l=0,
+            r=25,
+            b=0,
+            t=160,
+            pad=0
+        ),
+        bargap=0,
+        paper_bgcolor='#fffdf5',#fcf8ed #faf9ed
+        plot_bgcolor='#f5f0e4',#f5f0e4 fcf8ed f0e8d5 
+        coloraxis=dict(colorscale=["green", "#ffc832", "#cf0000"], cmin=-max_value_diff/4, cmax=max_value_diff/4), 
+                    coloraxis_colorbar=dict(
+                        title="Nombre<br>quotidien<br>de {}<br>&#8205;<br>&#8205; ".format(type_ppl),
+                        thicknessmode="pixels", thickness=15,
+                        lenmode="pixels", len=600,
+                        yanchor="middle", y=0.5, xanchor="left", x=1.02,
+                        ticks="outside", tickprefix="  ", ticksuffix="",
+                        nticks=15,
+                        tickfont=dict(size=15),
+                        titlefont=dict(size=18)),
+
+                    showlegend=False,
+
+                     title={
+                        'text': ("COVID19 : <b>nombre de {} quotidiens</b><br>"+sub).format(type_ppl),
+                        'y':0.97,
+                        'x':0.5,
+                        'xref':"paper",
+                         'yref':"container",
+                        'xanchor': 'center',
+                        'yanchor': 'middle'},
+                        titlefont = dict(
+                        size=40,
+                        )
+    )
+
+    fig["layout"]["annotations"] += ( dict(
+                            x=0.9,
+                            y=0.015,
+                            xref='paper',
+                            yref='paper',
+                            xanchor='center',
+                            yanchor='top',
+                            text='Source :<br>Santé Publique France',
+                            showarrow = False,
+                            font=dict(size=12), 
+                            opacity=0.5
+                        ),)
+    
+
+    name_fig = "subplots_" + name_suffix
+    fig.write_image("images/charts/{}.png".format(name_fig), scale=2, width=3000, height=1650)
+
+    fig["layout"]["annotations"] += (
+                    dict(
+                        x=0.5,
+                        y=1,
+                        xref='paper',
+                        yref='paper',
+                        xanchor='center',
+                        text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
+                        showarrow = False
+                        ),
+                        )
+    plotly.offline.plot(fig, filename = 'images/html_exports/{}.html'.format(name_fig), auto_open=False)
+    print("> " + name_fig)
+
+
+    #fig.show()
+
+
+# In[ ]:
+
+
+
+
+
 # ## Function calls
 # This block contains calls to above function for every chart.
 
-# In[18]:
+# In[356]:
 
 
 update_data()
@@ -800,7 +967,7 @@ for log in False, True:
 # # EXPERIMENTATIONS (SEIR model)
 # Currently not working.
 
-# In[19]:
+# In[357]:
 
 
 # Define parameters
@@ -817,7 +984,7 @@ params = alpha, beta, gamma, rho
 # Run simulation
 
 
-# In[20]:
+# In[358]:
 
 
 def seir_model_with_soc_dist(init_vals, params, t):
@@ -837,7 +1004,7 @@ def seir_model_with_soc_dist(init_vals, params, t):
     return np.stack([S, E, I, R]).T
 
 
-# In[21]:
+# In[359]:
 
 
 results = seir_model_with_soc_dist(init_vals, params, t)

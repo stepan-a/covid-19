@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[11]:
+# In[23]:
 
 
 import france_data_management as data
@@ -22,7 +22,7 @@ colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.col
 
 # ## Data Import
 
-# In[12]:
+# In[24]:
 
 
 df, df_confirmed, dates, df_new, df_tests = data.import_data()
@@ -30,6 +30,9 @@ df, df_confirmed, dates, df_new, df_tests = data.import_data()
 df_region = df.groupby(['regionName', 'jour', 'regionPopulation']).sum().reset_index()
 df_region["hosp_regpop"] = df_region["hosp"] / df_region["regionPopulation"]*1000000 
 df_region["rea_regpop"] = df_region["rea"] / df_region["regionPopulation"]*1000000 
+df_region["dc_new_regpop"] = df_region["dc_new"] / df_region["regionPopulation"]*1000000 
+df_region["dc_new_regpop_rolling7"] = df_region["dc_new_regpop"].rolling(window=7).mean()
+df_region["dc_new_rolling7"] = df_region["dc_new"].rolling(window=7).mean()
 
 df_tests_tot = df_tests.groupby(['jour']).sum().reset_index()
 
@@ -47,11 +50,11 @@ regions = list(dict.fromkeys(list(df['regionName'].values)))
 # - nb de réanimations par habitant des régions,
 # et ce pour toutes les régions françaises
 
-# In[13]:
+# In[25]:
 
 
 
-for val in ["hosp_regpop", "hosp", "rea", "rea_regpop"]:
+for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
     ni, nj = 5, 4
     i, j = 1, 1
 
@@ -64,9 +67,15 @@ for val in ["hosp_regpop", "hosp", "rea", "rea_regpop"]:
     fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles=[ "<b>"+ str(r) +"</b>" for r in (regions_ordered[:11] + [""] + regions_ordered[11:14]+[""]+regions_ordered[14:])], vertical_spacing = 0.06, horizontal_spacing = 0.01)
     #&#8681;
     
+    sub = "<sub>{}par ordre décroissant des hospitalisations actuelles - guillaumerozier.fr</sub>"
     type_ppl = "hospitalisées"
+    
     if "rea" in val:
         type_ppl = "en réanimation"
+        
+    if "dc" in val:
+        type_ppl = "décédées"
+        sub = "<sub>par million d'habitants, moyenne mobile sur 7 jours - guillaumerozier.fr</sub>"
         
     df_nonobj = df_region.select_dtypes(exclude=['object'])
     df_nonobj['jour'] = df_region['jour']
@@ -91,9 +100,10 @@ for val in ["hosp_regpop", "hosp", "rea", "rea_regpop"]:
                             marker=dict(color = data_r[val + "_new"], coloraxis="coloraxis"), ),
                       i, j)
         
-        
-
-        fig.update_xaxes(title_text="", range=["2020-03-15", "2020-05-01"], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, nticks=10, linewidth=1, linecolor='white', row=i, col=j)
+        rangemin = "2020-03-15"
+        if "dc" in val:
+            rangemin = "2020-03-25"
+        fig.update_xaxes(title_text="", range=[rangemin, "2020-05-10"], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, nticks=10, linewidth=1, linecolor='white', row=i, col=j)
         fig.update_yaxes(title_text="", range=[0, max_value], gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
 
         j+=1
@@ -115,6 +125,8 @@ for val in ["hosp_regpop", "hosp", "rea", "rea_regpop"]:
     if "pop" in val:
         by_million_title = "pour 1 million d'habitants, "
         by_million_legend = "pour 1M. d'hab."
+    
+    
 
     fig.update_layout(
         barmode="overlay",
@@ -142,7 +154,7 @@ for val in ["hosp_regpop", "hosp", "rea", "rea_regpop"]:
                     showlegend=False,
     
                      title={
-                        'text': "COVID19 : <b>nombre de personnes {}</b><br><sub>{}par ordre décroissant des hospitalisations actuelles - guillaumerozier.fr</sub>".format(type_ppl, by_million_title),
+                        'text': ("COVID19 : <b>nombre de personnes {}</b><br>"+sub).format(type_ppl, by_million_title),
                         'y':0.97,
                         'x':0.5,
                         'xref':"paper",
@@ -206,7 +218,7 @@ for val in ["hosp_regpop", "hosp", "rea", "rea_regpop"]:
 # - nb d'hospitalisés par habitant des départements,
 # et ce pour toutes les régions françaises
 
-# In[14]:
+# In[26]:
 
 
 
@@ -405,7 +417,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
 # ## Subplots : départements - classé par régions
 # Idem précédent mais les départements sont rangés dans leurs régions, et les régions classées par ordre décroissant du nb de personnes
 
-# In[15]:
+# In[27]:
 
 
 
