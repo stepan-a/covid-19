@@ -4,7 +4,7 @@
 # # COVID-19 French Maps
 # Guillaume Rozier, 2020
 
-# In[18]:
+# In[31]:
 
 
 """
@@ -24,7 +24,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[19]:
+# In[1]:
 
 
 import france_data_management as data
@@ -41,14 +41,14 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 # ## Data import
 
-# In[20]:
+# In[2]:
 
 
 # Import data from Santé publique France
-df, df_confirmed, dates, _, _ = data.import_data()
+df, df_confirmed, dates, _, _, df_deconf, df_sursaud = data.import_data()
 
 
-# In[21]:
+# In[34]:
 
 
 # Download and import data from INSEE
@@ -70,14 +70,14 @@ df_insee['jour'] = df_insee['jour'].dt.strftime('%Y-%m-%d')
 dates_insee = list(dict.fromkeys(list(df_insee.dropna()['jour'].values))) 
 
 
-# In[22]:
+# In[35]:
 
 
 df_insee_france = df_insee.groupby('jour').sum().reset_index()
 df_insee_france["surmortalite20"] = (df_insee_france["dc20"] - df_insee_france["moy1819"])/df_insee_france["moy1819"]
 
 
-# In[23]:
+# In[36]:
 
 
 df_insee_france[df_insee_france["jour"] == "2020-04-06"]
@@ -88,11 +88,17 @@ df_insee_france[df_insee_france["jour"] == "2020-04-06"]
 # 
 # ## Function definition
 
-# In[24]:
+# In[47]:
 
 
 with open('data/france/dep.geojson') as response:
     depa = json.load(response)
+
+
+# In[37]:
+
+
+
     
 def map_gif(dates, imgs_folder, df, type_ppl, legend_title, min_scale, max_scale, colorscale, subtitle):
     i=1
@@ -240,6 +246,162 @@ def build_gif(file_gif, imgs_folder, dates):
                     writer.append_data(image)
 
 
+# In[38]:
+
+
+
+    
+def build_map(data_df, img_folder, legend_title="legend_title", title="title"):
+    dates_deconf = list(dict.fromkeys(list(data_df['extract_date'].values))) 
+    data = dates_deconf[-1]
+    
+    data_df = data_df[data_df["extract_date"] == date]
+
+    fig = px.choropleth(geojson = depa, 
+                        locations = data_df['departement'], 
+                        featureidkey="properties.code",
+                        color = data_df['indic_synthese'],
+                        scope='europe',
+                        #labels={'indic_synthese':"Couleur"},
+                        #color_discrete_sequence = ["green", "orange", "red"],
+                        color_discrete_map = {"vert":"green", "orange":"orange", "rouge":"red"}
+                        #category_orders = {"indic_synthese" :["vert", "orange", "rouge"]}
+                              )
+    date_title = datetime.strptime(dates_deconf[-1], '%Y-%m-%d').strftime('%d %B')
+
+    fig.update_geos(fitbounds="locations", visible=False)
+
+    fig.update_layout(
+        margin={"r":0,"t":0,"l":0,"b":0},
+        title={
+            'text': title,
+            'y':0.98,
+            'x':0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'},
+        
+        titlefont = dict(
+            size=30),
+        
+        annotations = [
+            dict(
+                x=0.54,
+                y=0.03,
+                xref='paper',
+                yref='paper',
+                xanchor = 'center',
+                text='Source : Ministère de la Santé. Auteur : @guillaumerozier.',
+                showarrow = False
+            ),
+
+            dict(
+                x=0.55,
+                y=0.94,
+                xref='paper',
+                yref='paper',
+                text= "Mis à jour le {}".format(date_title),
+                showarrow = False,
+                font=dict(
+                    size=20
+                        )
+            )]
+         ) 
+
+    fig.update_geos(
+        #center=dict(lon=-30, lat=-30),
+        projection_rotation=dict(lon=12, lat=30, roll=8),
+        #lataxis_range=[-50,20], lonaxis_range=[0, 200]
+    )
+    #fig.show()
+    if date == dates_deconf[-1]:
+        fig.write_image(img_folder.format("latest"), scale=2, width=1200, height=800)
+    fig.write_image(img_folder.format(date), scale=2, width=1200, height=800)
+
+
+# In[39]:
+
+
+build_map(df_deconf, img_folder="images/charts/france/deconf_synthese/{}.png", title="Départements déconfinés le 11/05")
+
+
+# In[ ]:
+
+
+def build_map_indic1(data_df, img_folder, legend_title="legend_title", title="title"):
+    dates_deconf = list(dict.fromkeys(list(data_df['extract_date'].values))) 
+    data = dates_deconf[-1]
+    
+    data_df = data_df[data_df["extract_date"] == date]
+
+    fig = px.choropleth(geojson = depa, 
+                        locations = data_df['departement'], 
+                        featureidkey="properties.code",
+                        color = data_df['indic_synthese'],
+                        scope='europe',
+                        #labels={'indic_synthese':"Couleur"},
+                        #color_discrete_sequence = ["green", "orange", "red"],
+                        color_discrete_map = {"vert":"green", "orange":"orange", "rouge":"red"}
+                        #category_orders = {"indic_synthese" :["vert", "orange", "rouge"]}
+                              )
+    date_title = datetime.strptime(dates_deconf[-1], '%Y-%m-%d').strftime('%d %B')
+
+    fig.update_geos(fitbounds="locations", visible=False)
+
+    fig.update_layout(
+        margin={"r":0,"t":0,"l":0,"b":0},
+        title={
+            'text': title,
+            'y':0.98,
+            'x':0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'},
+        
+        titlefont = dict(
+            size=30),
+        
+        annotations = [
+            dict(
+                x=0.54,
+                y=0.03,
+                xref='paper',
+                yref='paper',
+                xanchor = 'center',
+                text='Source : Ministère de la Santé. Auteur : @guillaumerozier.',
+                showarrow = False
+            ),
+
+            dict(
+                x=0.55,
+                y=0.94,
+                xref='paper',
+                yref='paper',
+                text= "Mis à jour le {}".format(date_title),
+                showarrow = False,
+                font=dict(
+                    size=20
+                        )
+            )]
+         ) 
+
+    fig.update_geos(
+        #center=dict(lon=-30, lat=-30),
+        projection_rotation=dict(lon=12, lat=30, roll=8),
+        #lataxis_range=[-50,20], lonaxis_range=[0, 200]
+    )
+    #fig.show()
+    if date == dates_deconf[-1]:
+        fig.write_image(img_folder.format("latest"), scale=2, width=1200, height=800)
+    fig.write_image(img_folder.format(date), scale=2, width=1200, height=800)
+    
+build_map_indic1(df_sursaud, img_folder="images/charts/france/deconf_indic1/{}.png", title="Indic 1")
+
+
+# In[3]:
+
+
+df_sursaud
+
+
 # <br>
 # 
 # <br>
@@ -250,7 +412,7 @@ def build_gif(file_gif, imgs_folder, dates):
 # 
 # ## Function calls
 
-# In[25]:
+# In[40]:
 
 
 def dep_map():
@@ -261,7 +423,7 @@ def dep_map():
     build_gif(file_gif = "images/charts/france/dep-map.gif", imgs_folder = "images/charts/france/dep-map-img/{}.png", dates=dates)
 
 
-# In[26]:
+# In[41]:
 
 
 def dep_map_dc_cum():
@@ -272,7 +434,7 @@ def dep_map_dc_cum():
     build_gif(file_gif = "images/charts/france/dep-map-dc-cum.gif", imgs_folder = "images/charts/france/dep-map-img-dc-cum/{}.png", dates=dates[1:])
 
 
-# In[27]:
+# In[42]:
 
 
 def dep_map_dc_journ():
@@ -283,7 +445,7 @@ def dep_map_dc_journ():
     build_gif(file_gif = "images/charts/france/dep-map-dc-journ.gif", imgs_folder = "images/charts/france/dep-map-img-dc-journ/{}.png", dates=dates[1:])
 
 
-# In[28]:
+# In[43]:
 
 
 dep_map()
@@ -291,7 +453,7 @@ dep_map_dc_cum()
 dep_map_dc_journ()
 
 
-# In[ ]:
+# In[44]:
 
 
 """def bestfunction(unefonc):
@@ -316,7 +478,7 @@ p.start()
 p.join()"""
 
 
-# In[ ]:
+# In[45]:
 
 
 """
@@ -329,7 +491,7 @@ map_gif(dates_insee, imgs_folder, df = df_insee.dropna(), type_ppl = ppl, legend
 build_gif(file_gif = "images/charts/france/dep-map-surmortalite.gif", imgs_folder = imgs_folder, dates=dates_insee)"""
 
 
-# In[ ]:
+# In[46]:
 
 
 """# Line chart évolution de la mortalité

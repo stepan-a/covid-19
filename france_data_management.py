@@ -18,7 +18,8 @@ def download_data():
     pbar = tqdm(total=8)
     url_metadata = "https://www.data.gouv.fr/fr/organizations/sante-publique-france/datasets-resources.csv"
     url_geojson = "https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/departements.geojson"
-    url_deconf = "https://www.data.gouv.fr/fr/datasets/r/c50efb6f-a967-4a5a-812e-4f311a577629"
+    url_deconf = "https://www.data.gouv.fr/fr/datasets/r/f2d0f955-f9c4-43a8-b588-a03733a38921"
+    
     pbar.update(1)
     metadata = requests.get(url_metadata)
     pbar.update(2)
@@ -37,12 +38,14 @@ def download_data():
     url_data = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-covid19")]["url"].values[0]
     url_data_new = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-nouveaux")]["url"].values[0]
     url_tests = df_metadata[df_metadata['url'].str.contains("/donnees-tests-covid19-labo-quotidien")]["url"].values[0]
+    url_sursaud = df_metadata[df_metadata['url'].str.contains("sursaud.*departement")]["url"].values[0]
     
     pbar.update(6)
     data = requests.get(url_data)
     data_new = requests.get(url_data_new)
     data_tests = requests.get(url_tests)
     data_deconf = requests.get(url_deconf)
+    data_sursaud = requests.get(url_sursaud)
     
     pbar.update(7)
     with open('data/france/donnes-hospitalieres-covid19.csv', 'wb') as f:
@@ -56,6 +59,9 @@ def download_data():
         
     with open('data/france/indicateurs-deconf.csv', 'wb') as f:
         f.write(data_deconf.content)
+    
+    with open('data/france/sursaud-covid19-departement.csv', 'wb') as f:
+        f.write(data_sursaud.content)
         
     pbar.update(8)
 
@@ -66,6 +72,7 @@ def import_data():
     pbar = tqdm(total=4)
     pbar.update(1)
     df = pd.read_csv('data/france/donnes-hospitalieres-covid19.csv', sep=";")
+    df_sursaud = pd.read_csv('data/france/sursaud-covid19-departement.csv', sep=",")
     df_new = pd.read_csv('data/france/donnes-hospitalieres-covid19-nouveaux.csv', sep=";")
     df_tests = pd.read_csv('data/france/donnes-tests-covid19-quotidien.csv', sep=";")
     df_deconf = pd.read_csv('data/france/indicateurs-deconf.csv', sep=";")
@@ -115,5 +122,5 @@ def import_data():
     df_tests = df_tests.drop(['nb_test_h', 'nb_pos_h', 'nb_test_f', 'nb_pos_f'], axis=1)
     df_tests = df_tests[df_tests['clage_covid'] == "0"]
     
-    return df, df_confirmed, dates, df_new, df_tests, df_deconf
+    return df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud
 
