@@ -34,7 +34,7 @@
     data-tags="%7B%22udata%22%3A%20%222.0.3%22%2C%20%22udata-ckan%22%3A%20%222.0.0%22%2C%20%22udata-croquemort%22%3A%20%222.0.0%22%2C%20%22udata-data-fair%22%3A%20%220.3.1%22%2C%20%22udata-geoplatform%22%3A%20%222.0.0%22%2C%20%22udata-gouvfr%22%3A%20%222.0.2%22%2C%20%22udata-ods%22%3A%20%222.0.0%22%2C%20%22udata-piwik%22%3A%20%222.0.2%22%2C%20%22udata-recommendations%22%3A%20%222.0.0%22%2C%20%22udata-tabular-preview%22%3A%20%222.0.0%22%7D"
 />
 
-<meta name="csrf-token" content="IjU5ODNlZTgxMmY5ZjBkM2QzYzJmMTZjMWI1ODcyZGQ2MWYxNmE2ZWEi.XqzUYQ.GKMUWEcOVgH-c-hIOmXZsJBR9Vk" />
+<meta name="csrf-token" content="Ijg0ZjMwMzcyMTZjZDU2MTg0MmQxMTk4N2M0NWZmYzY2ZTQzNzk1Nzci.Xq2nPQ.Jl-AXAwH7_Xz740l5etLa3755eY" />
 <meta name="site-title" content="data.gouv.fr" />
 
 
@@ -294,7 +294,7 @@
                     </li>
                     
                     <li>
-                        <a href="https://www.data.gouv.fr/es/datasets/catalogue-des-donnees-de-data-gouv-fr/">Catalogue des données</a>
+                        <a href="https://www.data.gouv.fr/fr/datasets/catalogue-des-donnees-de-data-gouv-fr/">Catalogue des données</a>
                         
                     </li>
                     
