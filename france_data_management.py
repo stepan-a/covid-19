@@ -75,7 +75,7 @@ def import_data():
     df_sursaud = pd.read_csv('data/france/sursaud-covid19-departement.csv', sep=",")
     df_new = pd.read_csv('data/france/donnes-hospitalieres-covid19-nouveaux.csv', sep=";")
     df_tests = pd.read_csv('data/france/donnes-tests-covid19-quotidien.csv', sep=";")
-    df_deconf = pd.read_csv('data/france/indicateurs-deconf.csv', sep=";")
+    df_deconf = pd.read_csv('data/france/indicateurs-deconf.csv', sep=",")
     
     df_regions = pd.read_csv('data/france/departments_regions_france_2016.csv', sep=",")
     df_reg_pop = pd.read_csv('data/france/population_grandes_regions.csv', sep=",")

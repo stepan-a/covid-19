@@ -4,7 +4,7 @@
 # # COVID-19 French Charts
 # Guillaume Rozier, 2020
 
-# In[43]:
+# In[61]:
 
 
 """
@@ -26,7 +26,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[2]:
+# In[62]:
 
 
 from multiprocessing import Pool
@@ -51,16 +51,16 @@ show_charts = False
 
 # # Data download and import
 
-# In[3]:
+# In[63]:
 
 
 data.download_data()
 
 
-# In[46]:
+# In[64]:
 
 
-df, df_confirmed, dates, df_new, df_tests, df_deconf = data.import_data()
+df, df_confirmed, dates, df_new, df_tests, df_deconf, _ = data.import_data()
 
 df_region = df.groupby(['regionName', 'jour', 'regionPopulation']).sum().reset_index()
 df_region["hosp_regpop"] = df_region["hosp"] / df_region["regionPopulation"]*1000000 
@@ -74,13 +74,13 @@ df_france = df.groupby('jour').sum().reset_index()
 regions = list(dict.fromkeys(list(df['regionName'].values))) 
 
 
-# In[47]:
+# In[65]:
 
 
 df_deconf
 
 
-# In[48]:
+# In[66]:
 
 
 #Calcul sorties de réa
@@ -100,7 +100,7 @@ df_france_last15 = df_france[ df_france["jour"].isin(dates[-19:]) ]
 df_tests_tot_last15 = df_tests_tot[ df_tests_tot["jour"].isin(dates[-19:]) ]
 
 
-# In[49]:
+# In[67]:
 
 
 df_tests_tot.sum()
@@ -110,7 +110,7 @@ df_tests_tot.sum()
 
 # ## Variation journée
 
-# In[50]:
+# In[68]:
 
 
 #VAR JOURN
@@ -208,7 +208,7 @@ if show_charts:
 
 # ## Evolution jorunée
 
-# In[51]:
+# In[69]:
 
 
 #EVOL JOURN
@@ -249,6 +249,14 @@ fig.add_trace(go.Bar(
 
 # Here we modify the tickangle of the xaxis, resulting in rotated labels.
 fig.update_layout(
+    legend_orientation="h",
+    margin=dict(
+            l=0,
+            r=0,
+            b=0,
+            t=80,
+            pad=0
+        ),
     #paper_bgcolor='#fffbed',#fcf8ed #faf9ed
     #plot_bgcolor='#f5f0e4',#f5f0e4 fcf8ed f0e8d5
     barmode='group',
@@ -277,7 +285,7 @@ fig.update_layout(
                  )
 
 name_fig = "evol_journ"
-fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1400, height=800)
+fig.write_image("images/charts/france/{}.png".format(name_fig), scale=2, width=1600, height=800)
 
 fig.update_layout(
     legend_orientation="h",
@@ -300,7 +308,7 @@ if show_charts:
 
 # ## Tests Covid
 
-# In[52]:
+# In[70]:
 
 
 # TESTS
@@ -378,7 +386,7 @@ if show_charts:
 
 # ## Entrées/Sortires hosp et réa
 
-# In[53]:
+# In[71]:
 
 
 fig = go.Figure()
@@ -500,7 +508,7 @@ if show_charts:
 # ## Entrées/Sorties hosp et réa - rolling mean (7 days)
 # La moyenne glissante sur 4 jours permet de lisser les effets liés aux week-ends (moins de saisies de données, donc il y a un trou) et d'évaluer la tendance.
 
-# In[54]:
+# In[72]:
 
 
 fig = go.Figure()
@@ -619,7 +627,7 @@ if show_charts:
 
 # ## Hospitalisations (bar chart)
 
-# In[55]:
+# In[73]:
 
 
 """fig = go.Figure()
@@ -694,7 +702,7 @@ if show_charts:
 
 # ## Hospitalisations et réanimations (bar charts subplot)
 
-# In[56]:
+# In[74]:
 
 
 
@@ -798,7 +806,7 @@ print("> " + name_fig)
 #fig.show()
 
 
-# In[57]:
+# In[75]:
 
 
 
@@ -889,7 +897,7 @@ print("> " + name_fig)
 # ## Situation cas (bar chart)
 # Où en sont les personnes atteintes du Covid (retour à domicile, décédées, en réa, hosp ou autre)
 
-# In[58]:
+# In[76]:
 
 
 
@@ -974,7 +982,7 @@ if show_charts:
 
 # ## Décès hospitalisations et réanimations (line chart)
 
-# In[59]:
+# In[77]:
 
 
 df_france = df.groupby('jour').sum().reset_index()
@@ -1040,7 +1048,7 @@ print("> " + name_fig)
 
 # ## Décès cumulés (line chart)
 
-# In[60]:
+# In[78]:
 
 
 
@@ -1076,7 +1084,7 @@ if show_charts:
     fig.show()
 
 
-# In[61]:
+# In[79]:
 
 
 
@@ -1114,7 +1122,7 @@ if show_charts:
 
 # ## Hospitalisations
 
-# In[62]:
+# In[80]:
 
 
 
@@ -1152,7 +1160,7 @@ if show_charts:
 
 # ## Hospitalisations (entrées - sorties) (line chart)
 
-# In[63]:
+# In[81]:
 
 
 
@@ -1190,7 +1198,7 @@ if show_charts:
 
 # ## Admissions en hospitalisation (line chart)
 
-# In[64]:
+# In[82]:
 
 
 
@@ -1228,7 +1236,7 @@ if show_charts:
 
 # ## Réanimations par région (line chart)
 
-# In[65]:
+# In[83]:
 
 
 fig = px.line(x=df_region['jour'], y=df_region['rea'], color=df_region["regionName"], color_discrete_sequence=colors).update_traces(mode='lines+markers', marker_size=7.5, line=dict(width=2.5))
@@ -1264,7 +1272,7 @@ if show_charts:
 
 # ## Réanimations par département (line chart)
 
-# In[66]:
+# In[84]:
 
 
 df_last_d = df[df['jour'] == dates[-1]]
@@ -1324,7 +1332,7 @@ if show_charts:
 
 # ## Hospitalisations par département (line chart)
 
-# In[67]:
+# In[85]:
 
 
 df_last_d = df[df['jour'] == dates[-1]]
@@ -1386,7 +1394,7 @@ if show_charts:
 # 
 # ## Hospitalisations par habitant / région
 
-# In[68]:
+# In[86]:
 
 
 """
@@ -1437,7 +1445,7 @@ if show_charts:
 # 
 # ## Capacité réanimation (line chart)
 
-# In[69]:
+# In[87]:
 
 
 """
@@ -1510,7 +1518,7 @@ if show_charts:
 # 
 # ## Décès cumulés (région)
 
-# In[70]:
+# In[88]:
 
 
 fig = px.line(x=df_region['jour'], y=df_region['dc'], color=df_region["regionName"], labels={'color':'Région'}, color_discrete_sequence=colors).update_traces(mode='lines+markers')
@@ -1559,7 +1567,7 @@ if show_charts:
 
 # ## Nouveaux décès quotidiens (line chart)
 
-# In[71]:
+# In[89]:
 
 
 fig = px.line(x=df_new_region['jour'], y=df_new_region['incid_dc'].rolling(window=7).mean(), color=df_new_region["regionName"], labels={'color':'Région'}, color_discrete_sequence=colors).update_traces(mode='lines+markers')
@@ -1610,7 +1618,7 @@ if show_charts:
 # 
 # ## Décès cumulés par habitant (région)
 
-# In[72]:
+# In[90]:
 
 
 """
@@ -1670,7 +1678,7 @@ if show_charts:
 # 
 # ## Décès cumulés par région / temps
 
-# In[73]:
+# In[91]:
 
 
 fig = px.bar(x=df_region['jour'], y = df_region['dc'], color=df_region["regionName"], labels={'color':'Région'}, color_discrete_sequence=colors, opacity=0.9)
@@ -1723,7 +1731,7 @@ if show_charts:
 # 
 # ## Décès cumulés par région / 3 derniers jours
 
-# In[74]:
+# In[92]:
 
 
 
@@ -1813,7 +1821,7 @@ if show_charts:
 # 
 # ## Décès cumulés VS. Décès cumulés par habitant / région
 
-# In[75]:
+# In[93]:
 
 
 fig = go.Figure()
@@ -1890,7 +1898,7 @@ if show_charts:
 # 
 # ## Situation des malades / région
 
-# In[76]:
+# In[94]:
 
 
 #df_region_sumj = df_region.groupby('regionName').sum().reset_index()
@@ -1900,7 +1908,7 @@ df_region_sumj = pd.melt(df_region_sumj, id_vars=['regionName'], value_vars=['ra
 df_region_sumj.drop(df_region_sumj[df_region_sumj['regionName'].isin(['Guyane', 'Mayote', 'La Réunion', 'Guadeloupe', 'Martinique'])].index, inplace = True)
 
 
-# In[77]:
+# In[95]:
 
 
 data = df_region_sumj[df_region_sumj["variable"] == "dc"]
@@ -1968,7 +1976,7 @@ if show_charts:
 # 
 # ## Situation des malades par habitant / région
 
-# In[78]:
+# In[96]:
 
 
 df_region_sumj = df_region[df_region['jour'] == dates[-1]]
@@ -1976,7 +1984,7 @@ df_region_sumj = pd.melt(df_region_sumj, id_vars=['regionName'], value_vars=['ra
 df_region_sumj.drop(df_region_sumj[df_region_sumj['regionName'].isin(['Guyane', 'Mayote', 'La Réunion', 'Guadeloupe', 'Martinique'])].index, inplace = True)
 
 
-# In[79]:
+# In[97]:
 
 
 """data = df_region_sumj[df_region_sumj["variable"] == "dc_pop"]
@@ -2047,7 +2055,7 @@ if show_charts:
 # 
 # # Expérimentations (brouillon)
 
-# In[80]:
+# In[98]:
 
 
 """

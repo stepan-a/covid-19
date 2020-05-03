@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[23]:
+# In[7]:
 
 
 import france_data_management as data
@@ -22,10 +22,10 @@ colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.col
 
 # ## Data Import
 
-# In[24]:
+# In[8]:
 
 
-df, df_confirmed, dates, df_new, df_tests = data.import_data()
+df, df_confirmed, dates, df_new, df_tests, _, _ = data.import_data()
 
 df_region = df.groupby(['regionName', 'jour', 'regionPopulation']).sum().reset_index()
 df_region["hosp_regpop"] = df_region["hosp"] / df_region["regionPopulation"]*1000000 
@@ -50,7 +50,7 @@ regions = list(dict.fromkeys(list(df['regionName'].values)))
 # - nb de réanimations par habitant des régions,
 # et ce pour toutes les régions françaises
 
-# In[25]:
+# In[9]:
 
 
 
@@ -218,7 +218,7 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
 # - nb d'hospitalisés par habitant des départements,
 # et ce pour toutes les régions françaises
 
-# In[26]:
+# In[10]:
 
 
 
@@ -417,7 +417,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
 # ## Subplots : départements - classé par régions
 # Idem précédent mais les départements sont rangés dans leurs régions, et les régions classées par ordre décroissant du nb de personnes
 
-# In[27]:
+# In[11]:
 
 
 
