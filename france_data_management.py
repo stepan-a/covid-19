@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[5]:
+# In[2]:
 
 
 import requests
@@ -10,7 +10,7 @@ import json
 from tqdm import tqdm
 
 
-# In[1]:
+# In[13]:
 
 
 # Download data from Santé publique France and export it to local files
@@ -93,6 +93,10 @@ def import_data():
     df_new = df_new.merge(df_dep_pop, left_on='dep', right_on='dep')
     df_new['incid_hosp_nonrea'] = df_new['incid_hosp'] - df_new['incid_rea']
     
+    df_sursaud = df_sursaud.merge(df_regions, left_on='dep', right_on='departmentCode')
+    df_sursaud = df_sursaud.merge(df_reg_pop, left_on='regionName', right_on='regionName')
+    df_sursaud = df_sursaud.merge(df_dep_pop, left_on='dep', right_on='dep')
+    
     pbar.update(2)
     
     df['rea_pop'] = df['rea']/df['regionPopulation']*100000
@@ -123,4 +127,16 @@ def import_data():
     df_tests = df_tests[df_tests['clage_covid'] == "0"]
     
     return df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud
+
+
+# In[15]:
+
+
+df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud = import_data()
+
+
+# In[16]:
+
+
+df_sursaud
 
