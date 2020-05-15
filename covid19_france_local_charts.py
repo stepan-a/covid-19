@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[44]:
 
 
 import france_data_management as data
@@ -14,10 +14,12 @@ import plotly.express as px
 import numpy as np
 colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.colors.qualitative.Plotly + px.colors.qualitative.Dark24 + px.colors.qualitative.Alphabet
 
+last_day_plot = "2020-05-15"
+
 
 # ## Data Import
 
-# In[2]:
+# In[45]:
 
 
 df, df_confirmed, dates, df_new, df_tests, _, df_sursaud = data.import_data()
@@ -48,7 +50,7 @@ lits_reas = pd.read_csv('data/france/lits_rea.csv', sep=",")
 # - nb de réanimations par habitant des régions,
 # et ce pour toutes les régions françaises
 
-# In[59]:
+# In[46]:
 
 
 
@@ -76,7 +78,7 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
         sub = "<sub>par million d'habitants, moyenne mobile sur 7 jours - guillaumerozier.fr</sub>"
         
     df_nonobj = df_region.select_dtypes(exclude=['object'])
-    df_nonobj['jour'] = df_region['jour']
+    df_nonobj.loc[:,'jour'] = df_region.loc[:, 'jour']
     
     vals_quantiles=[]
     for q in range(25, 125, 25):
@@ -85,7 +87,8 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
     for region in regions_ordered:
         data_r = df_region[df_region["regionName"] == region]
         
-        data_r[val + "_new"] = data_r[val].diff()
+        #data_r[val + "_new"] = data_r[val].diff()
+        data_r.loc[:, val + "_new"] = data_r.loc[:, val].diff()
         ordered_values = df_region.sort_values(by=[val + "_new"], ascending=False)[val + "_new"]
         max_value_diff = ordered_values.quantile(.90)
         
@@ -101,7 +104,7 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
         rangemin = "2020-03-15"
         if "dc" in val:
             rangemin = "2020-03-25"
-        fig.update_xaxes(title_text="", range=[rangemin, "2020-05-10"], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, nticks=10, linewidth=1, linecolor='white', row=i, col=j)
+        fig.update_xaxes(title_text="", range=[rangemin, last_day_plot], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, nticks=10, linewidth=1, linecolor='white', row=i, col=j)
         fig.update_yaxes(title_text="", range=[0, max_value], gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
 
         j+=1
@@ -216,7 +219,7 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
 # - nb d'hospitalisés par habitant des départements,
 # et ce pour toutes les régions françaises
 
-# In[60]:
+# In[47]:
 
 
 
@@ -259,7 +262,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #&#8681;
     
     df_nonobj = df.select_dtypes(exclude=['object'])
-    df_nonobj['jour'] = df['jour']
+    df_nonobj.loc[:, 'jour'] = df.loc[:, 'jour']
     
     vals_quantiles=[]
     for q in range(25, 125, 25):
@@ -274,7 +277,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     for dep in tqdm(deps_ordered):
         data_dep = df[df["departmentName"] == dep]
         
-        data_dep[val + "_new"] = data_dep[val].diff()
+        data_dep.loc[:, val + "_new"] = data_dep.loc[:, val].diff()
         ordered_values = data_dep.sort_values(by=[val + "_new"], ascending=False)[val + "_new"]
         max_values_diff += [ordered_values.quantile(.90)]
         
@@ -415,7 +418,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
 # ## Subplots : départements - classé par régions
 # Idem précédent mais les départements sont rangés dans leurs régions, et les régions classées par ordre décroissant du nb de personnes
 
-# In[61]:
+# In[48]:
 
 
 
@@ -461,7 +464,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #&#8681;
     
     df_nonobj = df.select_dtypes(exclude=['object'])
-    df_nonobj['jour'] = df['jour']
+    df_nonobj.loc[:,'jour'] = df.loc[:,'jour']
     
     vals_quantiles=[]
     for q in range(25, 125, 25):
@@ -478,7 +481,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
 
             data_dep = df[df["departmentName"] == dep]
 
-            data_dep[val + "_new"] = data_dep[val].diff()
+            data_dep.loc[:,val + "_new"] = data_dep.loc[:,val].diff()
             ordered_values = data_dep.sort_values(by=[val + "_new"], ascending=False)[val + "_new"]
             max_values_diff += [ordered_values.quantile(.90)]
 
@@ -635,7 +638,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()
 
 
-# In[111]:
+# In[49]:
 
 
 df_sursaud = df_sursaud[df_sursaud["sursaud_cl_age_corona"] == "0"]
@@ -643,7 +646,7 @@ df_sursaud["taux_covid"] = df_sursaud["nbre_pass_corona"] / df_sursaud["nbre_pas
 #df_sursaud
 
 
-# In[145]:
+# In[50]:
 
 
 
@@ -689,7 +692,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #&#8681;
     
     df_nonobj = df.select_dtypes(exclude=['object'])
-    df_nonobj['jour'] = df['jour']
+    df_nonobj.loc[:,'jour'] = df.loc[:,'jour']
     
     vals_quantiles=[]
     for q in range(25, 125, 25):
@@ -735,7 +738,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                             marker_color=clrs),
                       i, j)
         
-        fig.update_xaxes(title_text="", range=["2020-04-25", "2020-05-12"], gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=7), tickangle=0, nticks=6, linewidth=0, linecolor='white', row=i, col=j)
+        fig.update_xaxes(title_text="", range=["2020-04-25", last_day_plot], gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=7), tickangle=0, nticks=6, linewidth=0, linecolor='white', row=i, col=j)
         fig.update_yaxes(title_text="", range=[0, 25], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j)
 
         j+=1
@@ -872,13 +875,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()
 
 
-# In[146]:
-
-
-df_sursaud
-
-
-# In[65]:
+# In[51]:
 
 
 
@@ -906,7 +903,7 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
         sub = "<sub>par million d'habitants, moyenne mobile sur 7 jours - guillaumerozier.fr</sub>"
         
     df_nonobj = df_region.select_dtypes(exclude=['object'])
-    df_nonobj['jour'] = df_region['jour']
+    df_nonobj.loc[:,'jour'] = df_region.loc[:,'jour']
     
     vals_quantiles=[]
     for q in range(25, 125, 25):
@@ -915,7 +912,7 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
     for region in regions_ordered:
         data_r = df_region[df_region["regionName"] == region]
         
-        data_r[val + "_new"] = data_r[val].diff()
+        data_r.loc[:,val + "_new"] = data_r.loc[:,val].diff()
         ordered_values = df_region.sort_values(by=[val + "_new"], ascending=False)[val + "_new"]
         max_value_diff = ordered_values.quantile(.90)
         
@@ -1041,25 +1038,19 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
     #fig.show()
 
 
-# In[66]:
+# In[52]:
 
 
-
+"""
 dta = df_sursaud[df_sursaud["dep"] == "18"]
 fig = go.Figure()
 clrs = ["black"] * len(dta["taux_covid"])
 fig.add_trace(go.Bar(x = dta["date_de_passage"], y = dta["taux_covid"]*100, marker_color=clrs))
 #fig.update_xaxes(range=["2020-04-15", "2020-05-12"])
-fig.show()
+fig.show()"""
 
 
-# In[67]:
-
-
-dta
-
-
-# In[68]:
+# In[53]:
 
 
 
@@ -1104,7 +1095,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #&#8681;
     
     df_nonobj = df.select_dtypes(exclude=['object'])
-    df_nonobj['jour'] = df['jour']
+    df_nonobj.loc[:,'jour'] = df.loc[:,'jour']
     
     vals_quantiles=[]
     for q in range(25, 125, 25):
@@ -1147,7 +1138,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                             marker_color=clrs),
                       i, j)
         
-        fig.update_xaxes(title_text="", range=["2020-04-25", "2020-05-12"], gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=7), tickangle=0, nticks=6, linewidth=0, linecolor='white', row=i, col=j)
+        fig.update_xaxes(title_text="", range=["2020-04-25", last_day_plot], gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=7), tickangle=0, nticks=6, linewidth=0, linecolor='white', row=i, col=j)
         fig.update_yaxes(title_text="", range=[0, 150], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j)
 
         j+=1
@@ -1270,7 +1261,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()
 
 
-# In[69]:
+# In[54]:
 
 
 """
@@ -1482,14 +1473,4 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
 
 
     #fig.show()"""
-
-
-# In[70]:
-
-
-df_dep_temp = df[df["dep"] == "01"]
-
-#df_dep_temp["rea"]/lits_reas[lits_reas["nom_dpt"] == deps_ordered[ list(deps_ordered_nb).index("21")] ]["LITS"].values[0]
-deps_ordered[ list(deps_ordered_nb).index("974")]
-        
 

@@ -4,7 +4,7 @@
 # # COVID-19 French Charts
 # Guillaume Rozier, 2020
 
-# In[613]:
+# In[1]:
 
 
 """
@@ -26,7 +26,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[614]:
+# In[2]:
 
 
 from multiprocessing import Pool
@@ -43,6 +43,7 @@ import imageio
 import json
 import locale
 import france_data_management as data
+import numpy as np
 
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.colors.qualitative.Plotly + px.colors.qualitative.Dark24 + px.colors.qualitative.Alphabet
@@ -52,17 +53,18 @@ last_day_plot = "2020-05-15"
 
 # # Data download and import
 
-# In[615]:
+# In[3]:
 
 
 data.download_data()
 
 
-# In[616]:
+# In[4]:
 
 
 df, df_confirmed, dates, df_new, df_tests, df_deconf, _ = data.import_data()
-
+    
+dates = list(dict.fromkeys(list(df['jour'].values))) 
 df_region = df.groupby(['regionName', 'jour', 'regionPopulation']).sum().reset_index()
 df_region["hosp_regpop"] = df_region["hosp"] / df_region["regionPopulation"]*1000000 
 df_region["rea_regpop"] = df_region["rea"] / df_region["regionPopulation"]*1000000 
@@ -75,13 +77,7 @@ df_france = df.groupby('jour').sum().reset_index()
 regions = list(dict.fromkeys(list(df['regionName'].values))) 
 
 
-# In[617]:
-
-
-df_deconf
-
-
-# In[618]:
+# In[5]:
 
 
 #Calcul sorties de réa
@@ -101,17 +97,11 @@ df_france_last15 = df_france[ df_france["jour"].isin(dates[-19:]) ]
 df_tests_tot_last15 = df_tests_tot[ df_tests_tot["jour"].isin(dates[-19:]) ]
 
 
-# In[619]:
-
-
-df_tests_tot.sum()
-
-
 # # Graphes: bar charts
 
 # ## Variation journée
 
-# In[620]:
+# In[46]:
 
 
 #VAR JOURN
@@ -174,7 +164,7 @@ fig.update_layout(
                     y=1.05,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(max(dates), '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
                  )
 
@@ -201,7 +191,7 @@ if show_charts:
     fig.show()
 
 
-# In[660]:
+# In[7]:
 
 
 #VAR JOURN
@@ -295,7 +285,7 @@ fig.update_layout(
         range=[-500,1700]),
     barmode='group',
     title={
-                'text': "<b>COVID-19 : variation quotidienne en France</b>, moyenne glissante 7 jours",
+                'text': "<b>COVID-19 : variation quotidienne en France</b>, moyenne mobile centrée de 7 jours",
                 'y':0.95,
                 'x':0.5,
                 'xanchor': 'center',
@@ -313,7 +303,7 @@ fig.update_layout(
                     y=1.05,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(max(dates), '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
                  )
 
@@ -348,7 +338,7 @@ if show_charts:
 
 # ## Evolution jorunée
 
-# In[622]:
+# In[8]:
 
 
 #EVOL JOURN
@@ -420,7 +410,7 @@ fig.update_layout(
                     y=1.05,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(max(dates), '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
                  )
 
@@ -448,7 +438,7 @@ if show_charts:
 
 # ## Tests Covid
 
-# In[623]:
+# In[9]:
 
 
 # TESTS
@@ -498,7 +488,7 @@ fig.update_layout(
                     y=1.05,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(max(dates), '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
                 )]
                  )
 
@@ -526,7 +516,7 @@ if show_charts:
 
 # ## Entrées/Sortires hosp et réa
 
-# In[624]:
+# In[10]:
 
 
 fig = go.Figure()
@@ -598,7 +588,7 @@ fig.update_layout(
                 size=20),
         
     xaxis=dict(
-        range=["2020-03-26", (datetime.strptime(dates[-1], '%Y-%m-%d') + timedelta(days=1)).strftime("%Y-%m-%d")  ], # Adding one day
+        range=["2020-03-26", (datetime.strptime(max(dates), '%Y-%m-%d') + timedelta(days=1)).strftime("%Y-%m-%d")  ], # Adding one day
         title='',
         tickformat='%d/%m'),
     yaxis_title="Nb. de personnes",
@@ -610,7 +600,7 @@ fig.update_layout(
                     xref='paper',
                     yref='paper',
                     xanchor='center',
-                    text='moyenne mobile sur les 4 précédents jours',
+                    text='',
                     font=dict(size=17),
                     showarrow = False),
             
@@ -619,7 +609,7 @@ fig.update_layout(
                     y=1.04,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),           
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr'.format(datetime.strptime(max(dates), '%Y-%m-%d').strftime('%d %B %Y')),           
                     showarrow = False)
                 ]
                 )
@@ -648,7 +638,7 @@ if show_charts:
 # ## Entrées/Sorties hosp et réa - rolling mean (7 days)
 # La moyenne glissante sur 4 jours permet de lisser les effets liés aux week-ends (moins de saisies de données, donc il y a un trou) et d'évaluer la tendance.
 
-# In[625]:
+# In[45]:
 
 
 fig = go.Figure()
@@ -718,7 +708,7 @@ fig.update_layout(
                 size=20),
         
     xaxis=dict(
-        range=["2020-04-02", (datetime.strptime(dates[-1], '%Y-%m-%d') + timedelta(days=1)).strftime("%Y-%m-%d")  ], # Adding one day
+        range=["2020-04-02", (datetime.strptime(max(dates), '%Y-%m-%d') + timedelta(days=1)).strftime("%Y-%m-%d")  ], # Adding one day
         title='',
         tickformat='%d/%m'),
     yaxis_title="Nb. de personnes",
@@ -730,7 +720,7 @@ fig.update_layout(
                     xref='paper',
                     yref='paper',
                     xanchor='center',
-                    text='moyenne mobile sur les 7 précédents jours',
+                    text='moyenne mobile centrée sur 7 jours',
                     font=dict(size=17),
                     showarrow = False),
             
@@ -739,7 +729,7 @@ fig.update_layout(
                     y=1.04,
                     xref='paper',
                     yref='paper',
-                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),           
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr'.format(datetime.strptime(max(dates)dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),           
                     showarrow = False)
                 ]
                 )
@@ -767,7 +757,7 @@ if show_charts:
 
 # ## Hospitalisations (bar chart)
 
-# In[626]:
+# In[12]:
 
 
 """fig = go.Figure()
@@ -842,7 +832,7 @@ if show_charts:
 
 # ## Hospitalisations et réanimations (bar charts subplot)
 
-# In[627]:
+# In[13]:
 
 
 
@@ -919,7 +909,7 @@ fig["layout"]["annotations"] += ( dict(
                         yref='paper',
                         xanchor='center',
                         yanchor='middle',
-                        text='guillaumerozier.fr - {}'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),
+                        text='guillaumerozier.fr - {}'.format(datetime.strptime(max(dates), '%Y-%m-%d').strftime('%d %B %Y')),
                         showarrow = False,
                         font=dict(size=15), 
                         opacity=0.8
@@ -946,7 +936,7 @@ print("> " + name_fig)
 #fig.show()
 
 
-# In[628]:
+# In[14]:
 
 
 
@@ -1025,7 +1015,7 @@ fig["layout"]["annotations"] += ( dict(
                         yref='paper',
                         xanchor='center',
                         yanchor='middle',
-                        text='guillaumerozier.fr - {}'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),
+                        text='guillaumerozier.fr - {}'.format(datetime.strptime(max(dates), '%Y-%m-%d').strftime('%d %B %Y')),
                         showarrow = False,
                         font=dict(size=15), 
                         opacity=0.8
@@ -1052,7 +1042,7 @@ print("> " + name_fig)
 #fig.show()
 
 
-# In[629]:
+# In[15]:
 
 
 
@@ -1110,7 +1100,7 @@ fig["layout"]["annotations"] += ( dict(
                         yref='paper',
                         xanchor='center',
                         yanchor='middle',
-                        text='guillaumerozier.fr - {}'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),
+                        text='guillaumerozier.fr - {}'.format(datetime.strptime(max(dates), '%Y-%m-%d').strftime('%d %B %Y')),
                         showarrow = False,
                         font=dict(size=15), 
                         opacity=0
@@ -1121,7 +1111,7 @@ fig["layout"]["annotations"] += ( dict(
                         xref='paper',
                         yref='paper',
                         xanchor='center',
-                        text='moyenne mobile sur les 7 précédents jours pour lisser les week-ends',
+                        text='moyenne mobile centrée sur 7 jours pour lisser les week-ends',
                         font=dict(size=15),
                         showarrow = False),)
 
@@ -1146,10 +1136,92 @@ print("> " + name_fig)
 #fig.show()
 
 
+# In[16]:
+
+
+df_new.sum()
+
+
+# In[17]:
+
+
+
+
+fig = go.Figure()
+
+y = [df_new.sum()["incid_rea"]]
+fig.add_trace(go.Bar(x=["Hospitalisations cumulées"], y=y, marker_color="Red", text=str(y[0])+"<br>Réanimations cumulées")).update_xaxes(categoryorder="total descending")
+
+y = [df_new.sum()["incid_dc"]]
+fig.add_trace(go.Bar(x=["Décès hosp. cumulés"], y=y, marker_color="Black", text=y)).update_xaxes(categoryorder="total descending")
+
+y = [df_new.sum()["incid_hosp"]-df_new.sum()["incid_rea"]]
+fig.add_trace(go.Bar(x=["Hospitalisations cumulées"], y= y, marker_color="Orange", text=str(y[0])+"<br>Autres hospitalisations cumulées")).update_xaxes(categoryorder="total descending")
+
+y = [df_new.sum()["incid_rad"]]
+fig.add_trace(go.Bar(x=["Retours à domicile cumulés"], y=y, marker_color="Green", text=y)).update_xaxes(categoryorder="total descending")
+
+fig.update_traces(textposition='auto')
+
+fig.update_layout(
+    barmode="stack",
+    margin=dict(
+        l=0,
+        r=150,
+        b=0,
+        t=90,
+        pad=0
+    ),
+    title={
+                'text': "<b>Nombre cumulé de personnes hospitalisées, décédées et guéries du Covid-19</b>",
+                'y':0.95,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'middle'},
+                titlefont = dict(
+                size=20),
+
+
+                showlegend=False,
+
+)
+
+fig["layout"]["annotations"] += (
+                                dict(
+                        x=0.56,
+                        y=1.08,
+                        xref='paper',
+                        yref='paper',
+                        xanchor='center',
+                        text='Données : Santé publique France  -  guillaumerozier.fr  -  {}'.format(datetime.strptime(max(dates), '%Y-%m-%d').strftime('%d %B %Y')),
+                        font=dict(size=15),
+                        showarrow = False),)
+
+name_fig = "sum"
+fig.write_image("images/charts/france/{}.png".format(name_fig), scale=2, width=900, height=600)
+
+fig["layout"]["annotations"] += (
+                dict(
+                    x=0.5,
+                    y=1,
+                    xref='paper',
+                    yref='paper',
+                    xanchor='center',
+                    text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
+                    showarrow = False
+                    ),
+                    )
+plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+print("> " + name_fig)
+
+
+#fig.show()
+
+
 # ## Situation cas (bar chart)
 # Où en sont les personnes atteintes du Covid (retour à domicile, décédées, en réa, hosp ou autre)
 
-# In[630]:
+# In[18]:
 
 
 
@@ -1207,6 +1279,7 @@ name_fig = "situation_cas"
 fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1100, height=700)
 
 fig.update_layout(
+    bargap=0,
     legend_orientation="h",
     annotations = [
                 dict(
@@ -1225,6 +1298,12 @@ if show_charts:
     fig.show()
 
 
+# In[ ]:
+
+
+sorted()
+
+
 # <br>
 # <br>
 # <br>
@@ -1234,7 +1313,7 @@ if show_charts:
 
 # ## Décès hospitalisations et réanimations (line chart)
 
-# In[631]:
+# In[19]:
 
 
 df_france = df.groupby('jour').sum().reset_index()
@@ -1300,7 +1379,7 @@ print("> " + name_fig)
 
 # ## Décès cumulés (line chart)
 
-# In[632]:
+# In[20]:
 
 
 
@@ -1336,7 +1415,7 @@ if show_charts:
     fig.show()
 
 
-# In[633]:
+# In[21]:
 
 
 
@@ -1374,7 +1453,7 @@ if show_charts:
 
 # ## Hospitalisations
 
-# In[634]:
+# In[22]:
 
 
 
@@ -1412,7 +1491,7 @@ if show_charts:
 
 # ## Hospitalisations (entrées - sorties) (line chart)
 
-# In[635]:
+# In[23]:
 
 
 
@@ -1450,7 +1529,7 @@ if show_charts:
 
 # ## Admissions en hospitalisation (line chart)
 
-# In[636]:
+# In[24]:
 
 
 
@@ -1488,7 +1567,7 @@ if show_charts:
 
 # ## Réanimations par région (line chart)
 
-# In[637]:
+# In[25]:
 
 
 fig = px.line(x=df_region['jour'], y=df_region['rea'], color=df_region["regionName"], color_discrete_sequence=colors).update_traces(mode='lines+markers', marker_size=7.5, line=dict(width=2.5))
@@ -1524,7 +1603,7 @@ if show_charts:
 
 # ## Réanimations par département (line chart)
 
-# In[638]:
+# In[26]:
 
 
 df_last_d = df[df['jour'] == dates[-1]]
@@ -1584,7 +1663,7 @@ if show_charts:
 
 # ## Hospitalisations par département (line chart)
 
-# In[639]:
+# In[27]:
 
 
 df_last_d = df[df['jour'] == dates[-1]]
@@ -1646,7 +1725,7 @@ if show_charts:
 # 
 # ## Hospitalisations par habitant / région
 
-# In[640]:
+# In[28]:
 
 
 """
@@ -1697,7 +1776,7 @@ if show_charts:
 # 
 # ## Capacité réanimation (line chart)
 
-# In[641]:
+# In[29]:
 
 
 """
@@ -1770,7 +1849,7 @@ if show_charts:
 # 
 # ## Décès cumulés (région)
 
-# In[642]:
+# In[30]:
 
 
 fig = px.line(x=df_region['jour'], y=df_region['dc'], color=df_region["regionName"], labels={'color':'Région'}, color_discrete_sequence=colors).update_traces(mode='lines+markers')
@@ -1819,7 +1898,7 @@ if show_charts:
 
 # ## Nouveaux décès quotidiens (line chart)
 
-# In[643]:
+# In[31]:
 
 
 fig = px.line(x=df_new_region['jour'], y=df_new_region['incid_dc'].rolling(window=7, center=True).mean(), color=df_new_region["regionName"], labels={'color':'Région'}, color_discrete_sequence=colors).update_traces(mode='lines+markers')
@@ -1870,7 +1949,7 @@ if show_charts:
 # 
 # ## Décès cumulés par habitant (région)
 
-# In[644]:
+# In[32]:
 
 
 """
@@ -1930,7 +2009,7 @@ if show_charts:
 # 
 # ## Décès cumulés par région / temps
 
-# In[645]:
+# In[33]:
 
 
 fig = px.bar(x=df_region['jour'], y = df_region['dc'], color=df_region["regionName"], labels={'color':'Région'}, color_discrete_sequence=colors, opacity=0.9)
@@ -1983,7 +2062,7 @@ if show_charts:
 # 
 # ## Décès cumulés par région / 3 derniers jours
 
-# In[646]:
+# In[34]:
 
 
 
@@ -2073,7 +2152,7 @@ if show_charts:
 # 
 # ## Décès cumulés VS. Décès cumulés par habitant / région
 
-# In[647]:
+# In[35]:
 
 
 fig = go.Figure()
@@ -2150,7 +2229,7 @@ if show_charts:
 # 
 # ## Situation des malades / région
 
-# In[648]:
+# In[36]:
 
 
 #df_region_sumj = df_region.groupby('regionName').sum().reset_index()
@@ -2160,7 +2239,7 @@ df_region_sumj = pd.melt(df_region_sumj, id_vars=['regionName'], value_vars=['ra
 df_region_sumj.drop(df_region_sumj[df_region_sumj['regionName'].isin(['Guyane', 'Mayote', 'La Réunion', 'Guadeloupe', 'Martinique'])].index, inplace = True)
 
 
-# In[649]:
+# In[37]:
 
 
 data = df_region_sumj[df_region_sumj["variable"] == "dc"]
@@ -2228,7 +2307,7 @@ if show_charts:
 # 
 # ## Situation des malades par habitant / région
 
-# In[650]:
+# In[38]:
 
 
 df_region_sumj = df_region[df_region['jour'] == dates[-1]]
@@ -2236,7 +2315,7 @@ df_region_sumj = pd.melt(df_region_sumj, id_vars=['regionName'], value_vars=['ra
 df_region_sumj.drop(df_region_sumj[df_region_sumj['regionName'].isin(['Guyane', 'Mayote', 'La Réunion', 'Guadeloupe', 'Martinique'])].index, inplace = True)
 
 
-# In[651]:
+# In[39]:
 
 
 """data = df_region_sumj[df_region_sumj["variable"] == "dc_pop"]
@@ -2307,7 +2386,7 @@ if show_charts:
 # 
 # # Expérimentations (brouillon)
 
-# In[652]:
+# In[40]:
 
 
 """

@@ -4,7 +4,7 @@
 # # COVID-19 World Charts
 # Guillaume Rozier, 2020
 
-# In[62]:
+# In[1]:
 
 
 """
@@ -23,7 +23,7 @@ Data is download to/imported from 'data/'.
 """
 
 
-# In[63]:
+# In[2]:
 
 
 import requests
@@ -56,7 +56,7 @@ today = datetime.now().strftime("%Y-%m-%d %H:%M")
 
 # If you want to display charts here, please change "show" variable to True:
 
-# In[64]:
+# In[3]:
 
 
 upload = False
@@ -64,7 +64,7 @@ show = False
 export = True
 
 
-# In[65]:
+# In[4]:
 
 
 
@@ -85,7 +85,7 @@ if len(sys.argv) >= 4:
 
 # ## Functions
 
-# In[66]:
+# In[5]:
 
 
 def compute_offset(df, col_of_reference, col_to_align, countries):
@@ -117,7 +117,7 @@ def compute_offset(df, col_of_reference, col_to_align, countries):
 
 # #### Download data
 
-# In[67]:
+# In[6]:
 
 
 def download_data():
@@ -154,7 +154,7 @@ def download_data():
 
 # #### Import data and merge
 
-# In[68]:
+# In[7]:
 
 
 def import_files(): 
@@ -175,7 +175,7 @@ def import_files():
     return df_confirmed_csse, df_deaths_csse, df_confirmed_perso, df_deaths_perso, df_france_data
 
 
-# In[69]:
+# In[8]:
 
 
 def data_prep_csse(df0):
@@ -195,7 +195,7 @@ def data_prep_csse(df0):
 #"build : " + today
 
 
-# In[70]:
+# In[9]:
 
 
 def data_merge(data_confirmed, df_confirmed_perso, data_deaths, df_deaths_perso, df_france_data):
@@ -238,7 +238,7 @@ def data_merge(data_confirmed, df_confirmed_perso, data_deaths, df_deaths_perso,
     return data_confirmed, data_deaths
 
 
-# In[71]:
+# In[10]:
 
 
 def rolling(df):
@@ -290,7 +290,7 @@ def final_data_prep(data_confirmed, data_confirmed_rolling, data_deaths, data_de
     return data_confirmed, data_confirmed_rolling, data_deaths, data_deaths_rolling
 
 
-# In[72]:
+# In[11]:
 
 
 #print(data_confirmed_rolling.tail)
@@ -298,7 +298,7 @@ def final_data_prep(data_confirmed, data_confirmed_rolling, data_deaths, data_de
 
 # #### Informations on countries (population, offset)
 
-# In[73]:
+# In[12]:
 
 
 
@@ -323,7 +323,7 @@ def offset_compute_export(data_confirmed, data_deaths):
     "build : " + today
 
 
-# In[74]:
+# In[13]:
 
 
 def final_df_exports(data_confirmed, data_deaths):
@@ -337,7 +337,7 @@ def data_import():
     return pd.read_csv('data/data_confirmed.csv'), pd.read_csv('data/data_deaths.csv'), countries
 
 
-# In[75]:
+# In[14]:
 
 
 def update_data():
@@ -360,7 +360,7 @@ def update_data():
     final_df_exports(data_confirmed, data_deaths)
 
 
-# In[76]:
+# In[15]:
 
 
 """df_confirmed_csse, df_deaths_csse, df_confirmed_perso, df_deaths_perso, df_france_data = import_files()
@@ -390,7 +390,7 @@ df_france_data_confirmed['date'] = df_france_data_confirmed['date'].astype('date
 data_confirmed = pd.merge(df_confirmed_csse, df_france_data_confirmed, how='outer')"""
 
 
-# In[77]:
+# In[16]:
 
 
 """download_data()
@@ -424,7 +424,7 @@ data_confirmed.join(df_france_data_confirmed.set_index('date'), lsuffix='_caller
 # ## Function
 # This fonction builds and export graphs.
 
-# In[78]:
+# In[17]:
 
 
 def chart(data, data_rolling, countries, by_million_inh = False, align_curves = False, last_d = 15, offset_name = 'offset_confirmed', type_ppl = "confirmed cases", name_fig="", since=False, min_rate=0, log=False, new=""):
@@ -639,7 +639,7 @@ def chart(data, data_rolling, countries, by_million_inh = False, align_curves = 
     return fig
 
 
-# In[79]:
+# In[18]:
 
 
 update_data()
@@ -669,7 +669,7 @@ data_deaths_t = data_deaths_t.drop(data_deaths_t.index[0])
 
 
 
-# In[80]:
+# In[34]:
 
 
 for (data, name_var) in [(data_deaths_t, "deaths"), (data_confirmed_t, "confirmed")]: 
@@ -680,7 +680,7 @@ for (data, name_var) in [(data_deaths_t, "deaths"), (data_confirmed_t, "confirme
         name_suffix="deaths"
         type_ppl = "décès"
         
-    ni, nj = 3, 5
+    ni, nj = 4, 5
     i, j = 1, 1
 
     dates = data.columns.values
@@ -688,28 +688,35 @@ for (data, name_var) in [(data_deaths_t, "deaths"), (data_confirmed_t, "confirme
     data = data.sort_values(by=[dates[-1]], ascending=False)
     data = data.diff(axis=1).rolling(axis=1, window=4).mean()
 
-    countries_ordered = list(data.index.values[:15])
+    countries_ordered = list(data.index.values[:20])
     #countries_ordered[:11] + [""] + countries_ordered[11:14] + [""] + countries_ordered[14:]
     max_value = 0
 
     fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles = ["<b>" + c + "</b>" for c in countries_ordered], vertical_spacing = 0.06, horizontal_spacing = 0.01)
 
-    sub = "<sub>par ordre décroissant du cumul total, moyenne mobile sur 4 jours  •  guillaumerozier.fr</sub>"
+    sub = "<sub>par ordre décroissant du cumul total, moyenne mobile sur 7 jours  •  guillaumerozier.fr</sub>"
 
     max_value_diff = 0
 
     for country in countries_ordered:
 
-        data_c = data.loc[country].rolling(window=7).mean()
+        data_c = data.loc[country].rolling(window=7, center=True).mean()
         fig.add_trace(go.Bar(x = data.loc[country].index, y = data_c,
                             marker=dict(color = data_c.diff(), coloraxis="coloraxis"), ),
                       i, j)
+        fig.add_trace(go.Scatter(x = data.loc[country].index, y = data.loc[country],
+                    mode="markers",
+                    marker_size=6,
+                    marker_symbol="x-thin",
+                    marker_line_color="Black", marker_line_width=0.6, opacity=0.5),
+                     i, j)
+        
         max_value = max(max_value, data_c.max())
         max_value_diff = max(max_value_diff, data_c.diff().max())
 
         rangemin = "2020-02-02"
 
-        fig.update_xaxes(title_text="", range=[rangemin, "2020-05-05"], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, nticks=10, linewidth=1, linecolor='white', row=i, col=j)
+        fig.update_xaxes(title_text="", range=[rangemin, dates[-1]], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, nticks=10, linewidth=1, linecolor='white', row=i, col=j)
         fig.update_yaxes(title_text="", range=[0, max_value], gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
 
         j+=1
@@ -719,7 +726,8 @@ for (data, name_var) in [(data_deaths_t, "deaths"), (data_confirmed_t, "confirme
 
 
     for i in fig['layout']['annotations']:
-        i['font'] = dict(size=20)
+        i['font'] = dict(size=25)
+        i['y'] = i['y'] - 0.04
 
     #for annotation in fig['layout']['annotations']: 
             #annotation ['x'] = 0.5
@@ -808,7 +816,7 @@ for (data, name_var) in [(data_deaths_t, "deaths"), (data_confirmed_t, "confirme
 # ## Function calls
 # This block contains calls to above function for every chart.
 
-# In[81]:
+# In[20]:
 
 
 update_data()
@@ -967,7 +975,7 @@ for log in False, True:
 # # EXPERIMENTATIONS (SEIR model)
 # Currently not working.
 
-# In[82]:
+# In[21]:
 
 
 # Define parameters
@@ -984,7 +992,7 @@ params = alpha, beta, gamma, rho
 # Run simulation
 
 
-# In[83]:
+# In[22]:
 
 
 def seir_model_with_soc_dist(init_vals, params, t):
@@ -1004,7 +1012,7 @@ def seir_model_with_soc_dist(init_vals, params, t):
     return np.stack([S, E, I, R]).T
 
 
-# In[84]:
+# In[23]:
 
 
 results = seir_model_with_soc_dist(init_vals, params, t)

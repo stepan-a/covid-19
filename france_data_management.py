@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
+# In[5]:
 
 
 import requests
@@ -10,7 +10,7 @@ import json
 from tqdm import tqdm
 
 
-# In[13]:
+# In[19]:
 
 
 # Download data from Santé publique France and export it to local files
@@ -121,22 +121,31 @@ def import_data():
             vals = df[df["dep"] == d][col].diff()
             df.loc[vals.index,col+"_new"] = vals
             df.loc[vals.index,col+"_new_deppop"] = vals / df.loc[vals.index,"departmentPopulation"]*100000
-    dates = list(dict.fromkeys(list(df['jour'].values))) 
     
     df_tests = df_tests.drop(['nb_test_h', 'nb_pos_h', 'nb_test_f', 'nb_pos_f'], axis=1)
     df_tests = df_tests[df_tests['clage_covid'] == "0"]
     
+    # Correction du 14/05 (pas de données)
+    #cols_to_change = df.select_dtypes(include=np.number).columns.tolist()
+    cols_to_change = [s for s in df.columns.tolist() if "new" in s]
+    print(cols_to_change)
+    
+    for dep in deps:
+        ligne = df.loc[(df["jour"] == "2020-05-15") & (df["dep"] == dep),:]
+
+        moitié = ligne.loc[:, cols_to_change]/2
+        df.loc[ (df["jour"] == "2020-05-15") & (df["dep"] == dep), cols_to_change] = moitié
+
+        ligne.loc[:, cols_to_change] = moitié
+        ligne.loc[:,["jour"]] = ["2020-05-14"]
+        df = df.append(ligne)
+        
+    dates = sorted(list(dict.fromkeys(list(df['jour'].values))))
     return df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud
 
 
-# In[15]:
+# In[18]:
 
 
 df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud = import_data()
-
-
-# In[16]:
-
-
-df_sursaud
 

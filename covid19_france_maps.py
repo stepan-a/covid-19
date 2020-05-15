@@ -4,7 +4,7 @@
 # # COVID-19 French Maps
 # Guillaume Rozier, 2020
 
-# In[132]:
+# In[151]:
 
 
 """
@@ -24,7 +24,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[133]:
+# In[152]:
 
 
 import france_data_management as data
@@ -41,14 +41,14 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 # ## Data import
 
-# In[134]:
+# In[153]:
 
 
 # Import data from Santé publique France
 df, df_confirmed, dates, _, _, df_deconf, df_sursaud = data.import_data()
 
 
-# In[135]:
+# In[154]:
 
 
 # Download and import data from INSEE
@@ -70,7 +70,7 @@ df_insee['jour'] = df_insee['jour'].dt.strftime('%Y-%m-%d')
 dates_insee = list(dict.fromkeys(list(df_insee.dropna()['jour'].values))) 
 
 
-# In[136]:
+# In[155]:
 
 
 df_insee_france = df_insee.groupby('jour').sum().reset_index()
@@ -82,14 +82,14 @@ df_insee_france["surmortalite20"] = (df_insee_france["dc20"] - df_insee_france["
 # 
 # ## Function definition
 
-# In[137]:
+# In[156]:
 
 
 with open('data/france/dep.geojson') as response:
     depa = json.load(response)
 
 
-# In[138]:
+# In[157]:
 
 
 
@@ -241,7 +241,7 @@ def build_gif(file_gif, imgs_folder, dates):
                     writer.append_data(image)
 
 
-# In[139]:
+# In[158]:
 
 
 
@@ -313,13 +313,13 @@ def build_map(data_df, img_folder, legend_title="legend_title", title="title"):
     fig.write_image(img_folder.format(date), scale=2, width=1200, height=800)
 
 
-# In[140]:
+# In[159]:
 
 
 build_map(df_deconf, img_folder="images/charts/france/deconf_synthese/{}.png", title="Départements déconfinés le 11/05")
 
 
-# In[141]:
+# In[160]:
 
 
 def build_map_indic1(data_df, img_folder, legend_title="legend_title", title="title"):
@@ -391,7 +391,7 @@ def build_map_indic1(data_df, img_folder, legend_title="legend_title", title="ti
     
 
 
-# In[142]:
+# In[161]:
 
 
 """df_sursaud = df_sursaud[df_sursaud["sursaud_cl_age_corona"] == "0"]
@@ -405,7 +405,7 @@ df_sursaud_gb["taux_corona"] = df_sursaud_gb["nbre_pass_corona"]/df_sursaud_gb["
 #build_map_indic1(df_sursaud_gb, img_folder="images/charts/france/deconf_indic1/{}.png", title="Indic 1")
 
 
-# In[143]:
+# In[162]:
 
 
 #df_sursaud_gb = df_sursaud.groupby(["dep"]).rolling(window=7, on="date_de_passage").mean().reset_index()
@@ -424,7 +424,7 @@ df_sursaud_gb["taux_corona"] = df_sursaud_gb["nbre_pass_corona"]/df_sursaud_gb["
 # 
 # ## Function calls
 
-# In[144]:
+# In[163]:
 
 
 def dep_map():
@@ -435,7 +435,7 @@ def dep_map():
     build_gif(file_gif = "images/charts/france/dep-map.gif", imgs_folder = "images/charts/france/dep-map-img/{}.png", dates=dates)
 
 
-# In[145]:
+# In[164]:
 
 
 def dep_map_dc_cum():
@@ -446,7 +446,7 @@ def dep_map_dc_cum():
     build_gif(file_gif = "images/charts/france/dep-map-dc-cum.gif", imgs_folder = "images/charts/france/dep-map-img-dc-cum/{}.png", dates=dates[1:])
 
 
-# In[146]:
+# In[165]:
 
 
 def dep_map_dc_journ():
@@ -457,7 +457,7 @@ def dep_map_dc_journ():
     build_gif(file_gif = "images/charts/france/dep-map-dc-journ.gif", imgs_folder = "images/charts/france/dep-map-img-dc-journ/{}.png", dates=dates[1:])
 
 
-# In[147]:
+# In[166]:
 
 
 dep_map()
@@ -465,7 +465,7 @@ dep_map_dc_cum()
 dep_map_dc_journ()
 
 
-# In[148]:
+# In[167]:
 
 
 """def bestfunction(unefonc):
@@ -490,7 +490,7 @@ p.start()
 p.join()"""
 
 
-# In[149]:
+# In[168]:
 
 
 """
@@ -503,7 +503,7 @@ map_gif(dates_insee, imgs_folder, df = df_insee.dropna(), type_ppl = ppl, legend
 build_gif(file_gif = "images/charts/france/dep-map-surmortalite.gif", imgs_folder = imgs_folder, dates=dates_insee)"""
 
 
-# In[150]:
+# In[169]:
 
 
 """# Line chart évolution de la mortalité
