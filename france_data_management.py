@@ -97,6 +97,9 @@ def import_data():
     df_sursaud = df_sursaud.merge(df_reg_pop, left_on='regionName', right_on='regionName')
     df_sursaud = df_sursaud.merge(df_dep_pop, left_on='dep', right_on='dep')
     
+    df_sursaud = df_sursaud[df_sursaud["sursaud_cl_age_corona"] == "0"]
+    df_sursaud["taux_covid"] = df_sursaud["nbre_pass_corona"] / df_sursaud["nbre_pass_tot"]
+    
     pbar.update(2)
     
     df['rea_pop'] = df['rea']/df['regionPopulation']*100000
@@ -128,7 +131,6 @@ def import_data():
     # Correction du 14/05 (pas de données)
     #cols_to_change = df.select_dtypes(include=np.number).columns.tolist()
     cols_to_change = [s for s in df.columns.tolist() if "new" in s]
-    print(cols_to_change)
     
     for dep in deps:
         ligne = df.loc[(df["jour"] == "2020-05-15") & (df["dep"] == dep),:]

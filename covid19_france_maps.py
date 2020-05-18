@@ -4,7 +4,7 @@
 # # COVID-19 French Maps
 # Guillaume Rozier, 2020
 
-# In[151]:
+# In[3]:
 
 
 """
@@ -24,7 +24,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[152]:
+# In[4]:
 
 
 import france_data_management as data
@@ -41,14 +41,14 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 # ## Data import
 
-# In[153]:
+# In[5]:
 
 
 # Import data from Santé publique France
 df, df_confirmed, dates, _, _, df_deconf, df_sursaud = data.import_data()
 
 
-# In[154]:
+# In[6]:
 
 
 # Download and import data from INSEE
@@ -70,7 +70,7 @@ df_insee['jour'] = df_insee['jour'].dt.strftime('%Y-%m-%d')
 dates_insee = list(dict.fromkeys(list(df_insee.dropna()['jour'].values))) 
 
 
-# In[155]:
+# In[8]:
 
 
 df_insee_france = df_insee.groupby('jour').sum().reset_index()
@@ -82,7 +82,7 @@ df_insee_france["surmortalite20"] = (df_insee_france["dc20"] - df_insee_france["
 # 
 # ## Function definition
 
-# In[156]:
+# In[7]:
 
 
 with open('data/france/dep.geojson') as response:
@@ -465,31 +465,6 @@ dep_map_dc_cum()
 dep_map_dc_journ()
 
 
-# In[167]:
-
-
-"""def bestfunction(unefonc):
-    unefonc()
-    time.sleep(5)"""
-    
-"""pool = multiprocessing.Pool(processes=4) 
-pool.apply_async(bestfunction, [dep_map(), dep_map_dc_cum(), dep_map_dc_journ()])"""
-
-"""processes = []
-for i in (dep_map, dep_map_dc_cum, dep_map_dc_journ):
-    p = multiprocessing.Process(target = bestfunction, args=(i,))
-    processes.append(p)
-    p.start()
-
-for process in processes:
-    process.join()
-"""
-
-"""p = multiprocessing.Process(target=bestfunction, args=(dep_map(), dep_map_dc_cum(), dep_map_dc_journ()))
-p.start()
-p.join()"""
-
-
 # In[168]:
 
 
@@ -503,10 +478,10 @@ map_gif(dates_insee, imgs_folder, df = df_insee.dropna(), type_ppl = ppl, legend
 build_gif(file_gif = "images/charts/france/dep-map-surmortalite.gif", imgs_folder = imgs_folder, dates=dates_insee)"""
 
 
-# In[169]:
+# In[9]:
 
 
-"""# Line chart évolution de la mortalité
+# Line chart évolution de la mortalité
 
 import plotly.graph_objects as go
 import plotly
@@ -570,7 +545,7 @@ fig.write_image("images/charts/france/{}.png".format(name_fig), scale=2, width=1
 plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
 print("> " + name_fig)
 
-fig.show()"""
+fig.show()
 
 
 # In[ ]:

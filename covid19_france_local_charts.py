@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[44]:
+# In[8]:
 
 
 import france_data_management as data
@@ -9,20 +9,21 @@ import pandas as pd
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from tqdm import tqdm
+from datetime import datetime
+from datetime import timedelta
 import plotly
 import plotly.express as px
 import numpy as np
 colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.colors.qualitative.Plotly + px.colors.qualitative.Dark24 + px.colors.qualitative.Alphabet
 
-last_day_plot = "2020-05-15"
-
 
 # ## Data Import
 
-# In[45]:
+# In[9]:
 
 
 df, df_confirmed, dates, df_new, df_tests, _, df_sursaud = data.import_data()
+last_day_plot = (datetime.strptime(max(dates), '%Y-%m-%d') + timedelta(days=1)).strftime("%Y-%m-%d")
 
 dates_sursaud = list(dict.fromkeys(list(df_sursaud['date_de_passage'].values))) 
 
@@ -32,6 +33,9 @@ df_region["rea_regpop"] = df_region["rea"] / df_region["regionPopulation"]*10000
 df_region["dc_new_regpop"] = df_region["dc_new"] / df_region["regionPopulation"]*1000000 
 df_region["dc_new_regpop_rolling7"] = df_region["dc_new_regpop"].rolling(window=7).mean()
 df_region["dc_new_rolling7"] = df_region["dc_new"].rolling(window=7).mean()
+
+df["dc_new_deppop"] = df["dc_new"] / df["departmentPopulation"]*1000000 
+df["dc_new_deppop_rolling7"] = df["dc_new_deppop"].rolling(window=7).mean()
 
 df_tests_tot = df_tests.groupby(['jour']).sum().reset_index()
 
@@ -50,12 +54,12 @@ lits_reas = pd.read_csv('data/france/lits_rea.csv', sep=",")
 # - nb de réanimations par habitant des régions,
 # et ce pour toutes les régions françaises
 
-# In[46]:
+# In[10]:
 
 
 
 for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
-    ni, nj = 5, 4
+    ni, nj = 6, 4
     i, j = 1, 1
 
     df_region[val+"_new"] = df_region[val].diff()
@@ -64,7 +68,7 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
     regions_ordered = df_region[df_region['jour'] == dates[-1]].sort_values(by=[val], ascending=False)["regionName"].values
     regions_ordered = list(dict.fromkeys(list(regions_ordered)))[:]
     
-    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles=[ "<b>"+ str(r) +"</b>" for r in (regions_ordered[:11] + [""] + regions_ordered[11:14]+[""]+regions_ordered[14:])], vertical_spacing = 0.06, horizontal_spacing = 0.01)
+    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles=[ "<b>"+ str(r) +"</b>" for r in (regions_ordered[:11] + [""] + regions_ordered[11:14]+[""]+regions_ordered[14:17]+[""]+regions_ordered[17:])], vertical_spacing = 0.06, horizontal_spacing = 0.01)
     #&#8681;
     
     sub = "<sub>{}par ordre décroissant des hospitalisations actuelles - guillaumerozier.fr</sub>"
@@ -97,14 +101,14 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
                         ),
                       i, j)
         
-        fig.add_trace(go.Bar(x=data_r["jour"], y=data_r[val],
-                            marker=dict(color = data_r[val + "_new"], coloraxis="coloraxis"), ),
+        fig.add_trace(go.Bar(x=data_r["jour"], y=data_r[val].rolling(window=3, center=True).mean(),
+                            marker=dict(color = data_r[val + "_new"].rolling(window=3, center=True).mean(), coloraxis="coloraxis"), ),
                       i, j)
         
         rangemin = "2020-03-15"
         if "dc" in val:
             rangemin = "2020-03-25"
-        fig.update_xaxes(title_text="", range=[rangemin, last_day_plot], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, nticks=10, linewidth=1, linecolor='white', row=i, col=j)
+        fig.update_xaxes(title_text="", range=[rangemin, last_day_plot], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, linewidth=1, linecolor='white', row=i, col=j)
         fig.update_yaxes(title_text="", range=[0, max_value], gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
 
         j+=1
@@ -148,7 +152,6 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
                         lenmode="pixels", len=400,
                         yanchor="bottom", y=0.26, xanchor="left", x=0.85,
                         ticks="outside", tickprefix="  ", ticksuffix=" hosp.",
-                        nticks=15,
                         tickfont=dict(size=12),
                         titlefont=dict(size=15)),
                       
@@ -219,13 +222,13 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
 # - nb d'hospitalisés par habitant des départements,
 # et ce pour toutes les régions françaises
 
-# In[47]:
+# In[13]:
 
 
 
 import numpy as np
-for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
-    ni, nj = 12, 9
+for val in ["dc_new_deppop_rolling7", "hosp_deppop"]: #, "hosp", "rea", "rea_pop"
+    ni, nj = 13, 9
     i, j = 1, 1
 
     #df_region[val+"_new"] = df_region[val].diff()
@@ -251,8 +254,8 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     
     titles = []
     k=0
-    for case in range(1, ni * nj - 1):
-        if case in [80, 81, 89, 90, 98, 99]:
+    for case in range(1, 109):
+        if case in [80, 81, 89, 90, 98, 99, 107, 108]:
             titles += [""] 
         else:
             titles += ["<b>" + deps_ordered_nb[k] + "</b> - " + deps_ordered[k]]
@@ -271,6 +274,8 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     type_ppl = "hospitalisées"
     if "rea" in val:
         type_ppl = "en réanimation"
+    if "dc" in val:
+        type_ppl = "décédées"
     max_values_diff=[]
         
     
@@ -291,7 +296,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                             marker=dict(color = data_dep[val + "_new"], coloraxis="coloraxis"), ),
                       i, j)
         
-        fig.update_xaxes(title_text="", range=["2020-03-15", "2020-05-01"], gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=7), tickangle=0, nticks=6, linewidth=0, linecolor='white', row=i, col=j)
+        fig.update_xaxes(title_text="", range=["2020-03-15", last_day_plot], gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=7), tickangle=0, nticks=6, linewidth=0, linecolor='white', row=i, col=j)
         fig.update_yaxes(title_text="", range=[0, max_value], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j)
 
         j+=1
@@ -351,7 +356,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                         'xanchor': 'center',
                         'yanchor': 'middle'},
                         titlefont = dict(
-                            size=50
+                            size=45
                         )
     )
 
@@ -418,7 +423,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
 # ## Subplots : départements - classé par régions
 # Idem précédent mais les départements sont rangés dans leurs régions, et les régions classées par ordre décroissant du nb de personnes
 
-# In[48]:
+# In[12]:
 
 
 
@@ -495,7 +500,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                                 marker=dict(color = data_dep[val + "_new"], coloraxis="coloraxis"), ),
                           i, j)
 
-            fig.update_xaxes(title_text="", range=["2020-03-15", "2020-05-01"], gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=7), tickangle=0, nticks=6, linewidth=0, linecolor='white', row=i, col=j)
+            fig.update_xaxes(title_text="", range=["2020-03-15", last_day_plot], gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=7), tickangle=0, nticks=6, linewidth=0, linecolor='white', row=i, col=j)
             fig.update_yaxes(title_text="", range=[0, max_value], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j)
 
             j+=1
@@ -638,7 +643,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()
 
 
-# In[49]:
+# In[ ]:
 
 
 df_sursaud = df_sursaud[df_sursaud["sursaud_cl_age_corona"] == "0"]
@@ -646,7 +651,7 @@ df_sursaud["taux_covid"] = df_sursaud["nbre_pass_corona"] / df_sursaud["nbre_pas
 #df_sursaud
 
 
-# In[50]:
+# In[ ]:
 
 
 
@@ -688,7 +693,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
         titles += ["<b>" + deps_ordered_nb[k] + "</b> - " + deps_ordered[k] + ""] #&#9661; 
         k+=1
 
-    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles= titles, vertical_spacing = 0.025, horizontal_spacing = 0.005)
+    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles= titles, vertical_spacing = 0.025, horizontal_spacing = 0.005) #specs=[ [{"secondary_y": True} for i in range(nj)] for i in range(ni)]
     #&#8681;
     
     df_nonobj = df.select_dtypes(exclude=['object'])
@@ -737,9 +742,17 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
         fig.add_trace(go.Bar(x = df_sursaud_dep["date_de_passage"], y = values_y,
                             marker_color=clrs),
                       i, j)
+        #fig.add_trace(go.Scatter(x = df_sursaud_dep["date_de_passage"], y = df_sursaud_dep["nbre_pass_tot"],
+         #                   marker_color="Black"),
+          #            i, j, secondary_y=True,)
+        #fig.add_trace(go.Scatter(x = df_sursaud_dep["date_de_passage"], y = df_sursaud_dep["nbre_pass_corona"],
+         #                   marker_color="Blue"),
+          #            i, j, secondary_y=True,)
         
         fig.update_xaxes(title_text="", range=["2020-04-25", last_day_plot], gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=7), tickangle=0, nticks=6, linewidth=0, linecolor='white', row=i, col=j)
         fig.update_yaxes(title_text="", range=[0, 25], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j)
+        #fig.update_yaxes(title_text="", range=[0, 300], row=i, col=j, secondary_y=True)
+
 
         j+=1
         if j == nj+1: #or ((i >= 9) & (j >= nj-1)) 
@@ -781,7 +794,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
             l=0,
             r=15,
             b=0,
-            t=160,
+            t=140,
             pad=0
         ),
         bargap=0,
@@ -815,26 +828,26 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
 
     fig["layout"]["annotations"] += ( 
                         dict(
-                            x=0.75,
-                            y=0.04,
+                            x=0.82,
+                            y=0.05,
                             xref='paper',
                             yref='paper',
                             xanchor='center',
                             yanchor='top',
-                            text="La moyenne des 7 deniers jours est considérée pour déterminer la couleur d'un département<br>Couleurs : rouge (> 10 %), orange (6 à 10%), vert (< 6%)",
+                            text="La moyenne des 7 deniers jours est considérée pour déterminer la<br>couleur d'un département. Couleurs : rouge (> 10 %), orange (6 à 10%),<br>vert (< 6%).",
                             showarrow = False,
                             font=dict(size=16), 
                             opacity=1,
                             align='left'
                         ),
                         dict(
-                            x=0.9,
+                            x=0.82,
                             y=0.015,
                             xref='paper',
                             yref='paper',
                             xanchor='center',
                             yanchor='top',
-                            text='Source :<br>Santé Publique France',
+                            text='Source : Santé Publique France',
                             showarrow = False,
                             font=dict(size=15), 
                             opacity=0.5
@@ -842,7 +855,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                             
                             dict(
                             x=0.5,
-                            y=1.03,
+                            y=1.02,
                             xref='paper',
                             yref='paper',
                             xanchor='center',
@@ -875,12 +888,12 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()
 
 
-# In[51]:
+# In[ ]:
 
 
 
 for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
-    ni, nj = 5, 4
+    ni, nj = 6, 4
     i, j = 1, 1
 
     df_region[val+"_new"] = df_region[val].diff()
@@ -889,7 +902,7 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
     regions_ordered = df_region[df_region['jour'] == dates[-1]].sort_values(by=[val], ascending=False)["regionName"].values
     regions_ordered = list(dict.fromkeys(list(regions_ordered)))[:]
     
-    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles=[ "<b>"+ str(r) +"</b>" for r in (regions_ordered[:11] + [""] + regions_ordered[11:14]+[""]+regions_ordered[14:])], vertical_spacing = 0.06, horizontal_spacing = 0.01)
+    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles=[ "<b>"+ str(r) +"</b>" for r in (regions_ordered[:11] + [""] + regions_ordered[11:14]+[""]+regions_ordered[14:17]+[""]+regions_ordered[17:])], vertical_spacing = 0.06, horizontal_spacing = 0.01)
     #&#8681;
     
     sub = "<sub>{}par ordre décroissant des hospitalisations actuelles - guillaumerozier.fr</sub>"
@@ -928,7 +941,7 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
         rangemin = "2020-03-15"
         if "dc" in val:
             rangemin = "2020-03-25"
-        fig.update_xaxes(title_text="", range=[rangemin, "2020-05-10"], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, nticks=10, linewidth=1, linecolor='white', row=i, col=j)
+        fig.update_xaxes(title_text="", range=[rangemin, last_day_plot], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, nticks=10, linewidth=1, linecolor='white', row=i, col=j)
         fig.update_yaxes(title_text="", range=[0, max_value], gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
 
         j+=1
@@ -1038,7 +1051,7 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
     #fig.show()
 
 
-# In[52]:
+# In[ ]:
 
 
 """
@@ -1050,12 +1063,12 @@ fig.add_trace(go.Bar(x = dta["date_de_passage"], y = dta["taux_covid"]*100, mark
 fig.show()"""
 
 
-# In[53]:
+# In[ ]:
 
 
 
 for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
-    ni, nj = 12, 9
+    ni, nj = 13, 8
     i, j = 1, 1
     
     regions_ordered = df_region[df_region['jour'] == dates[-1]].sort_values(by=[val], ascending=False)["regionName"].values
@@ -1084,12 +1097,10 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     
     titles = []
     k=0
-    for case in range(1, ni * nj - 1):
-        if case in [80, 81, 89, 90, 98, 99]:
-            titles += [""] 
-        else:
-            titles += ["<b>" + deps_ordered_nb[k] + "</b> - " + deps_ordered[k] + " ↓"]
-            k+=1
+    for case in range(1, len(deps_ordered_nb)+1):
+        
+        titles += ["<b>" + deps_ordered_nb[k] + "</b> - " + deps_ordered[k] + ""] #&#9661; 
+        k+=1
 
     fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles= titles, vertical_spacing = 0.025, horizontal_spacing = 0.002)
     #&#8681;
@@ -1107,6 +1118,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     max_values_diff=[]
     
     clrs_dep = []
+    
     for dep in tqdm(deps_ordered_nb):
         data_dep = df[df["departmentName"] == dep]
         
@@ -1142,7 +1154,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
         fig.update_yaxes(title_text="", range=[0, 150], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j)
 
         j+=1
-        if j == nj+1 or ((i >= 9) & (j >= nj-1)): 
+        if j == nj+1: #or ((i >= 9) & (j >= nj-1)) 
             i+=1
             j=1
 
@@ -1201,13 +1213,13 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
 
     fig["layout"]["annotations"] += ( 
                         dict(
-                            x=0.9,
-                            y=0.17,
+                            x=0.82,
+                            y=0.05,
                             xref='paper',
                             yref='paper',
                             xanchor='center',
                             yanchor='top',
-                            text='Rouge : > 80 %<br><br><br>Orange : 60 à 80 %<br><br><br>Vert : < 60 %',
+                            text="La moyenne des 7 deniers jours est considérée pour déterminer la<br>couleur d'un département. Couleurs : rouge (> 80 %), orange (60 à 80%),<br>vert (< 60%).",
                             showarrow = False,
                             font=dict(size=16), 
                             opacity=1,
@@ -1261,7 +1273,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()
 
 
-# In[54]:
+# In[ ]:
 
 
 """
