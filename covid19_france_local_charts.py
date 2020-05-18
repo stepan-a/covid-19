@@ -646,9 +646,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
 # In[ ]:
 
 
-df_sursaud = df_sursaud[df_sursaud["sursaud_cl_age_corona"] == "0"]
-df_sursaud["taux_covid"] = df_sursaud["nbre_pass_corona"] / df_sursaud["nbre_pass_tot"]
-#df_sursaud
+
 
 
 # In[ ]:

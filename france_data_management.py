@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[5]:
+# In[7]:
 
 
 import requests
@@ -10,7 +10,7 @@ import json
 from tqdm import tqdm
 
 
-# In[19]:
+# In[25]:
 
 
 # Download data from Santé publique France and export it to local files
@@ -77,6 +77,8 @@ def import_data():
     df_tests = pd.read_csv('data/france/donnes-tests-covid19-quotidien.csv', sep=";")
     df_deconf = pd.read_csv('data/france/indicateurs-deconf.csv', sep=",")
     
+    lits_reas = pd.read_csv('data/france/lits_rea.csv', sep=",")
+    
     df_regions = pd.read_csv('data/france/departments_regions_france_2016.csv', sep=",")
     df_reg_pop = pd.read_csv('data/france/population_grandes_regions.csv', sep=",")
     df_dep_pop = pd.read_csv('data/france/dep-pop.csv', sep=";")
@@ -87,6 +89,7 @@ def import_data():
     df = df.merge(df_dep_pop, left_on='dep', right_on='dep')
     df = df[df["sexe"] == 0]
     df['hosp_nonrea'] = df['hosp'] - df['rea']
+    df = df.merge(lits_reas, left_on="departmentName", right_on="nom_dpt")
     
     df_new = df_new.merge(df_regions, left_on='dep', right_on='departmentCode')
     df_new = df_new.merge(df_reg_pop, left_on='regionName', right_on='regionName')
@@ -144,10 +147,4 @@ def import_data():
         
     dates = sorted(list(dict.fromkeys(list(df['jour'].values))))
     return df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud
-
-
-# In[18]:
-
-
-df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud = import_data()
 
