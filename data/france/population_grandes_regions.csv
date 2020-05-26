@@ -1,19 +1,19 @@
-regionName,regionPopulation
-Auvergne-Rhône-Alpes,8027000
-Bourgogne-Franche-Comté,2795000
-Bretagne,3329000
-Centre,2567000
-Corse,339178
-Grand Est,5518000
-Hauts-de-France,5978000
-Ile-de-France,12210000
-Normandie,3342467
-Nouvelle-Aquitaine,5987000
-Occitanie,5808435
-Pays de la Loire,3757760
-Provence-Alpes-Côte d'Azur,5059000
-Guadeloupe,395700
-Martinique,376480
-Guyane,290691
-La Réunion,859959
-Mayotte,270373
+regionName,regionPopulation,code
+Auvergne-Rhône-Alpes,8027000,84
+Bourgogne-Franche-Comté,2795000,27
+Bretagne,3329000,53
+Centre,2567000,24
+Corse,339178,94
+Grand Est,5518000,44
+Hauts-de-France,5978000,32
+Ile-de-France,12210000,11
+Normandie,3342467,28
+Nouvelle-Aquitaine,5987000,75
+Occitanie,5808435,76
+Pays de la Loire,3757760,52
+Provence-Alpes-Côte d'Azur,5059000,93
+Guadeloupe,395700,01
+Martinique,376480,02
+Guyane,290691,03
+La Réunion,859959,04
+Mayotte,270373,06
