@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[7]:
+# In[2]:
 
 
 import requests
@@ -10,7 +10,7 @@ import json
 from tqdm import tqdm
 
 
-# In[25]:
+# In[7]:
 
 
 # Download data from Santé publique France and export it to local files
@@ -38,6 +38,7 @@ def download_data():
     url_data = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-covid19")]["url"].values[0]
     url_data_new = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-nouveaux")]["url"].values[0]
     url_tests = df_metadata[df_metadata['url'].str.contains("/donnees-tests-covid19-labo-quotidien")]["url"].values[0]
+    url_incidence = df_metadata[df_metadata['url'].str.contains("/taux-incidence-quot-dep")]["url"].values[0]
     url_sursaud = df_metadata[df_metadata['url'].str.contains("sursaud.*departement")]["url"].values[0]
     
     pbar.update(6)
@@ -46,6 +47,7 @@ def download_data():
     data_tests = requests.get(url_tests)
     data_deconf = requests.get(url_deconf)
     data_sursaud = requests.get(url_sursaud)
+    data_incidence = requests.get(url_incidence)
     
     pbar.update(7)
     with open('data/france/donnes-hospitalieres-covid19.csv', 'wb') as f:
@@ -63,6 +65,9 @@ def download_data():
     with open('data/france/sursaud-covid19-departement.csv', 'wb') as f:
         f.write(data_sursaud.content)
         
+    with open('data/france/taux-incidence-dep-quot.csv', 'wb') as f:
+        f.write(data_incidence.content)
+        
     pbar.update(8)
 
 
@@ -76,6 +81,7 @@ def import_data():
     df_new = pd.read_csv('data/france/donnes-hospitalieres-covid19-nouveaux.csv', sep=";")
     df_tests = pd.read_csv('data/france/donnes-tests-covid19-quotidien.csv', sep=";")
     df_deconf = pd.read_csv('data/france/indicateurs-deconf.csv', sep=",")
+    df_incid = pd.read_csv('data/france/taux-incidence-dep-quot.csv', sep=",")
     
     lits_reas = pd.read_csv('data/france/lits_rea.csv', sep=",")
     
@@ -146,5 +152,5 @@ def import_data():
         #df = df.append(ligne)
         
     dates = sorted(list(dict.fromkeys(list(df['jour'].values))))
-    return df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud
+    return df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid
 

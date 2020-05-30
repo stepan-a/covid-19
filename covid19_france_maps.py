@@ -45,7 +45,7 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 
 # Import data from Santé publique France
-df, df_confirmed, dates, _, _, df_deconf, df_sursaud = data.import_data()
+df, df_confirmed, dates, _, _, df_deconf, df_sursaud, _ = data.import_data()
 
 
 # In[6]:

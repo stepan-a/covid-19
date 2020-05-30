@@ -27,7 +27,7 @@ colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.col
 # In[3]:
 
 
-df, df_confirmed, dates, df_new, df_tests, _, df_sursaud = data.import_data()
+df, df_confirmed, dates, df_new, df_tests, _, df_sursaud, _ = data.import_data()
 df = df.sort_values(by=['dep', 'jour'], axis=0).reset_index()
 last_day_plot = (datetime.strptime(max(dates), '%Y-%m-%d') + timedelta(days=1)).strftime("%Y-%m-%d")
 df_sursaud['indic_clr'] = ["white" for i in range(len(df_sursaud))]
