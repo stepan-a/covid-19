@@ -807,3 +807,104 @@ date,code_departement,nom_departement,nom_region,indicateur_synthese
 2020-05-07,973,Guyane,Guyane,vert
 2020-05-07,974,La Réunion,La Réunion,vert
 2020-05-07,976,Mayotte,Mayotte,rouge
+2020-05-28,01,Ain,Auvergne-Rhône-Alpes,vert
+2020-05-28,02,Aisne,Hauts-de-France,vert
+2020-05-28,03,Allier,Auvergne-Rhône-Alpes,vert
+2020-05-28,04,Alpes-de-Haute-Provence,Provence-Alpes-Côte d'Azur,vert
+2020-05-28,05,Hautes-Alpes,Provence-Alpes-Côte d'Azur,vert
+2020-05-28,06,Alpes-Maritimes,Provence-Alpes-Côte d'Azur,vert
+2020-05-28,07,Ardèche,Auvergne-Rhône-Alpes,vert
+2020-05-28,08,Ardennes,Grand Est,vert
+2020-05-28,09,Ariège,Occitanie,vert
+2020-05-28,10,Aube,Grand Est,vert
+2020-05-28,11,Aude,Occitanie,vert
+2020-05-28,12,Aveyron,Occitanie,vert
+2020-05-28,13,Bouches-du-Rhône,Provence-Alpes-Côte d'Azur,vert
+2020-05-28,14,Calvados,Normandie,vert
+2020-05-28,15,Cantal,Auvergne-Rhône-Alpes,vert
+2020-05-28,16,Charente,Nouvelle-Aquitaine,vert
+2020-05-28,17,Charente-Maritime,Nouvelle-Aquitaine,vert
+2020-05-28,18,Cher,Centre-Val de Loire,vert
+2020-05-28,19,Corrèze,Nouvelle-Aquitaine,vert
+2020-05-28,21,Côte-d'Or,Bourgogne-Franche-Comté,vert
+2020-05-28,22,Côtes-d'Armor,Bretagne,vert
+2020-05-28,23,Creuse,Nouvelle-Aquitaine,vert
+2020-05-28,24,Dordogne,Nouvelle-Aquitaine,vert
+2020-05-28,25,Doubs,Bourgogne-Franche-Comté,vert
+2020-05-28,26,Drôme,Auvergne-Rhône-Alpes,vert
+2020-05-28,27,Eure,Normandie,vert
+2020-05-28,28,Eure-et-Loir,Centre-Val de Loire,vert
+2020-05-28,29,Finistère,Bretagne,vert
+2020-05-28,2A,Corse-du-Sud,Corse,vert
+2020-05-28,2B,Haute-Corse,Corse,vert
+2020-05-28,30,Gard,Occitanie,vert
+2020-05-28,31,Haute-Garonne,Occitanie,vert
+2020-05-28,32,Gers,Occitanie,vert
+2020-05-28,33,Gironde,Nouvelle-Aquitaine,vert
+2020-05-28,34,Hérault,Occitanie,vert
+2020-05-28,35,Ille-et-Vilaine,Bretagne,vert
+2020-05-28,36,Indre,Centre-Val de Loire,vert
+2020-05-28,37,Indre-et-Loire,Centre-Val de Loire,vert
+2020-05-28,38,Isère,Auvergne-Rhône-Alpes,vert
+2020-05-28,39,Jura,Bourgogne-Franche-Comté,vert
+2020-05-28,40,Landes,Nouvelle-Aquitaine,vert
+2020-05-28,41,Loir-et-Cher,Centre-Val de Loire,vert
+2020-05-28,42,Loire,Auvergne-Rhône-Alpes,vert
+2020-05-28,43,Haute-Loire,Auvergne-Rhône-Alpes,vert
+2020-05-28,44,Loire-Atlantique,Pays de la Loire,vert
+2020-05-28,45,Loiret,Centre-Val de Loire,vert
+2020-05-28,46,Lot,Occitanie,vert
+2020-05-28,47,Lot-et-Garonne,Nouvelle-Aquitaine,vert
+2020-05-28,48,Lozère,Occitanie,vert
+2020-05-28,49,Maine-et-Loire,Pays de la Loire,vert
+2020-05-28,50,Manche,Normandie,vert
+2020-05-28,51,Marne,Grand Est,vert
+2020-05-28,52,Haute-Marne,Grand Est,vert
+2020-05-28,53,Mayenne,Pays de la Loire,vert
+2020-05-28,54,Meurthe-et-Moselle,Grand Est,vert
+2020-05-28,55,Meuse,Grand Est,vert
+2020-05-28,56,Morbihan,Bretagne,vert
+2020-05-28,57,Moselle,Grand Est,vert
+2020-05-28,58,Nièvre,Bourgogne-Franche-Comté,vert
+2020-05-28,59,Nord,Hauts-de-France,vert
+2020-05-28,60,Oise,Hauts-de-France,vert
+2020-05-28,61,Orne,Normandie,vert
+2020-05-28,62,Pas-de-Calais,Hauts-de-France,vert
+2020-05-28,63,Puy-de-Dôme,Auvergne-Rhône-Alpes,vert
+2020-05-28,64,Pyrénées-Atlantiques,Nouvelle-Aquitaine,vert
+2020-05-28,65,Hautes-Pyrénées,Occitanie,vert
+2020-05-28,66,Pyrénées-Orientales,Occitanie,vert
+2020-05-28,67,Bas-Rhin,Grand Est,vert
+2020-05-28,68,Haut-Rhin,Grand Est,vert
+2020-05-28,69,Rhône,Auvergne-Rhône-Alpes,vert
+2020-05-28,70,Haute-Saône,Bourgogne-Franche-Comté,vert
+2020-05-28,71,Saône-et-Loire,Bourgogne-Franche-Comté,vert
+2020-05-28,72,Sarthe,Pays de la Loire,vert
+2020-05-28,73,Savoie,Auvergne-Rhône-Alpes,vert
+2020-05-28,74,Haute-Savoie,Auvergne-Rhône-Alpes,vert
+2020-05-28,75,Paris,Île-de-France,orange
+2020-05-28,76,Seine-Maritime,Normandie,vert
+2020-05-28,77,Seine-et-Marne,Île-de-France,orange
+2020-05-28,78,Yvelines,Île-de-France,orange
+2020-05-28,79,Deux-Sèvres,Nouvelle-Aquitaine,vert
+2020-05-28,80,Somme,Hauts-de-France,vert
+2020-05-28,81,Tarn,Occitanie,vert
+2020-05-28,82,Tarn-et-Garonne,Occitanie,vert
+2020-05-28,83,Var,Provence-Alpes-Côte d'Azur,vert
+2020-05-28,84,Vaucluse,Provence-Alpes-Côte d'Azur,vert
+2020-05-28,85,Vendée,Pays de la Loire,vert
+2020-05-28,86,Vienne,Nouvelle-Aquitaine,vert
+2020-05-28,87,Haute-Vienne,Nouvelle-Aquitaine,vert
+2020-05-28,88,Vosges,Grand Est,vert
+2020-05-28,89,Yonne,Bourgogne-Franche-Comté,vert
+2020-05-28,90,Territoire de Belfort,Bourgogne-Franche-Comté,vert
+2020-05-28,91,Essonne,Île-de-France,orange
+2020-05-28,92,Hauts-de-Seine,Île-de-France,orange
+2020-05-28,93,Seine-Saint-Denis,Île-de-France,orange
+2020-05-28,94,Val-de-Marne,Île-de-France,orange
+2020-05-28,95,Val-d'Oise,Île-de-France,orange
+2020-05-28,971,Guadeloupe,Guadeloupe,vert
+2020-05-28,972,Martinique,Martinique,vert
+2020-05-28,973,Guyane,Guyane,orange
+2020-05-28,974,La Réunion,La Réunion,vert
+2020-05-28,976,Mayotte,Mayotte,orange

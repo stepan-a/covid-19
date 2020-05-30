@@ -24,7 +24,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[4]:
+# In[1]:
 
 
 import france_data_management as data
@@ -41,7 +41,7 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 # ## Data import
 
-# In[5]:
+# In[2]:
 
 
 # Import data from Santé publique France
@@ -246,16 +246,16 @@ def build_gif(file_gif, imgs_folder, dates):
 
 
     
-def build_map(data_df, img_folder, legend_title="legend_title", title="title"):
+def build_map(data_df, img_folder, date_str = "extract_date", dep_str = "departement", color_str = 'indic_synthese', legend_title="legend_title", title="title"):
     dates_deconf = list(dict.fromkeys(list(data_df['extract_date'].values))) 
     date = dates_deconf[-1]
     
-    data_df = data_df[data_df["extract_date"] == date]
+    data_df = data_df[data_df[date_str] == date]
 
     fig = px.choropleth(geojson = depa, 
-                        locations = data_df['departement'], 
+                        locations = data_df[dep_str], 
                         featureidkey="properties.code",
-                        color = data_df['indic_synthese'],
+                        color = data_df[color_str],
                         scope='europe',
                         #labels={'indic_synthese':"Couleur"},
                         #color_discrete_sequence = ["green", "orange", "red"],

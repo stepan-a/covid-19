@@ -135,15 +135,15 @@ def import_data():
     #cols_to_change = df.select_dtypes(include=np.number).columns.tolist()
     cols_to_change = [s for s in df.columns.tolist() if "new" in s]
     
-    for dep in deps:
-        ligne = df.loc[(df["jour"] == "2020-05-15") & (df["dep"] == dep),:]
+    #for dep in deps:
+        #ligne = df.loc[(df["jour"] == "2020-05-15") & (df["dep"] == dep),:]
 
-        moitié = ligne.loc[:, cols_to_change]/2
-        df.loc[ (df["jour"] == "2020-05-15") & (df["dep"] == dep), cols_to_change] = moitié
+        #moitié = ligne.loc[:, cols_to_change]/2
+        #df.loc[ (df["jour"] == "2020-05-15") & (df["dep"] == dep), cols_to_change] = moitié
 
-        ligne.loc[:, cols_to_change] = moitié
-        ligne.loc[:,["jour"]] = ["2020-05-14"]
-        df = df.append(ligne)
+        #ligne.loc[:, cols_to_change] = moitié
+        #ligne.loc[:,["jour"]] = ["2020-05-14"]
+        #df = df.append(ligne)
         
     dates = sorted(list(dict.fromkeys(list(df['jour'].values))))
     return df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud

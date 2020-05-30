@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[8]:
+# In[2]:
 
 
 import france_data_management as data
@@ -13,26 +13,35 @@ from datetime import datetime
 from datetime import timedelta
 import plotly
 import plotly.express as px
+import math
+import json
 import numpy as np
+import locale
+
+locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.colors.qualitative.Plotly + px.colors.qualitative.Dark24 + px.colors.qualitative.Alphabet
 
 
 # ## Data Import
 
-# In[9]:
+# In[3]:
 
 
 df, df_confirmed, dates, df_new, df_tests, _, df_sursaud = data.import_data()
+df = df.sort_values(by=['dep', 'jour'], axis=0).reset_index()
 last_day_plot = (datetime.strptime(max(dates), '%Y-%m-%d') + timedelta(days=1)).strftime("%Y-%m-%d")
-
+df_sursaud['indic_clr'] = ["white" for i in range(len(df_sursaud))]
 dates_sursaud = list(dict.fromkeys(list(df_sursaud['date_de_passage'].values))) 
 
 df_region = df.groupby(['regionName', 'jour', 'regionPopulation']).sum().reset_index()
 df_region["hosp_regpop"] = df_region["hosp"] / df_region["regionPopulation"]*1000000 
 df_region["rea_regpop"] = df_region["rea"] / df_region["regionPopulation"]*1000000 
 df_region["dc_new_regpop"] = df_region["dc_new"] / df_region["regionPopulation"]*1000000 
-df_region["dc_new_regpop_rolling7"] = df_region["dc_new_regpop"].rolling(window=7).mean()
+df_region["dc_new_regpop_rolling7"] = df_region["dc_new_regpop"].rolling(window=7, center=True).mean()
 df_region["dc_new_rolling7"] = df_region["dc_new"].rolling(window=7).mean()
+
+df_region["hosp_regpop_rolling7"] = df_region["hosp_regpop"].rolling(window=4, center=True).mean()
+df_region["rea_regpop_rolling7"] = df_region["rea_regpop"].rolling(window=4, center=True).mean()
 
 df["dc_new_deppop"] = df["dc_new"] / df["departmentPopulation"]*1000000 
 df["dc_new_deppop_rolling7"] = df["dc_new_deppop"].rolling(window=7).mean()
@@ -43,7 +52,99 @@ df_new_region = df_new.groupby(['regionName', 'jour']).sum().reset_index()
 df_france = df.groupby('jour').sum().reset_index()
 
 regions = list(dict.fromkeys(list(df['regionName'].values))) 
+codes_reg = list(dict.fromkeys(list(df['code'].values))) 
 lits_reas = pd.read_csv('data/france/lits_rea.csv', sep=",")
+
+
+# In[31]:
+
+
+with open('data/france/dep.geojson') as response:
+    dep_geojson = json.load(response)
+    
+with open('data/france/regions.geojson') as response:
+    reg_geojson = json.load(response)
+    
+def build_map(data_df, img_folder, date = dates_sursaud[-1], subtitle="", legend_str="", type_data="dep", date_str ="extract_date", dep_str = "departement", color_str = 'indic_synthese', legend_title="legend_title", title="title"):    
+    date = max(list(dict.fromkeys(list(data_df[date_str].values))))
+    data_df = data_df[data_df[date_str] == date]
+    
+    if type_data == "dep":
+        geojson_data = dep_geojson
+    else:
+        geojson_data = reg_geojson
+        
+    fig = px.choropleth(geojson = geojson_data, 
+                        locations = data_df[dep_str], 
+                        featureidkey="properties.code",
+                        color = data_df[color_str],
+                        scope='europe',
+                        labels={"color":"Couleur"},
+                        #legend_title = "couleur",
+                        color_discrete_map = {"green":"green", "orange":"orange", "red":"red"}
+                        #category_orders = {"indic_synthese" :["vert", "orange", "rouge"]}
+                              )
+    date_title = datetime.strptime(date, '%Y-%m-%d').strftime('%d %B')
+
+    fig.update_geos(fitbounds="locations", visible=False)
+
+    fig.update_layout(
+        margin={"r":0,"t":0,"l":0,"b":0},
+        title={
+            'text': title,
+            'y':0.98,
+            'x':0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'},
+        
+        titlefont = dict(
+            size=30),
+        
+        annotations = [
+            dict(
+                x=0.54,
+                y=0.03,
+                xref='paper',
+                yref='paper',
+                xanchor = 'center',
+                text='Données : Santé publique France. Auteur : @guillaumerozier - covidtracker.fr',
+                showarrow = False
+            ),
+            dict(
+                x=1,
+                y=0.4,
+                xref='paper',
+                yref='paper',
+                xanchor = 'right',
+                align = "center",
+                text = legend_str,
+                showarrow = False,
+                font=dict(
+                    size=20
+                        )
+            ),
+
+            dict(
+                x=0.55,
+                y=0.94,
+                xref='paper',
+                yref='paper',
+                text= "{}, {}".format(subtitle, date_title),
+                showarrow = False,
+                font=dict(
+                    size=20
+                        )
+            )]
+         ) 
+
+    fig.update_geos(
+        #center=dict(lon=-30, lat=-30),
+        projection_rotation=dict(lon=12, lat=30, roll=8),
+        #lataxis_range=[-50,20], lonaxis_range=[0, 200]
+    )
+    #fig.show()
+    fig.write_image(img_folder.format("latest"), scale=2, width=1200, height=800)
+    fig.write_image(img_folder.format(date), scale=2, width=1200, height=800)
 
 
 # ## Subplots : régions
@@ -54,12 +155,12 @@ lits_reas = pd.read_csv('data/france/lits_rea.csv', sep=",")
 # - nb de réanimations par habitant des régions,
 # et ce pour toutes les régions françaises
 
-# In[10]:
+# In[122]:
 
 
-
+"""
 for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
-    ni, nj = 6, 4
+    ni, nj = 5, 4
     i, j = 1, 1
 
     df_region[val+"_new"] = df_region[val].diff()
@@ -68,7 +169,7 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
     regions_ordered = df_region[df_region['jour'] == dates[-1]].sort_values(by=[val], ascending=False)["regionName"].values
     regions_ordered = list(dict.fromkeys(list(regions_ordered)))[:]
     
-    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles=[ "<b>"+ str(r) +"</b>" for r in (regions_ordered[:11] + [""] + regions_ordered[11:14]+[""]+regions_ordered[14:17]+[""]+regions_ordered[17:])], vertical_spacing = 0.06, horizontal_spacing = 0.01)
+    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles=[ "<b>"+ str(r) +"</b>" for r in (regions_ordered[:11] + [""] + regions_ordered[11:14]+[""]+regions_ordered[14:])], vertical_spacing = 0.06, horizontal_spacing = 0.01)
     #&#8681;
     
     sub = "<sub>{}par ordre décroissant des hospitalisations actuelles - guillaumerozier.fr</sub>"
@@ -112,13 +213,9 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
         fig.update_yaxes(title_text="", range=[0, max_value], gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
 
         j+=1
-        if j == nj+1 or ((i >= 3) & (j == nj)):
+        if j == nj+1 or ((i >= 3) & (j == nj) & (i<5)):
             i+=1
             j=1
-            
-        """if j == nj+1:
-            i+=1
-            j=1"""
 
     for i in fig['layout']['annotations']:
         i['font'] = dict(size=15)
@@ -131,7 +228,15 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
         by_million_title = "pour 1 million d'habitants, "
         by_million_legend = "pour 1M. d'hab."
     
-    
+    fig.add_layout_image(
+        dict(
+            source="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/covidtracker_logo.png",
+            xref="paper", yref="paper",
+            x=1, y=1.07,
+            sizex=0.06, sizey=0.06, opacity=0.9,
+            xanchor="right", yanchor="bottom"
+            )
+) 
 
     fig.update_layout(
         barmode="overlay",
@@ -197,7 +302,170 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
                         ))
     
     name_fig = "subplots_" + val 
-    fig.write_image("images/charts/france/{}.png".format(name_fig), scale=2, width=1300, height=1600)
+    fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=2, width=1300, height=1600)
+
+    fig["layout"]["annotations"] += (
+                    dict(
+                        x=0.5,
+                        y=1,
+                        xref='paper',
+                        yref='paper',
+                        xanchor='center',
+                        text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
+                        showarrow = False
+                        ),
+                        )
+    plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+    print("> " + name_fig)
+
+
+    #fig.show()"""
+
+
+# In[156]:
+
+
+
+for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
+    ni, nj = 5, 4
+    i, j = 1, 1
+
+    df_region[val+"_new"] = df_region[val].diff()
+    max_value = df_region[val].max()
+    
+    regions_ordered = df_region[df_region['jour'] == dates[-1]].sort_values(by=[val], ascending=False)["regionName"].values
+    regions_ordered = list(dict.fromkeys(list(regions_ordered)))[:]
+    
+    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles=[ "<b>"+ str(r) +"</b>" for r in (regions_ordered[:11] + [""] + regions_ordered[11:14]+[""]+regions_ordered[14:])], vertical_spacing = 0.06, horizontal_spacing = 0.01)
+    #&#8681;
+    
+    sub = "<sub>{}par ordre décroissant des hospitalisations actuelles - guillaumerozier.fr</sub>"
+    type_ppl = "hospitalisées"
+    
+    if "rea" in val:
+        type_ppl = "en réanimation"
+        
+    if "dc" in val:
+        type_ppl = "décédées"
+        sub = "<sub>par million d'habitants, moyenne mobile sur 7 jours - guillaumerozier.fr</sub>"
+        
+    df_nonobj = df_region.select_dtypes(exclude=['object'])
+    df_nonobj.loc[:,'jour'] = df_region.loc[:,'jour']
+    
+    vals_quantiles=[]
+    for q in range(25, 125, 25):
+        vals_quantiles.append(df_nonobj.groupby('jour').quantile(q=q/100).reset_index())
+        
+    for region in regions_ordered:
+        data_r = df_region[df_region["regionName"] == region]
+        
+        data_r.loc[:,val + "_new"] = data_r.loc[:,val].diff()
+        ordered_values = df_region.sort_values(by=[val + "_new"], ascending=False)[val + "_new"]
+        max_value_diff = ordered_values.quantile(.90)
+        
+        for data_quant in vals_quantiles:
+            fig.add_trace(go.Bar(x=data_quant["jour"], y=data_quant[val], marker=dict(color="grey", opacity=0.1) #rgba(230,230,230,0.5)
+                        ),
+                      i, j)
+        
+        fig.add_trace(go.Bar(x=data_r["jour"], y=data_r[val],
+                            marker=dict(color = data_r[val + "_new"], coloraxis="coloraxis"), ),
+                      i, j)
+        
+        rangemin = "2020-03-15"
+        if "dc" in val:
+            rangemin = "2020-03-25"
+        fig.update_xaxes(title_text="", range=[rangemin, last_day_plot], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, linewidth=1, linecolor='white', row=i, col=j)
+        fig.update_yaxes(title_text="", range=[0, max_value], gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
+
+        j+=1
+        if j == nj+1 or ((i >= 3) & (j == nj) & (i<5)):
+            i+=1
+            j=1
+            
+        """if j == nj+1:
+            i+=1
+            j=1"""
+
+    for i in fig['layout']['annotations']:
+        i['font'] = dict(size=15)
+
+    #for annotation in fig['layout']['annotations']: 
+            #annotation ['x'] = 0.5
+    by_million_title = ""
+    by_million_legend = ""
+    if "pop" in val:
+        by_million_title = "pour 1 million d'habitants, "
+        by_million_legend = "pour 1M. d'hab."
+    
+    
+
+    fig.update_layout(
+        barmode="overlay",
+        margin=dict(
+            l=0,
+            r=15,
+            b=0,
+            t=170,
+            pad=0
+        ),
+        bargap=0,
+        paper_bgcolor='#fffdf5',#fcf8ed #faf9ed
+        plot_bgcolor='#f5f0e4',#f5f0e4 fcf8ed f0e8d5 
+        coloraxis=dict(colorscale=["green", "#ffc832", "#cf0000"], cmin=-max_value_diff, cmax=max_value_diff), 
+                    coloraxis_colorbar=dict(
+                        title="Solde quotidien de<br>pers. {}<br>{}<br> &#8205; ".format(type_ppl, by_million_legend),
+                        thicknessmode="pixels", thickness=15,
+                        lenmode="pixels", len=400,
+                        yanchor="bottom", y=0.30, xanchor="left", x=0.85,
+                        ticks="outside", tickprefix="  ", ticksuffix=" hosp.",
+                        nticks=15,
+                        tickfont=dict(size=12),
+                        titlefont=dict(size=15)),
+                      
+                    showlegend=False,
+    
+                     title={
+                        'text': ("COVID19 : <b>nombre de personnes {}</b><br>"+sub).format(type_ppl, by_million_title),
+                        'y':0.97,
+                        'x':0.5,
+                        'xref':"paper",
+                         'yref':"container",
+                        'xanchor': 'center',
+                        'yanchor': 'middle'},
+                        titlefont = dict(
+                        size=35,
+                        )
+    )
+
+    fig["layout"]["annotations"] += ( dict(
+                            x=0.9,
+                            y=0.015,
+                            xref='paper',
+                            yref='paper',
+                            xanchor='center',
+                            yanchor='top',
+                            text='Source :<br>Santé Publique France',
+                            showarrow = False,
+                            font=dict(size=12), 
+                            opacity=0.5
+                        ),
+                            dict(
+                            x=0.9,
+                            y=0.27,
+                            xref='paper',
+                            yref='paper',
+                            xanchor='center',
+                            yanchor='top',
+                            text='25 % des données sont comprises<br>dans la courbe grise la plus foncée,<br>50 % dans la deuxième, 75 % dans<br>la troisième, 100 % dans la plus claire.',
+                            showarrow = False,
+                            font=dict(size=15), 
+                            opacity=1,
+                            align='left'
+                        ))
+    
+    name_fig = "subplots_" + val 
+    fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=1.5, width=1300, height=1600)
 
     fig["layout"]["annotations"] += (
                     dict(
@@ -222,13 +490,13 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
 # - nb d'hospitalisés par habitant des départements,
 # et ce pour toutes les régions françaises
 
-# In[13]:
+# In[137]:
 
 
 
 import numpy as np
 for val in ["dc_new_deppop_rolling7", "hosp_deppop"]: #, "hosp", "rea", "rea_pop"
-    ni, nj = 13, 9
+    ni, nj = 12, 9
     i, j = 1, 1
 
     #df_region[val+"_new"] = df_region[val].diff()
@@ -255,7 +523,7 @@ for val in ["dc_new_deppop_rolling7", "hosp_deppop"]: #, "hosp", "rea", "rea_pop
     titles = []
     k=0
     for case in range(1, 109):
-        if case in [80, 81, 89, 90, 98, 99, 107, 108]:
+        if case in [80, 81, 89, 90, 98, 99, 108]:
             titles += [""] 
         else:
             titles += ["<b>" + deps_ordered_nb[k] + "</b> - " + deps_ordered[k]]
@@ -300,7 +568,7 @@ for val in ["dc_new_deppop_rolling7", "hosp_deppop"]: #, "hosp", "rea", "rea_pop
         fig.update_yaxes(title_text="", range=[0, max_value], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j)
 
         j+=1
-        if j == nj+1 or ((i >= 9) & (j >= nj-1)): 
+        if j == nj+1 or ((i >= 9) & (j >= nj-1) & (i<12)): 
             i+=1
             j=1
             
@@ -339,7 +607,7 @@ for val in ["dc_new_deppop_rolling7", "hosp_deppop"]: #, "hosp", "rea", "rea_pop
                         title="Solde quotidien de<br>pers. {}<br>{}<br> &#8205; ".format(type_ppl, by_million_legend),
                         thicknessmode="pixels", thickness=15,
                         lenmode="pixels", len=350,
-                        yanchor="bottom", y=0.15, xanchor="left", x=0.87,
+                        yanchor="bottom", y=0.14, xanchor="left", x=0.87,
                         ticks="outside", tickprefix="  ", ticksuffix=" hosp.",
                         nticks=5,
                         tickfont=dict(size=12),
@@ -361,25 +629,25 @@ for val in ["dc_new_deppop_rolling7", "hosp_deppop"]: #, "hosp", "rea", "rea_pop
     )
 
     fig["layout"]["annotations"] += ( dict(
-                            x=0.9,
-                            y=0.015,
+                            x=0.95,
+                            y=0.04,
                             xref='paper',
                             yref='paper',
                             xanchor='center',
                             yanchor='top',
-                            text='Source :<br>Santé Publique France',
+                            text='Source :<br>Santé Publique<br>France',
                             showarrow = False,
                             font=dict(size=15), 
                             opacity=0.5
                         ),
                             dict(
                             x=0.9,
-                            y=0.14,
+                            y=0.13,
                             xref='paper',
                             yref='paper',
                             xanchor='center',
                             yanchor='top',
-                            text='25 % des données sont<br>comprises dans la courbe<br>grise la plus foncée,<br><br>50 % dans la deuxième,<br><br>75 % dans la troisième,<br><br>100 % dans la plus claire.',
+                            text='25 % des données sont comprises<br>dans la courbe grise la plus foncée,<br>50 % dans la deuxième, 75 % dans<br>la troisième, 100 % dans la plus claire.',
                             showarrow = False,
                             font=dict(size=16), 
                             opacity=1,
@@ -400,7 +668,7 @@ for val in ["dc_new_deppop_rolling7", "hosp_deppop"]: #, "hosp", "rea", "rea_pop
                                     )
     
     name_fig = "subplots_dep_" + val 
-    fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1600, height=2300)
+    fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=2, width=1600, height=2300)
 
     fig["layout"]["annotations"] += (
                     dict(
@@ -423,7 +691,7 @@ for val in ["dc_new_deppop_rolling7", "hosp_deppop"]: #, "hosp", "rea", "rea_pop
 # ## Subplots : départements - classé par régions
 # Idem précédent mais les départements sont rangés dans leurs régions, et les régions classées par ordre décroissant du nb de personnes
 
-# In[12]:
+# In[139]:
 
 
 
@@ -449,7 +717,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
         deps_by_reg += [[deps_ordered['dep'].values, deps_ordered['departmentName'].values]]
         
         for d in range(len(deps_ordered)):
-            if case in [80, 89, 98]:
+            if case in [80, 89, 98, 99, 108]:
                 titles += ["", ""]
                 titles += ["" + deps_ordered['dep'].values[d] + " - " + deps_ordered['departmentName'].values[d] + ""]
                 case+=3
@@ -458,7 +726,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                 case+=1
         k+=1
         
-    """for case in range(1, ni * nj - 1):
+        """for case in range(1, ni * nj - 1):
         if case in [80, 81, 89, 90, 98, 99]:
             titles += [""] 
         else:
@@ -504,7 +772,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
             fig.update_yaxes(title_text="", range=[0, max_value], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j)
 
             j+=1
-            if j == nj+1 or ((i >= 9) & (j >= nj-1)): 
+            if j == nj+1 or ((i >= 9) & (j >= nj-1) & (i < 12)): 
                 i+=1
                 j=1
 
@@ -562,7 +830,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                         title="Solde quotidien de<br>pers. {}<br>{}<br> &#8205; ".format(type_ppl, by_million_legend),
                         thicknessmode="pixels", thickness=15,
                         lenmode="pixels", len=350,
-                        yanchor="bottom", y=0.15, xanchor="left", x=0.87,
+                        yanchor="bottom", y=0.14, xanchor="left", x=0.87,
                         ticks="outside", tickprefix="  ", ticksuffix=" hosp.",
                         nticks=5,
                         tickfont=dict(size=12),
@@ -584,25 +852,25 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     )
 
     fig["layout"]["annotations"] += ( dict(
-                            x=0.9,
-                            y=0.015,
+                            x=0.95,
+                            y=0.04,
                             xref='paper',
                             yref='paper',
                             xanchor='center',
                             yanchor='top',
-                            text='Source :<br>Santé Publique France',
+                            text='Source :<br>Santé Publique<br>France',
                             showarrow = False,
                             font=dict(size=15), 
                             opacity=0.5
                         ),
                             dict(
                             x=0.9,
-                            y=0.14,
+                            y=0.13,
                             xref='paper',
                             yref='paper',
                             xanchor='center',
                             yanchor='top',
-                            text='25 % des données sont<br>comprises dans la courbe<br>grise la plus foncée,<br><br>50 % dans la deuxième,<br><br>75 % dans la troisième,<br><br>100 % dans la plus claire.',
+                            text='25 % des données sont comprises<br>dans la courbe grise la plus foncée,<br>50 % dans la deuxième, 75 % dans<br>la troisième, 100 % dans la plus claire.',
                             showarrow = False,
                             font=dict(size=16), 
                             opacity=1,
@@ -622,8 +890,18 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                         ),
                                     ) + annotations_to_add
     
+    fig.add_layout_image(
+        dict(
+            source="https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/covidtracker_logo.png",
+            xref="paper", yref="paper",
+            x=1, y=1.02,
+            sizex=0.08, sizey=0.08,
+            xanchor="right", yanchor="bottom"
+            )
+) 
+    
     name_fig = "subplots_dep__class-par-reg" + val 
-    fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1600, height=2300)
+    fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=2, width=1600, height=2300)
 
     fig["layout"]["annotations"] += (
                     dict(
@@ -643,13 +921,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()
 
 
-# In[ ]:
-
-
-
-
-
-# In[ ]:
+# In[6]:
 
 
 
@@ -707,6 +979,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     max_values_diff=[]
         
     clrs_dep = []
+    current_values = [[], []]
     for dep in tqdm(deps_ordered_nb):
         data_dep = df[df["departmentName"] == dep]
         
@@ -725,8 +998,10 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                 clrs += ["orange"]
             else:
                 clrs += ["red"]
-                
-                
+        
+        current_values[0].append(values_y.values[-1])
+        current_values[1].append(clrs[-1])
+            
         mean_last7 = values_y[-7:].mean()
         max_last7 = values_y[-14:].max()
         
@@ -736,8 +1011,10 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
             clrs_dep += [["orange", max_last7]]
         else:
             clrs_dep += [["red", max_last7]]
+        
+        df_sursaud.loc[(df_sursaud["dep"] == dep) & (df_sursaud["date_de_passage"] == dates_sursaud[-1]), "indic1_clr"] = clrs_dep[-1][0]
             
-        fig.add_trace(go.Bar(x = df_sursaud_dep["date_de_passage"], y = values_y,
+        fig.add_trace(go.Bar(x = dates_sursaud, y = values_y,
                             marker_color=clrs),
                       i, j)
         #fig.add_trace(go.Scatter(x = df_sursaud_dep["date_de_passage"], y = df_sursaud_dep["nbre_pass_tot"],
@@ -760,7 +1037,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     cnt=0
     shapes=[]
     for i in fig['layout']['annotations']:
-        i['font'] = dict(size=15, color = "grey")
+        i['font'] = dict(size=15, color = clrs_dep[cnt][0])
         
         if clrs_dep[cnt][1] <= 20:
             i['y'] = i['y'] - 0.011
@@ -770,7 +1047,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
             
         xref = "x"+str(cnt+1)
         yref = "y"+str(cnt+1)
-        shapes += [{'type': 'rect', 'x0': dates_sursaud[-7], 'y0': 0, 'x1': dates_sursaud[-1], 'y1': 100, 'xref': xref, 'yref': yref, 'fillcolor': clrs_dep[cnt][0], 'layer' : "below", 'line_width':0, 'opacity' : 0.08}]
+        shapes += [{'type': 'rect', 'x0': dates_sursaud[-7], 'y0': 0, 'x1': dates_sursaud[-1], 'y1': 100, 'xref': xref, 'yref': yref, 'fillcolor': clrs_dep[cnt][0], 'layer' : "below", 'line_width':0, 'opacity' : 0.1}]
 
         cnt+=1
     
@@ -803,7 +1080,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                         title="Solde quotidien de<br>pers. {}<br>{}<br> &#8205; ".format(type_ppl, by_million_legend),
                         thicknessmode="pixels", thickness=15,
                         lenmode="pixels", len=350,
-                        yanchor="bottom", y=0.15, xanchor="left", x=0.87,
+                        yanchor="bottom", y=0.14, xanchor="left", x=0.87,
                         ticks="outside", tickprefix="  ", ticksuffix=" hosp.",
                         nticks=5,
                         tickfont=dict(size=12),
@@ -823,8 +1100,33 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                             size=50
                         )
     )
-
-    fig["layout"]["annotations"] += ( 
+    
+    annot=()
+    cnt=1
+    for dep in deps_ordered_nb:
+        annot += (dict(
+            x = dates_sursaud[-1], y = current_values[0][cnt-1], # annotation point
+            xref='x'+str(cnt), 
+            yref='y'+str(cnt),
+            text="<b>{}</b> % ".format(math.trunc(round(current_values[0][cnt-1]))),
+            xshift=0,
+            yshift=3,
+            align='center',
+            xanchor="right",
+            font=dict(
+                color=current_values[1][cnt-1],
+                size=10
+                ),
+            ax = 0,
+            ay = -20,
+            arrowcolor=current_values[1][cnt-1],
+            arrowsize=1,
+            arrowwidth=1,
+            arrowhead=4
+        ),)
+        cnt+=1
+        
+    fig["layout"]["annotations"] += annot + ( 
                         dict(
                             x=0.82,
                             y=0.05,
@@ -866,7 +1168,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                                     )
     
     name_fig = "subplots_deconf_indic1"
-    fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1600, height=2300)
+    fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=1.5, width=1600, height=2300)
 
     fig["layout"]["annotations"] += (
                     dict(
@@ -886,170 +1188,13 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()
 
 
-# In[ ]:
+# In[40]:
 
 
-
-for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
-    ni, nj = 6, 4
-    i, j = 1, 1
-
-    df_region[val+"_new"] = df_region[val].diff()
-    max_value = df_region[val].max()
-    
-    regions_ordered = df_region[df_region['jour'] == dates[-1]].sort_values(by=[val], ascending=False)["regionName"].values
-    regions_ordered = list(dict.fromkeys(list(regions_ordered)))[:]
-    
-    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles=[ "<b>"+ str(r) +"</b>" for r in (regions_ordered[:11] + [""] + regions_ordered[11:14]+[""]+regions_ordered[14:17]+[""]+regions_ordered[17:])], vertical_spacing = 0.06, horizontal_spacing = 0.01)
-    #&#8681;
-    
-    sub = "<sub>{}par ordre décroissant des hospitalisations actuelles - guillaumerozier.fr</sub>"
-    type_ppl = "hospitalisées"
-    
-    if "rea" in val:
-        type_ppl = "en réanimation"
-        
-    if "dc" in val:
-        type_ppl = "décédées"
-        sub = "<sub>par million d'habitants, moyenne mobile sur 7 jours - guillaumerozier.fr</sub>"
-        
-    df_nonobj = df_region.select_dtypes(exclude=['object'])
-    df_nonobj.loc[:,'jour'] = df_region.loc[:,'jour']
-    
-    vals_quantiles=[]
-    for q in range(25, 125, 25):
-        vals_quantiles.append(df_nonobj.groupby('jour').quantile(q=q/100).reset_index())
-        
-    for region in regions_ordered:
-        data_r = df_region[df_region["regionName"] == region]
-        
-        data_r.loc[:,val + "_new"] = data_r.loc[:,val].diff()
-        ordered_values = df_region.sort_values(by=[val + "_new"], ascending=False)[val + "_new"]
-        max_value_diff = ordered_values.quantile(.90)
-        
-        for data_quant in vals_quantiles:
-            fig.add_trace(go.Bar(x=data_quant["jour"], y=data_quant[val], marker=dict(color="grey", opacity=0.1) #rgba(230,230,230,0.5)
-                        ),
-                      i, j)
-        
-        fig.add_trace(go.Bar(x=data_r["jour"], y=data_r[val],
-                            marker=dict(color = data_r[val + "_new"], coloraxis="coloraxis"), ),
-                      i, j)
-        
-        rangemin = "2020-03-15"
-        if "dc" in val:
-            rangemin = "2020-03-25"
-        fig.update_xaxes(title_text="", range=[rangemin, last_day_plot], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, nticks=10, linewidth=1, linecolor='white', row=i, col=j)
-        fig.update_yaxes(title_text="", range=[0, max_value], gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
-
-        j+=1
-        if j == nj+1 or ((i >= 3) & (j == nj)):
-            i+=1
-            j=1
-            
-        """if j == nj+1:
-            i+=1
-            j=1"""
-
-    for i in fig['layout']['annotations']:
-        i['font'] = dict(size=15)
-
-    #for annotation in fig['layout']['annotations']: 
-            #annotation ['x'] = 0.5
-    by_million_title = ""
-    by_million_legend = ""
-    if "pop" in val:
-        by_million_title = "pour 1 million d'habitants, "
-        by_million_legend = "pour 1M. d'hab."
-    
-    
-
-    fig.update_layout(
-        barmode="overlay",
-        margin=dict(
-            l=0,
-            r=15,
-            b=0,
-            t=170,
-            pad=0
-        ),
-        bargap=0,
-        paper_bgcolor='#fffdf5',#fcf8ed #faf9ed
-        plot_bgcolor='#f5f0e4',#f5f0e4 fcf8ed f0e8d5 
-        coloraxis=dict(colorscale=["green", "#ffc832", "#cf0000"], cmin=-max_value_diff, cmax=max_value_diff), 
-                    coloraxis_colorbar=dict(
-                        title="Solde quotidien de<br>pers. {}<br>{}<br> &#8205; ".format(type_ppl, by_million_legend),
-                        thicknessmode="pixels", thickness=15,
-                        lenmode="pixels", len=400,
-                        yanchor="bottom", y=0.26, xanchor="left", x=0.85,
-                        ticks="outside", tickprefix="  ", ticksuffix=" hosp.",
-                        nticks=15,
-                        tickfont=dict(size=12),
-                        titlefont=dict(size=15)),
-                      
-                    showlegend=False,
-    
-                     title={
-                        'text': ("COVID19 : <b>nombre de personnes {}</b><br>"+sub).format(type_ppl, by_million_title),
-                        'y':0.97,
-                        'x':0.5,
-                        'xref':"paper",
-                         'yref':"container",
-                        'xanchor': 'center',
-                        'yanchor': 'middle'},
-                        titlefont = dict(
-                        size=35,
-                        )
-    )
-
-    fig["layout"]["annotations"] += ( dict(
-                            x=0.9,
-                            y=0.015,
-                            xref='paper',
-                            yref='paper',
-                            xanchor='center',
-                            yanchor='top',
-                            text='Source :<br>Santé Publique France',
-                            showarrow = False,
-                            font=dict(size=12), 
-                            opacity=0.5
-                        ),
-                            dict(
-                            x=0.9,
-                            y=0.21,
-                            xref='paper',
-                            yref='paper',
-                            xanchor='center',
-                            yanchor='top',
-                            text='25 % des données sont<br>comprises dans la courbe<br>grise la plus foncée,<br><br>50 % dans la deuxième,<br><br>75 % dans la troisième,<br><br>100 % dans la plus claire.',
-                            showarrow = False,
-                            font=dict(size=16), 
-                            opacity=1,
-                            align='left'
-                        ))
-    
-    name_fig = "subplots_" + val 
-    fig.write_image("images/charts/france/{}.png".format(name_fig), scale=2, width=1300, height=1600)
-
-    fig["layout"]["annotations"] += (
-                    dict(
-                        x=0.5,
-                        y=1,
-                        xref='paper',
-                        yref='paper',
-                        xanchor='center',
-                        text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
-                        showarrow = False
-                        ),
-                        )
-    plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
-    print("> " + name_fig)
+build_map(df_sursaud, date_str="date_de_passage", legend_str="Rouge : > 10%<br>Orange : 6 à 10%<br>Vert : < 10%", dep_str="dep", color_str="indic1_clr", img_folder="images/charts/france/indic1/{}.png", title="Indicateur 1 : circulation du virus (par département)", subtitle="taux de suspicion Covid19 aux urgences")
 
 
-    #fig.show()
-
-
-# In[ ]:
+# In[127]:
 
 
 """
@@ -1061,7 +1206,7 @@ fig.add_trace(go.Bar(x = dta["date_de_passage"], y = dta["taux_covid"]*100, mark
 fig.show()"""
 
 
-# In[ ]:
+# In[17]:
 
 
 
@@ -1116,7 +1261,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     max_values_diff=[]
     
     clrs_dep = []
-    
+    current_values = [[], []]
     for dep in tqdm(deps_ordered_nb):
         data_dep = df[df["departmentName"] == dep]
         
@@ -1126,7 +1271,8 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                 
         df_dep_temp = df[df["dep"] == dep]
         
-        values_y = 100 * df_dep_temp["rea"]/lits_reas[lits_reas["nom_dpt"] == deps_ordered[list(deps_ordered_nb).index(dep)]]["LITS"].values[0]
+        values_y = 100 * df_dep_temp["rea"] / lits_reas[lits_reas["nom_dpt"] == deps_ordered[list(deps_ordered_nb).index(dep)]]["LITS"].values[0]
+        
         clrs=[]
         for tx in values_y.values:
             if tx < 60:
@@ -1135,6 +1281,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                 clrs += ["orange"]
             else:
                 clrs += ["red"]
+        current_values[1].append(clrs[-1])
         
         mean_last7 = values_y[-7:].mean()
         if mean_last7 < 60:
@@ -1143,7 +1290,10 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
             clrs_dep += ["orange"]
         else:
             clrs_dep += ["red"]
+        
+        df_sursaud.loc[(df_sursaud["dep"] == dep) & (df_sursaud["date_de_passage"] == dates_sursaud[-1]), "indic2_clr"] = clrs_dep[-1]
             
+        current_values[0].append(values_y.values[-1])
         fig.add_trace(go.Bar(x = df["jour"], y = values_y,
                             marker_color=clrs),
                       i, j)
@@ -1155,15 +1305,20 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
         if j == nj+1: #or ((i >= 9) & (j >= nj-1)) 
             i+=1
             j=1
-
+            
+    shapes=[]
     cnt=0
     for i in fig['layout']['annotations']:
         i['font'] = dict(size=14, color = clrs_dep[cnt])
         #print(regions_ordered.index( df[df['departmentName'] == deps_ordered[cnt]]['regionName'].values[0] ))
+        xref = "x"+str(cnt+1)
+        yref = "y"+str(cnt+1)
+        shapes += [{'type': 'rect', 'x0': dates[-7], 'y0': 0, 'x1': dates[-1], 'y1': 200, 'xref': xref, 'yref': yref, 'fillcolor': clrs_dep[cnt], 'layer' : "below", 'line_width':0, 'opacity' : 0.1}]
+
         cnt+=1
         
-    #for annotation in fig['layout']['annotations']: 
-            #annotation ['x'] = 0.5
+    fig['layout'].update(shapes=shapes)
+
     by_million_title = ""
     by_million_legend = ""
     if "pop" in val:
@@ -1188,7 +1343,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                         title="Solde quotidien de<br>pers. {}<br>{}<br> &#8205; ".format(type_ppl, by_million_legend),
                         thicknessmode="pixels", thickness=15,
                         lenmode="pixels", len=350,
-                        yanchor="bottom", y=0.15, xanchor="left", x=0.87,
+                        yanchor="bottom", y=0.20, xanchor="left", x=0.87,
                         ticks="outside", tickprefix="  ", ticksuffix=" hosp.",
                         nticks=5,
                         tickfont=dict(size=12),
@@ -1208,8 +1363,33 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                             size=50
                         )
     )
+    
+    annot=()
+    cnt=1
+    for dep in deps_ordered_nb:
+        annot += (dict(
+            x=dates[-1], y = current_values[0][cnt-1], # annotation point
+            xref='x'+str(cnt), 
+            yref='y'+str(cnt),
+            text="<b>{}</b> % ".format(math.trunc(round(current_values[0][cnt-1]))),
+            xshift=0,
+            yshift=3,
+            align='center',
+            xanchor="right",
+            font=dict(
+                color=current_values[1][cnt-1],
+                size=10
+                ),
+            ax = 0,
+            ay = -20,
+            arrowcolor=current_values[1][cnt-1],
+            arrowsize=1,
+            arrowwidth=1,
+            arrowhead=4
+        ),)
+        cnt+=1
 
-    fig["layout"]["annotations"] += ( 
+    fig["layout"]["annotations"] += annot + ( 
                         dict(
                             x=0.82,
                             y=0.05,
@@ -1248,10 +1428,10 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                             font=dict(size=30), 
                             opacity=1
                         ),
-                                    )
+                                    ) 
     
     name_fig = "subplots_deconf_indic2"
-    fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1600, height=2300)
+    fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=1.5, width=1600, height=2300)
 
     fig["layout"]["annotations"] += (
                     dict(
@@ -1271,7 +1451,55 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()
 
 
-# In[ ]:
+# In[39]:
+
+
+#build_map(df_sursaud, date_str="date_de_passage", dep_str="code", type_data="reg", color_str="indic2_clr", img_folder="images/charts/france/indic2/{}.png", title="Indicateur 2 : saturation des réa")
+
+
+# In[22]:
+
+
+df_groupby = df.groupby(['code', 'jour']).sum().reset_index()
+df_groupby["capa_rea"] = 100 * df_groupby['rea'].values/df_groupby['LITS'].values
+
+
+# In[23]:
+
+
+for code in codes_reg:
+    df_reg_temp = df_groupby[df_groupby['code'] == code]
+    capa_rea= df_reg_temp['capa_rea'].values[-7:].mean()
+    
+    if capa_rea > 80:
+        clr= "red"
+    elif capa_rea > 60:
+        clr="orange"
+    else:
+        clr="green"
+    df_groupby.loc[(df_groupby['jour'] == dates[-1]) & (df_groupby['code'] == code), 'capa_rea_clr'] = clr 
+    df_groupby.loc[(df_groupby['jour'] == dates[-1]) & (df_groupby['code'] == code), 'synthese_indics'] = "green" 
+
+
+# In[36]:
+
+
+build_map(df_groupby, date = dates[-1], date_str="jour", dep_str="code", type_data="reg", color_str="capa_rea_clr", img_folder="images/charts/france/indic2/{}.png", legend_str = "Rouge : > 80%<br>Orange : 60 à 80%<br>Vert : < 60%", title="Indicateur 2 : tension hospitalière (par région)", subtitle="proportion de lits de réa. occupés par des patients Covid19")
+
+
+# In[37]:
+
+
+build_map(df_sursaud, date = dates[-1], date_str="date_de_passage", dep_str="dep", type_data="dep", color_str="indic2_clr", img_folder="images/charts/france/indic2_deps/{}.png", legend_str = "Rouge : > 80%<br>Orange : 60 à 80%<br>Vert : < 60%", title="Indicateur 2 : tension hospitalière (par département)", subtitle="proportion de lits de réa. occupés par des patients Covid19")
+
+
+# In[39]:
+
+
+build_map(df_groupby, date = dates[-1], date_str="jour", dep_str="code", type_data="reg", color_str="synthese_indics", img_folder="images/charts/france/synthese_indics/{}.png", title="Synthèse des indicateurs de déconfinement", subtitle="synthèse des indicateurs 1 et 2")
+
+
+# In[129]:
 
 
 """
@@ -1465,7 +1693,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                                     )
     
     name_fig = "subplots_deconf_synthese"
-    fig.write_image("images/charts/france/{}.png".format(name_fig), scale=3, width=1600, height=2300)
+    fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=3, width=1600, height=2300)
 
     fig["layout"]["annotations"] += (
                     dict(
