@@ -26,7 +26,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[46]:
+# In[1]:
 
 
 from multiprocessing import Pool
@@ -59,10 +59,10 @@ show_charts = False
 data.download_data()
 
 
-# In[48]:
+# In[2]:
 
 
-df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, _ = data.import_data()
+df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid = data.import_data()
 
 df_sursaud_france = df_sursaud.groupby(['date_de_passage']).sum().reset_index()
 df_sursaud_france["taux_covid"] = df_sursaud_france["nbre_pass_corona"] / df_sursaud_france["nbre_pass_tot"]
@@ -1368,6 +1368,85 @@ print("> " + name_fig)
 
 locale.setlocale(locale.LC_ALL, '')
 #fig.show()
+
+
+# In[53]:
+
+
+fig = go.Figure()
+nbre_pass = df_sursaud["nbre_pass_corona"].rolling(window=7).mean()
+"""fig.add_trace(go.Scatter(x = dates_sursaud, y = nbre_pass,
+                    mode='lines+markers',
+                    line=dict(width=2),
+                    marker_size=8,
+                            ))
+fig.add_trace(go.Scatter(x = dates_sursaud, y = nbre_pass.shift(-4),
+                    mode='lines+markers',
+                    line=dict(width=2),
+                    name="shift4",
+                    marker_size=8,
+                            ))"""
+
+fig.add_trace(go.Scatter(x = dates_sursaud, y = (nbre_pass.rolling(window=7).sum() / nbre_pass.rolling(window=7).sum().shift(4) ),
+                    mode='lines+markers',
+                    line=dict(width=2),
+                    name="calc urgences",
+                    marker_size=8,
+                            ))
+
+fig.add_trace(go.Scatter(x = dates_sursaud, y = (nbre_pass.rolling(window=7).sum() / nbre_pass.rolling(window=7).sum().shift(4) ),
+                    mode='lines+markers',
+                    line=dict(width=2),
+                    name="calc urgences",
+                    marker_size=8,
+                            ))
+
+fig.update_layout(
+    title={
+                'text': "Nb. de <b>patients en réanimation</b> par département",
+                'y':0.95,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'},
+    titlefont = dict(
+                size=20),
+    annotations = [
+                dict(
+                    x=0,
+                    y=1,
+                    xref='paper',
+                    yref='paper',
+                    text='Date : {}. Source : INSEE et CSSE. Auteur : guillaumerozier.fr.'.format(datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B %Y')),                    showarrow = False
+                )]
+                 )
+fig.update_xaxes(title="")
+fig.update_yaxes(title="")
+
+name_fig = "reffectif"
+fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=3, width=1100, height=700)
+
+fig.update_layout(
+    annotations = [
+                dict(
+                    x=0.5,
+                    y=1.05,
+                    xref='paper',
+                    yref='paper',
+                    xanchor='center',
+                    text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
+                    showarrow = False
+                )]
+                 )
+plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+print("> " + name_fig)
+if show_charts:
+    fig.show()
+
+
+# In[3]:
+
+
+df_incid
 
 
 # In[59]:

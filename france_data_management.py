@@ -10,7 +10,7 @@ import json
 from tqdm import tqdm
 
 
-# In[7]:
+# In[9]:
 
 
 # Download data from Santé publique France and export it to local files
@@ -97,6 +97,8 @@ def import_data():
     df['hosp_nonrea'] = df['hosp'] - df['rea']
     df = df.merge(lits_reas, left_on="departmentName", right_on="nom_dpt")
     
+    df_incid = df_incid[df_incid["cl_age90"] == 0]
+    
     df_new = df_new.merge(df_regions, left_on='dep', right_on='departmentCode')
     df_new = df_new.merge(df_reg_pop, left_on='regionName', right_on='regionName')
     df_new = df_new.merge(df_dep_pop, left_on='dep', right_on='dep')
@@ -153,4 +155,10 @@ def import_data():
         
     dates = sorted(list(dict.fromkeys(list(df['jour'].values))))
     return df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid
+
+
+# In[ ]:
+
+
+
 
