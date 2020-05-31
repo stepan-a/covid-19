@@ -38,7 +38,7 @@ def download_data():
     url_data = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-covid19")]["url"].values[0]
     url_data_new = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-nouveaux")]["url"].values[0]
     url_tests = df_metadata[df_metadata['url'].str.contains("/donnees-tests-covid19-labo-quotidien")]["url"].values[0]
-    url_incidence = df_metadata[df_metadata['url'].str.contains("/taux-incidence-quot-dep")]["url"].values[0]
+    url_incidence = df_metadata[df_metadata['url'].str.contains("/sp-pe-tb-quot")]["url"].values[0]
     url_sursaud = df_metadata[df_metadata['url'].str.contains("sursaud.*departement")]["url"].values[0]
     
     pbar.update(6)
@@ -157,8 +157,8 @@ def import_data():
     return df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid
 
 
-# In[ ]:
+# In[10]:
 
 
-
+import_data()
 
