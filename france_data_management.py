@@ -97,6 +97,8 @@ def import_data():
     df['hosp_nonrea'] = df['hosp'] - df['rea']
     df = df.merge(lits_reas, left_on="departmentName", right_on="nom_dpt")
     
+    df_incid = df_incid.merge(df_regions, left_on='dep', right_on='departmentCode')
+    
     df_incid = df_incid[df_incid["cl_age90"] == 0]
     
     df_new = df_new.merge(df_regions, left_on='dep', right_on='departmentCode')
@@ -155,10 +157,4 @@ def import_data():
         
     dates = sorted(list(dict.fromkeys(list(df['jour'].values))))
     return df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid
-
-
-# In[10]:
-
-
-import_data()
 
