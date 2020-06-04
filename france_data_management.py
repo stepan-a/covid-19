@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
+# In[3]:
 
 
 import requests
@@ -10,7 +10,7 @@ import json
 from tqdm import tqdm
 
 
-# In[9]:
+# In[1]:
 
 
 # Download data from Santé publique France and export it to local files
@@ -39,6 +39,7 @@ def download_data():
     url_data_new = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-nouveaux")]["url"].values[0]
     url_tests = df_metadata[df_metadata['url'].str.contains("/donnees-tests-covid19-labo-quotidien")]["url"].values[0]
     url_incidence = df_metadata[df_metadata['url'].str.contains("/sp-pe-tb-quot")]["url"].values[0]
+    url_tests_viro = df_metadata[df_metadata['url'].str.contains("/sp-pos-quot-dep")]["url"].values[0]
     url_sursaud = df_metadata[df_metadata['url'].str.contains("sursaud.*departement")]["url"].values[0]
     
     pbar.update(6)
@@ -48,6 +49,7 @@ def download_data():
     data_deconf = requests.get(url_deconf)
     data_sursaud = requests.get(url_sursaud)
     data_incidence = requests.get(url_incidence)
+    data_tests_viro = requests.get(url_tests_viro)
     
     pbar.update(7)
     with open('data/france/donnes-hospitalieres-covid19.csv', 'wb') as f:
@@ -68,6 +70,9 @@ def download_data():
     with open('data/france/taux-incidence-dep-quot.csv', 'wb') as f:
         f.write(data_incidence.content)
         
+    with open('data/france/tests_viro-dep-quot.csv', 'wb') as f:
+        f.write(data_tests_viro.content)
+        
     pbar.update(8)
 
 
@@ -82,6 +87,7 @@ def import_data():
     df_tests = pd.read_csv('data/france/donnes-tests-covid19-quotidien.csv', sep=";")
     df_deconf = pd.read_csv('data/france/indicateurs-deconf.csv', sep=",")
     df_incid = pd.read_csv('data/france/taux-incidence-dep-quot.csv', sep=",")
+    df_tests_viro = pd.read_csv('data/france/tests_viro-dep-quot.csv', sep=",")
     
     lits_reas = pd.read_csv('data/france/lits_rea.csv', sep=",")
     
@@ -97,9 +103,11 @@ def import_data():
     df['hosp_nonrea'] = df['hosp'] - df['rea']
     df = df.merge(lits_reas, left_on="departmentName", right_on="nom_dpt")
     
-    df_incid = df_incid.merge(df_regions, left_on='dep', right_on='departmentCode')
-    
     df_incid = df_incid[df_incid["cl_age90"] == 0]
+    df_tests_viro = df_tests_viro[df_tests_viro["cl_age90"] == 0]
+    
+    df_incid = df_incid.merge(df_regions, left_on='dep', right_on='departmentCode')
+    df_incid = df_incid.merge(df_tests_viro.drop("p", axis=1).drop("cl_age90", axis=1), left_on=['jour', 'dep'], right_on=['jour', 'dep'])
     
     df_new = df_new.merge(df_regions, left_on='dep', right_on='departmentCode')
     df_new = df_new.merge(df_reg_pop, left_on='regionName', right_on='regionName')
@@ -157,4 +165,27 @@ def import_data():
         
     dates = sorted(list(dict.fromkeys(list(df['jour'].values))))
     return df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid
+
+
+# In[22]:
+
+
+df_incid = pd.read_csv('data/france/taux-incidence-dep-quot.csv', sep=",")
+df_tests_viro = pd.read_csv('data/france/tests_viro-dep-quot.csv', sep=",")
+df_regions = pd.read_csv('data/france/departments_regions_france_2016.csv', sep=",")
+
+#df_incid = df_incid.merge(df_tests_viro.drop("p", axis=1).drop("cl_age90", axis=1), left_on=['jour', 'dep'], right_on=['jour', 'dep'])
+
+df_incid = df_incid[df_incid["cl_age90"] == 0]
+df_tests_viro = df_tests_viro[df_tests_viro["cl_age90"] == 0]
+    
+df_incid = df_incid.merge(df_regions, left_on='dep', right_on='departmentCode')
+df_incid = df_incid.merge(df_tests_viro.drop("p", axis=1).drop("cl_age90", axis=1), left_on=['jour', 'dep'], right_on=['jour', 'dep'])
+    
+
+
+# In[23]:
+
+
+df_incid
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
+# In[1]:
 
 
 import france_data_management as data
@@ -24,13 +24,14 @@ colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.col
 
 # ## Data Import
 
-# In[9]:
+# In[3]:
 
 
 df, df_confirmed, dates, df_new, df_tests, _, df_sursaud, df_incid  = data.import_data()
 
 df_incid["incidence"] = df_incid["p"]/df_incid["pop"]*100000
 deps_incid = list(dict.fromkeys(list(df_incid['dep'].values))) 
+deps_incid_name = list(dict.fromkeys(list(df_incid['departmentName'].values))) 
 
 df = df.sort_values(by=['dep', 'jour'], axis=0).reset_index()
 last_day_plot = (datetime.strptime(max(dates), '%Y-%m-%d') + timedelta(days=1)).strftime("%Y-%m-%d")
@@ -698,7 +699,7 @@ for val in ["dc_new_deppop_rolling7", "hosp_deppop"]: #, "hosp", "rea", "rea_pop
 df_incid
 
 
-# In[70]:
+# In[6]:
 
 
 
@@ -712,7 +713,7 @@ max_value = df_incid["incidence"].max()
 titles = []
 k=0
 for case in range(1, 102):
-    titles += ["<b>" + deps_incid[k] + "</b>"]
+    titles += ["<b>" + deps_incid[k] + "</b> - " + deps_incid_name[k]]
     k+=1
 
 fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles= titles, vertical_spacing = 0.025, horizontal_spacing = 0.003)
@@ -805,13 +806,14 @@ fig["layout"]["annotations"] += ( dict(
                         opacity=0.5
                     ),
                         dict(
-                        x=0.9,
-                        y=0.13,
+                        x=0.2,
+                        y=0.04,
                         xref='paper',
                         yref='paper',
-                        xanchor='center',
+                        xanchor='left',
                         yanchor='top',
-                        text='25 % des données sont comprises<br>dans la courbe grise la plus foncée,<br>50 % dans la deuxième, 75 % dans<br>la troisième, 100 % dans la plus claire.',
+                        text="",
+                        #text='25 % des données sont comprises<br>dans la courbe grise la plus foncée,<br>50 % dans la deuxième, 75 % dans<br>la troisième, 100 % dans la plus claire.',
                         showarrow = False,
                         font=dict(size=16), 
                         opacity=1,
