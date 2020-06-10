@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[41]:
 
 
 import france_data_management as data
@@ -24,7 +24,7 @@ colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.col
 
 # ## Data Import
 
-# In[3]:
+# In[42]:
 
 
 df, df_confirmed, dates, df_new, df_tests, _, df_sursaud, df_incid  = data.import_data()
@@ -61,7 +61,7 @@ codes_reg = list(dict.fromkeys(list(df['code'].values)))
 lits_reas = pd.read_csv('data/france/lits_rea.csv', sep=",")
 
 
-# In[39]:
+# In[43]:
 
 
 with open('data/france/dep.geojson') as response:
@@ -160,7 +160,7 @@ def build_map(data_df, img_folder, date = dates_sursaud[-1], subtitle="", legend
 # - nb de réanimations par habitant des régions,
 # et ce pour toutes les régions françaises
 
-# In[40]:
+# In[44]:
 
 
 """
@@ -327,7 +327,7 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
     #fig.show()"""
 
 
-# In[41]:
+# In[45]:
 
 
 
@@ -495,7 +495,7 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
 # - nb d'hospitalisés par habitant des départements,
 # et ce pour toutes les régions françaises
 
-# In[42]:
+# In[46]:
 
 
 
@@ -693,13 +693,13 @@ for val in ["dc_new_deppop_rolling7", "hosp_deppop"]: #, "hosp", "rea", "rea_pop
     #fig.show()
 
 
-# In[5]:
+# In[47]:
 
 
-df_incid
+[ [[{"secondary_y": True}] for i in range(nj)] for j in range(ni)][0][0]
 
 
-# In[6]:
+# In[48]:
 
 
 
@@ -713,39 +713,43 @@ max_value = df_incid["incidence"].max()
 titles = []
 k=0
 for case in range(1, 102):
-    titles += ["<b>" + deps_incid[k] + "</b> - " + deps_incid_name[k]]
+    titles += ["<b>" + deps_incid[k] + "</b><br>" + deps_incid_name[k]]
     k+=1
 
-fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles= titles, vertical_spacing = 0.025, horizontal_spacing = 0.003)
+fig = make_subplots(rows=ni, cols=nj, shared_yaxes=False, subplot_titles= titles, vertical_spacing = 0.025, horizontal_spacing = 0.02, specs=[ [{"secondary_y": True} for i in range(nj)] for j in range(ni)])
 #&#8681;
 
-#df_nonobj = df.select_dtypes(exclude=['object'])
-#df_nonobj.loc[:, 'jour'] = df.loc[:, 'jour']
-
-#vals_quantiles=[]
-#for q in range(25, 125, 25):
-#    vals_quantiles.append(df_nonobj.groupby('jour').quantile(q=q/100).reset_index())
-
-max_values_diff=[]
-
+#max_values=[]
 for dep in tqdm(deps_incid):
     data_dep = df_incid[df_incid["dep"] == dep]
     data_dep["incid_rolling"] = data_dep["incidence"].rolling(window=7).mean()
+    data_dep["tot_rolling"] = (data_dep["t"]/data_dep["pop"]*100000).rolling(window=7).mean()
+    data_dep["taux"] = data_dep["incid_rolling"]/data_dep["tot_rolling"]*100
     
-    if data_dep["incid_rolling"].values[-1] > 5:
+    #max_values += data_dep["tot_rolling"].max()
+    
+    if data_dep["taux"].values[-1] > 5:
         clr = "red"
-    elif data_dep["incid_rolling"].values[-1] > 1:
-        clr = "orange"
+    elif data_dep["taux"].values[-1] > 1:
+        clr = "darkorange"
     else:
         clr = "green"
-
-    fig.add_trace(go.Scatter(x = data_dep["jour"].values[:-1], y = data_dep["incid_rolling"], line_color=clr, mode = "lines", line_width=4),
-                  i, j)
-    fig.add_trace(go.Scatter(x = [data_dep["jour"].values[-2]], y = [data_dep[data_dep["jour"] == data_dep["jour"].values[-2]]["incid_rolling"].values[-1]], line_color=clr, mode="markers", marker_size=15, marker_color=clr),
-                  i, j)
+    
+    fig.add_trace(go.Bar(x = data_dep["jour"].values[:-1], y = data_dep["incid_rolling"], marker_color='rgba(252, 19, 3, 0.3)'),
+                  i, j, secondary_y=False)
+    fig.add_trace(go.Bar(x = data_dep['jour'], y = data_dep["tot_rolling"], name = "Nombre de tests réalisés", showlegend=False, marker_color='rgba(186, 186, 186, 0.3)'),
+                  i, j, secondary_y=False)
+    fig.add_trace(go.Scatter(x = data_dep['jour'], y = data_dep["taux"], name = "Taux de tests positifs", showlegend=False, marker_opacity=0, line_width = 4, marker_color= clr),
+                  i, j, secondary_y=True)
+    #fig.add_trace(go.Scatter(x = [data_dep["jour"].values[-2]], y = [data_dep[data_dep["jour"] == data_dep["jour"].values[-2]]["incid_rolling"].values[-1]], line_color=clr, mode="markers", marker_size=15, marker_color=clr),
+                 # i, j, secondary_y=False)
+    
 
     fig.update_xaxes(title_text="", range=["2020-05-18", data_dep["jour"].values[-1]],gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=7), tickangle=0, nticks=6, linewidth=0, linecolor='white', row=i, col=j)
-    fig.update_yaxes(title_text="", range=[0, 5], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j)
+    #fig.update_yaxes(title_text="", range=[0, 5], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j, secondary_y=True)
+    fig.update_yaxes(title_text="", range=[0, 100], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j, secondary_y=False)
+    fig.update_yaxes(title_text="", range=[0, 10], gridcolor='white', linewidth=0, linecolor='white', ticksuffix="%", tickfont=dict(size=7, color=clr), nticks=8, row=i, col=j, secondary_y=True)
+
     #, range=[0, max_value]
     
     j+=1
@@ -757,7 +761,7 @@ cnt=0
 #shapes = []
 for i in fig['layout']['annotations']:
     #i['font'] = dict(size=14, color = str(colors[regions_ordered.index( df[df['departmentName'] == deps_ordered[cnt]]['regionName'].values[0] )]))
-    i['y'] = i['y'] - 0.014
+    i['y'] = i['y'] - 0.02
     
     xref = "x"+str(cnt+1)
     yref = "y"+str(cnt+1)
@@ -768,20 +772,21 @@ for i in fig['layout']['annotations']:
 
 max_value_diff = np.mean(max_values_diff) * 1.7
 fig.update_layout(
+    barmode="stack",
+    bargap=0,
     margin=dict(
         l=0,
-        r=15,
+        r=0,
         b=0,
-        t=160,
+        t=30,
         pad=0
     ),
     paper_bgcolor='#fffdf5',#fcf8ed #faf9ed
     plot_bgcolor='#f5f0e4',#f5f0e4 fcf8ed f0e8d5
-
     showlegend=False,
 
     title={
-                    'text': "Incidence : nombre de personnes testées positives",
+                    'text': "",
                     'y':0.98,
                     'x':0.5,
                     'xref':"paper",
@@ -800,7 +805,7 @@ fig["layout"]["annotations"] += ( dict(
                         yref='paper',
                         xanchor='center',
                         yanchor='top',
-                        text='Source :<br>Santé Publique<br>France',
+                        text='',
                         showarrow = False,
                         font=dict(size=15), 
                         opacity=0.5
@@ -820,21 +825,22 @@ fig["layout"]["annotations"] += ( dict(
                         align='left'
                     ),
                         dict(
-                        x=0.5,
+                        x=0,
                         y=1.03,
                         xref='paper',
                         yref='paper',
                         xanchor='center',
                         yanchor='middle',
-                        text='pour 100 000 habitants de chaque département - covidtracker.fr',
+                        text='',
                         showarrow = False,
                         font=dict(size=30), 
                         opacity=1
                     ),
                                 )
 
+
 name_fig = "subplots_dep_incidence"
-fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=2, width=1600, height=2300)
+fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=2, width=1700, height=2300)
 
 fig["layout"]["annotations"] += (
                 dict(
@@ -857,7 +863,7 @@ print("> " + name_fig)
 # ## Subplots : départements - classé par régions
 # Idem précédent mais les départements sont rangés dans leurs régions, et les régions classées par ordre décroissant du nb de personnes
 
-# In[43]:
+# In[49]:
 
 
 
@@ -1087,7 +1093,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()
 
 
-# In[44]:
+# In[50]:
 
 
 
@@ -1354,13 +1360,13 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()
 
 
-# In[45]:
+# In[51]:
 
 
 build_map(df_sursaud, date_str="date_de_passage", legend_str="Rouge : > 10%<br>Orange : 6 à 10%<br>Vert : < 10%", dep_str="dep", color_str="indic1_clr", img_folder="images/charts/france/indic1/{}.png", title="Indicateur 1 : circulation du virus (par département)", subtitle="taux de suspicion Covid19 aux urgences")
 
 
-# In[46]:
+# In[52]:
 
 
 """
@@ -1372,7 +1378,7 @@ fig.add_trace(go.Bar(x = dta["date_de_passage"], y = dta["taux_covid"]*100, mark
 fig.show()"""
 
 
-# In[47]:
+# In[53]:
 
 
 
@@ -1617,20 +1623,20 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()
 
 
-# In[48]:
+# In[54]:
 
 
 #build_map(df_sursaud, date_str="date_de_passage", dep_str="code", type_data="reg", color_str="indic2_clr", img_folder="images/charts/france/indic2/{}.png", title="Indicateur 2 : saturation des réa")
 
 
-# In[49]:
+# In[55]:
 
 
 df_groupby = df.groupby(['code', 'jour']).sum().reset_index()
 df_groupby["capa_rea"] = 100 * df_groupby['rea'].values/df_groupby['LITS'].values
 
 
-# In[50]:
+# In[56]:
 
 
 for code in codes_reg:
@@ -1647,25 +1653,25 @@ for code in codes_reg:
     df_groupby.loc[(df_groupby['jour'] == dates[-1]) & (df_groupby['code'] == code), 'synthese_indics'] = "green" 
 
 
-# In[51]:
+# In[57]:
 
 
 build_map(df_groupby, date = dates[-1], date_str="jour", dep_str="code", type_data="reg", color_str="capa_rea_clr", img_folder="images/charts/france/indic2/{}.png", legend_str = "Rouge : > 80%<br>Orange : 60 à 80%<br>Vert : < 60%", title="Indicateur 2 : tension hospitalière (par région)", subtitle="proportion de lits de réa. occupés par des patients Covid19")
 
 
-# In[52]:
+# In[58]:
 
 
 build_map(df_sursaud, date = dates[-1], date_str="date_de_passage", dep_str="dep", type_data="dep", color_str="indic2_clr", img_folder="images/charts/france/indic2_deps/{}.png", legend_str = "Rouge : > 80%<br>Orange : 60 à 80%<br>Vert : < 60%", title="Indicateur 2 : tension hospitalière (par département)", subtitle="proportion de lits de réa. occupés par des patients Covid19")
 
 
-# In[53]:
+# In[59]:
 
 
 build_map(df_groupby, date = dates[-1], date_str="jour", dep_str="code", type_data="reg", color_str="synthese_indics", img_folder="images/charts/france/synthese_indics/{}.png", title="Synthèse des indicateurs de déconfinement", subtitle="synthèse des indicateurs 1 et 2")
 
 
-# In[54]:
+# In[60]:
 
 
 """
