@@ -69,12 +69,15 @@ def try_update_france():
         # Mise à jour des graphiques
         subprocess.run(["sudo", "python3", "covid19_france_charts.py"])
         push("France")
-        print("update France: " + str(now.hour) + ":" + str(now.minute))
+        print("update France charts: " + str(now.hour) + ":" + str(now.minute))
         
         subprocess.run(["sudo", "python3", "covid19_france_local_charts.py"])
         push("France local subplots")
-        print("update France: " + str(now.hour) + ":" + str(now.minute))
-
+        print("update France local: " + str(now.hour) + ":" + str(now.minute))
+        
+        subprocess.run(["sudo", "python3", "covid19_utils.py"])
+        push("Utils")
+        print("update France utils: " + str(now.hour) + ":" + str(now.minute))
         #subprocess.run(["sudo", "python3", "covid19_france_maps.py"])
         #push("France GIF")
         #print("update France GIF: " + str(now.hour) + ":" + str(now.minute))

@@ -4,7 +4,7 @@
 # # COVID-19 French Charts
 # Guillaume Rozier, 2020
 
-# In[116]:
+# In[1]:
 
 
 """
@@ -26,7 +26,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[117]:
+# In[2]:
 
 
 from multiprocessing import Pool
@@ -53,13 +53,13 @@ show_charts = False
 
 # # Data download and import
 
-# In[118]:
+# In[5]:
 
 
 data.download_data()
 
 
-# In[119]:
+# In[3]:
 
 
 df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid = data.import_data()
@@ -87,13 +87,7 @@ df_france = df.groupby('jour').sum().reset_index()
 regions = list(dict.fromkeys(list(df['regionName'].values))) 
 
 
-# In[120]:
-
-
-df_incid_france
-
-
-# In[121]:
+# In[ ]:
 
 
 #Calcul sorties de réa
@@ -117,7 +111,7 @@ df_tests_tot_last15 = df_tests_tot[ df_tests_tot["jour"].isin(dates[-19:]) ]
 
 # ## Variation journée
 
-# In[122]:
+# In[ ]:
 
 
 #VAR JOURN
@@ -207,7 +201,7 @@ if show_charts:
     fig.show()
 
 
-# In[123]:
+# In[ ]:
 
 
 #VAR JOURN
@@ -353,7 +347,7 @@ fig.update_xaxes(range=["2020-03-21", last_day_plot])
 fig.update_layout(
     margin=dict(
             l=20,
-            r=130,
+            r=170,
             b=100,
             t=100,
             pad=0
@@ -390,7 +384,7 @@ for (data_temp, type_ppl, col) in [(dc_new_rolling, "décès", "black"), (rea_ne
             x=dates[-4], y = data_temp.values[-4], # annotation point
             xref='x1', 
             yref='y1',
-            text=" <b>{}</b><br> {}".format('%+d' % math.trunc(round(data_temp.values[-4], 1)), type_ppl),
+            text=" <b>{}</b> {}".format('%+d' % math.trunc(round(data_temp.values[-4], 1)), type_ppl),
             xshift=15,
             xanchor="left",
             align='left',
@@ -399,7 +393,7 @@ for (data_temp, type_ppl, col) in [(dc_new_rolling, "décès", "black"), (rea_ne
                 size=14
                 ),
             opacity=0.8,
-            ax=70,
+            ax=50,
             ay=0,
         arrowcolor=col,
             arrowsize=1.5,
@@ -439,7 +433,7 @@ if show_charts:
 
 # ## Evolution jorunée
 
-# In[124]:
+# In[ ]:
 
 
 #EVOL JOURN
@@ -539,7 +533,7 @@ if show_charts:
 
 # ## Tests Covid
 
-# In[125]:
+# In[ ]:
 
 
 # TESTS
@@ -617,7 +611,7 @@ if show_charts:
 
 # ## Entrées/Sortires hosp et réa
 
-# In[126]:
+# In[ ]:
 
 
 fig = go.Figure()
@@ -739,7 +733,7 @@ if show_charts:
 # ## Entrées/Sorties hosp et réa - rolling mean (7 days)
 # La moyenne glissante sur 4 jours permet de lisser les effets liés aux week-ends (moins de saisies de données, donc il y a un trou) et d'évaluer la tendance.
 
-# In[127]:
+# In[ ]:
 
 
 fig = go.Figure()
@@ -797,8 +791,6 @@ fig.add_trace(go.Scatter(
     opacity=0.4
 ))
 
-
-# Here we modify the tickangle of the xaxis, resulting in rotated labels.
 fig.update_layout(
     legend_orientation="h",
     margin=dict(
@@ -822,7 +814,7 @@ fig.update_layout(
         range=["2020-03-21", last_day_plot  ], # Adding one day
         title='',
         tickformat='%d/%m'),
-        yaxis_title="Nb. de personnes",
+    yaxis_title="Nb. de personnes",
     
     annotations = [
                 dict(
@@ -951,7 +943,7 @@ if show_charts:
 
 # ## Hospitalisations (bar chart)
 
-# In[128]:
+# In[ ]:
 
 
 """fig = go.Figure()
@@ -1026,7 +1018,7 @@ if show_charts:
 
 # ## Hospitalisations et réanimations (bar charts subplot)
 
-# In[129]:
+# In[ ]:
 
 
 
@@ -1130,7 +1122,7 @@ print("> " + name_fig)
 #fig.show()
 
 
-# In[130]:
+# In[ ]:
 
 
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
@@ -1386,19 +1378,19 @@ print("> " + name_fig)
 
 
 
-# In[131]:
+# In[ ]:
 
 
 df_incid_france
 
 
-# In[132]:
+# In[ ]:
 
 
 df_incid_france['p']+1
 
 
-# In[133]:
+# In[ ]:
 
 
 
@@ -1542,7 +1534,7 @@ locale.setlocale(locale.LC_ALL, '')
 #fig.show()
 
 
-# In[134]:
+# In[ ]:
 
 
 
@@ -1550,7 +1542,7 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 incid_rolling = (df_incid_france['p']).rolling(window=7, center=True).mean()
 tests_tot_rolling = (df_incid_france['t']).rolling(window=7, center=True).mean()
-taux = incid_rolling/tests_tot_rolling*100
+taux = (df_incid_france['p']/df_incid_france['t']*100).rolling(window=7, center=True).mean()
 
 if taux.dropna().values[-1] > 5:
     clr = "red"
@@ -1575,17 +1567,17 @@ fig.add_trace(go.Scatter(x = df_incid_france['jour'], y = taux, name = "Taux de 
 
 fig.update_xaxes(title_text="", range=["2020-05-18", dates_incid[-1]],gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=30), tickangle=0, linewidth=0, linecolor='white')
 #fig.update_yaxes(title_text="", range=[0, 5], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j, secondary_y=True)
-fig.update_yaxes(title_text="", titlefont=dict(size=30),gridcolor='white', linewidth=0, ticksuffix=" tests", linecolor='white', tickfont=dict(size=30), nticks=8, secondary_y=False)
-fig.update_yaxes(title_text="", titlefont=dict(size=30, color="blue"), range=[0, 3], ticksuffix=" %", gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=30, color=clr), nticks=8,  secondary_y=True)
+fig.update_yaxes(title_text="", titlefont=dict(size=30),gridcolor='white', linewidth=0, ticksuffix=" tests", linecolor='white', tickfont=dict(size=30), nticks=8, secondary_y=False, type="log")
+fig.update_yaxes(title_text="", titlefont=dict(size=30, color="blue"), range=[0, 5], ticksuffix=" %", gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=30, color=clr), nticks=8,  secondary_y=True)
 
 for i in fig['layout']['annotations']:
     i['font'] = dict(size=30)
 
 fig['layout']['annotations'] += (dict(
-        x=dates_incid[-4], y = incid_rolling.values[-4], # annotation point
+        x=dates_incid[-4], y = math.log10(incid_rolling.values[-4]), # annotation point
         xref='x1', 
         yref='y1',
-        text="soit <b>{} tests positifs</b> chaque jour<br>".format(math.trunc(round(incid_rolling.values[-4], 0)), datetime.strptime(dates_incid[-7], '%Y-%m-%d').strftime('%d'), datetime.strptime(dates_incid[-1], '%Y-%m-%d').strftime('%d %B')),
+        text="soit <b>{} tests positifs</b><br>chaque jour<br>".format(math.trunc(round(incid_rolling.values[-4], 0)), datetime.strptime(dates_incid[-7], '%Y-%m-%d').strftime('%d'), datetime.strptime(dates_incid[-1], '%Y-%m-%d').strftime('%d %B')),
         yshift=10,
         xanchor="center",
         align='center',
@@ -1605,7 +1597,7 @@ fig['layout']['annotations'] += (dict(
         x=dates_incid[-4], y = (incid_rolling/tests_tot_rolling*100).values[-4], # annotation point
         xref='x1', 
         yref='y2',
-        text="<b>{} %</b> de ces tests sont <b>positifs</b>".format((round((incid_rolling/tests_tot_rolling*100).values[-4], 1)), datetime.strptime(dates_incid[-7], '%Y-%m-%d').strftime('%d'), datetime.strptime(dates_incid[-1], '%Y-%m-%d').strftime('%d %B')),
+        text="<b>{} %</b> de ces tests<br>sont <b>positifs</b>".format((round((incid_rolling/tests_tot_rolling*100).values[-4], 2)), datetime.strptime(dates_incid[-7], '%Y-%m-%d').strftime('%d'), datetime.strptime(dates_incid[-1], '%Y-%m-%d').strftime('%d %B')),
         yshift=10,
         xanchor="center",
         align='center',
@@ -1614,7 +1606,7 @@ fig['layout']['annotations'] += (dict(
             size=35,
             ),
         ax=0,
-        ay=-70,
+        ay=-100,
         arrowcolor=clr,
         opacity=1,
         arrowsize=1,
@@ -1622,10 +1614,10 @@ fig['layout']['annotations'] += (dict(
         arrowhead=4
     ),
         dict(
-        x=dates_incid[-4], y = tests_tot_rolling.values[-4], # annotation point
+        x=dates_incid[-4], y = math.log10(tests_tot_rolling.values[-4]), # annotation point
         xref='x1', 
         yref='y1',
-        text="<b>{} tests</b> sont réalisés chaque jour<br>".format(math.trunc(round(tests_tot_rolling.values[-4], 0)), datetime.strptime(dates_incid[-7], '%Y-%m-%d').strftime('%d'), datetime.strptime(dates_incid[-1], '%Y-%m-%d').strftime('%d %B')),
+        text="<b>{} tests</b> sont réalisés<br>chaque jour<br>".format(math.trunc(round(tests_tot_rolling.values[-4], 0)), datetime.strptime(dates_incid[-7], '%Y-%m-%d').strftime('%d'), datetime.strptime(dates_incid[-1], '%Y-%m-%d').strftime('%d %B')),
         yshift=0,
         xanchor="center",
         align='center',
@@ -1715,7 +1707,7 @@ locale.setlocale(locale.LC_ALL, '')
 
 
 
-# In[135]:
+# In[ ]:
 
 
 
@@ -1746,7 +1738,7 @@ fig["layout"]["annotations"] += (
                         opacity=0.8
                     ),dict(
                         x=0.25,
-                        y=-0.5,
+                        y=0.2,
                         xref='paper',
                         yref='paper',
                         xanchor='center',
@@ -1756,9 +1748,23 @@ fig["layout"]["annotations"] += (
                         showarrow = False,
                         font=dict(size=60), 
                         opacity=0.8
-                    ),dict(
+                    ),
+                    dict(
+                        x=0.25,
+                        y=-0.4,
+                        xref='paper',
+                        yref='paper',
+                        xanchor='center',
+                        yanchor='middle',
+                        align="left",
+                        text = "<sub>Échelle de gauche : nombre de tests</sub>",
+                        showarrow = False,
+                        font=dict(size=60), 
+                        opacity=0.8
+                    ),
+                    dict(
                         x=0.75,
-                        y=-0.5,
+                        y=0.1,
                         xref='paper',
                         yref='paper',
                         xanchor='center',
@@ -1768,41 +1774,28 @@ fig["layout"]["annotations"] += (
                         showarrow = False,
                         font=dict(size=60), 
                         opacity=0.8
-                    ),)
+                    ),
+                    dict(
+                        x=0.75,
+                        y=-0.4,
+                        xref='paper',
+                        yref='paper',
+                        xanchor='center',
+                        yanchor='middle',
+                        align="left",
+                        text = "<sub>Échelle de gauche : nombre de tests par habitants de chaque département</sub>",
+                        showarrow = False,
+                        font=dict(size=60), 
+                        opacity=0.8
+                    ))
 
 
 name_fig = "title_incidence"
-fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=2, width=3400, height=250)
+fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=2, width=3400, height=300)
 #fig.show()
 
 
-# In[136]:
-
-
-#Assemble images
-import cv2
-import numpy as np
-
-im1 = cv2.imread('images/charts/france/incidence_taux_france.jpeg')
-im2 = cv2.imread('images/charts/france/subplots_dep_incidence.jpeg')
-
-im_h = cv2.hconcat([im1, im2])
-cv2.imwrite('images/charts/france/tests_combinaison.jpeg', im_h)
-
-im1 = cv2.imread('images/charts/france/title_incidence.jpeg')
-im2 = cv2.imread('images/charts/france/tests_combinaison.jpeg')
-
-im_h = cv2.vconcat([im1, im2])
-cv2.imwrite('images/charts/france/tests_combinaison.jpeg', im_h)
-
-
 # In[ ]:
-
-
-
-
-
-# In[137]:
 
 
 #fig = go.Figure()
@@ -1967,19 +1960,19 @@ if show_charts:
     fig.show()
 
 
-# In[138]:
+# In[ ]:
 
 
 y_data
 
 
-# In[139]:
+# In[ ]:
 
 
 df_incid_france
 
 
-# In[140]:
+# In[ ]:
 
 
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
@@ -2149,7 +2142,7 @@ locale.setlocale(locale.LC_ALL, '')
 #fig.show()
 
 
-# In[141]:
+# In[ ]:
 
 
 
@@ -2255,7 +2248,7 @@ print("> " + name_fig)
 #fig.show()
 
 
-# In[142]:
+# In[ ]:
 
 
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
@@ -2346,7 +2339,7 @@ fig['layout']['annotations'] += (dict(
         xref='x1', 
         yref='y1',
         text="<b>{} décès</b> quotidiens<br>en moyenne sur 7 jours<br>(du {} au {})".format(math.trunc(round(data["dc_new_r"].values[-4], 0) ), datetime.strptime(dates[-7], '%Y-%m-%d').strftime('%d'), datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B')),
-        yshift=-10,
+        yshift=1,
         xanchor="center",
         align='center',
         font=dict(
@@ -2386,7 +2379,7 @@ fig['layout']['annotations'] += (dict(
         xref='x1', 
         yref='y1',
         text="<b>{} décès</b><br>le {}".format(math.trunc(round(df_france['dc_new'][1:].values[-1], 0) ), datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B')),
-        yshift=10,
+        yshift=5,
         xanchor="center",
         align='center',
         font=dict(
@@ -2423,7 +2416,7 @@ print("> " + name_fig)
 #fig.show()
 
 
-# In[143]:
+# In[ ]:
 
 
 
@@ -2502,7 +2495,7 @@ print("> " + name_fig)
 # ## Situation cas (bar chart)
 # Où en sont les personnes atteintes du Covid (retour à domicile, décédées, en réa, hosp ou autre)
 
-# In[144]:
+# In[ ]:
 
 
 
@@ -2588,7 +2581,7 @@ if show_charts:
 
 # ## Décès hospitalisations et réanimations (line chart)
 
-# In[145]:
+# In[ ]:
 
 
 df_france = df.groupby('jour').sum().reset_index()
@@ -2654,7 +2647,7 @@ print("> " + name_fig)
 
 # ## Décès cumulés (line chart)
 
-# In[146]:
+# In[ ]:
 
 
 
@@ -2690,7 +2683,7 @@ if show_charts:
     fig.show()
 
 
-# In[147]:
+# In[ ]:
 
 
 
@@ -2728,7 +2721,7 @@ if show_charts:
 
 # ## Hospitalisations
 
-# In[148]:
+# In[ ]:
 
 
 
@@ -2766,7 +2759,7 @@ if show_charts:
 
 # ## Hospitalisations (entrées - sorties) (line chart)
 
-# In[149]:
+# In[ ]:
 
 
 
@@ -2804,7 +2797,7 @@ if show_charts:
 
 # ## Admissions en hospitalisation (line chart)
 
-# In[150]:
+# In[ ]:
 
 
 
@@ -2843,7 +2836,7 @@ if show_charts:
 
 # ## Réanimations par région (line chart)
 
-# In[151]:
+# In[ ]:
 
 
 fig = px.line(x=df_region['jour'], y=df_region['rea'], color=df_region["regionName"], color_discrete_sequence=colors).update_traces(mode='lines+markers', marker_size=7.5, line=dict(width=2.5))
@@ -2879,7 +2872,7 @@ if show_charts:
 
 # ## Réanimations par département (line chart)
 
-# In[152]:
+# In[ ]:
 
 
 df_last_d = df[df['jour'] == dates[-1]]
@@ -2939,7 +2932,7 @@ if show_charts:
 
 # ## Hospitalisations par département (line chart)
 
-# In[153]:
+# In[ ]:
 
 
 df_last_d = df[df['jour'] == dates[-1]]
@@ -3001,7 +2994,7 @@ if show_charts:
 # 
 # ## Hospitalisations par habitant / région
 
-# In[154]:
+# In[ ]:
 
 
 """
@@ -3052,7 +3045,7 @@ if show_charts:
 # 
 # ## Capacité réanimation (line chart)
 
-# In[155]:
+# In[ ]:
 
 
 """
@@ -3125,7 +3118,7 @@ if show_charts:
 # 
 # ## Décès cumulés (région)
 
-# In[156]:
+# In[ ]:
 
 
 fig = px.line(x=df_region['jour'], y=df_region['dc'], color=df_region["regionName"], labels={'color':'Région'}, color_discrete_sequence=colors).update_traces(mode='lines+markers')
@@ -3174,7 +3167,7 @@ if show_charts:
 
 # ## Nouveaux décès quotidiens (line chart)
 
-# In[157]:
+# In[ ]:
 
 
 fig = px.line(x=df_new_region['jour'], y=df_new_region['incid_dc'].rolling(window=7, center=True).mean(), color=df_new_region["regionName"], labels={'color':'Région'}, color_discrete_sequence=colors).update_traces(mode='lines+markers')
@@ -3225,7 +3218,7 @@ if show_charts:
 # 
 # ## Décès cumulés par habitant (région)
 
-# In[158]:
+# In[ ]:
 
 
 """
@@ -3285,7 +3278,7 @@ if show_charts:
 # 
 # ## Décès cumulés par région / temps
 
-# In[159]:
+# In[ ]:
 
 
 fig = px.bar(x=df_region['jour'], y = df_region['dc'], color=df_region["regionName"], labels={'color':'Région'}, color_discrete_sequence=colors, opacity=0.9)
@@ -3338,7 +3331,7 @@ if show_charts:
 # 
 # ## Décès cumulés par région / 3 derniers jours
 
-# In[160]:
+# In[ ]:
 
 
 
@@ -3428,7 +3421,7 @@ if show_charts:
 # 
 # ## Décès cumulés VS. Décès cumulés par habitant / région
 
-# In[161]:
+# In[ ]:
 
 
 fig = go.Figure()
@@ -3505,7 +3498,7 @@ if show_charts:
 # 
 # ## Situation des malades / région
 
-# In[162]:
+# In[ ]:
 
 
 #df_region_sumj = df_region.groupby('regionName').sum().reset_index()
@@ -3515,7 +3508,7 @@ df_region_sumj = pd.melt(df_region_sumj, id_vars=['regionName'], value_vars=['ra
 df_region_sumj.drop(df_region_sumj[df_region_sumj['regionName'].isin(['Guyane', 'Mayote', 'La Réunion', 'Guadeloupe', 'Martinique'])].index, inplace = True)
 
 
-# In[163]:
+# In[ ]:
 
 
 data = df_region_sumj[df_region_sumj["variable"] == "dc"]
@@ -3583,7 +3576,7 @@ if show_charts:
 # 
 # ## Situation des malades par habitant / région
 
-# In[164]:
+# In[ ]:
 
 
 df_region_sumj = df_region[df_region['jour'] == dates[-1]]
@@ -3591,7 +3584,7 @@ df_region_sumj = pd.melt(df_region_sumj, id_vars=['regionName'], value_vars=['ra
 df_region_sumj.drop(df_region_sumj[df_region_sumj['regionName'].isin(['Guyane', 'Mayote', 'La Réunion', 'Guadeloupe', 'Martinique'])].index, inplace = True)
 
 
-# In[165]:
+# In[ ]:
 
 
 """data = df_region_sumj[df_region_sumj["variable"] == "dc_pop"]
@@ -3662,7 +3655,7 @@ if show_charts:
 # 
 # # Expérimentations (brouillon)
 
-# In[166]:
+# In[ ]:
 
 
 """

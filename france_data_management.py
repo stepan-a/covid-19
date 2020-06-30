@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[3]:
+# In[2]:
 
 
 import requests
@@ -10,7 +10,7 @@ import json
 from tqdm import tqdm
 
 
-# In[1]:
+# In[14]:
 
 
 # Download data from Santé publique France and export it to local files
@@ -162,7 +162,7 @@ def import_data():
         #ligne.loc[:, cols_to_change] = moitié
         #ligne.loc[:,["jour"]] = ["2020-05-14"]
         #df = df.append(ligne)
-        
+    df['jour'] = df['jour'].str.replace(r'(.*)/(.*)/(.*)',r'\3-\2-\1')     
     dates = sorted(list(dict.fromkeys(list(df['jour'].values))))
     return df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid
 
@@ -170,7 +170,7 @@ def import_data():
 # In[22]:
 
 
-df_incid = pd.read_csv('data/france/taux-incidence-dep-quot.csv', sep=",")
+"""df_incid = pd.read_csv('data/france/taux-incidence-dep-quot.csv', sep=",")
 df_tests_viro = pd.read_csv('data/france/tests_viro-dep-quot.csv', sep=",")
 df_regions = pd.read_csv('data/france/departments_regions_france_2016.csv', sep=",")
 
@@ -181,11 +181,11 @@ df_tests_viro = df_tests_viro[df_tests_viro["cl_age90"] == 0]
     
 df_incid = df_incid.merge(df_regions, left_on='dep', right_on='departmentCode')
 df_incid = df_incid.merge(df_tests_viro.drop("p", axis=1).drop("cl_age90", axis=1), left_on=['jour', 'dep'], right_on=['jour', 'dep'])
-    
+    """
 
 
-# In[23]:
+# In[15]:
 
 
-df_incid
+#df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid = import_data()
 
