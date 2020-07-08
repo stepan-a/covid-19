@@ -460,7 +460,7 @@ def chart(data, data_rolling, countries, by_million_inh = False, align_curves = 
     countries_array = countries_array[ind][::-1]
         
     for c in countries_array:
-
+        
         if align_curves:
             offset = countries[c][offset_name]
             offset2 = -offset

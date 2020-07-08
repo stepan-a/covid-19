@@ -24,7 +24,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[2]:
+# In[6]:
 
 
 import france_data_management as data
@@ -41,14 +41,14 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 # ## Data import
 
-# In[3]:
+# In[7]:
 
 
 # Import data from Santé publique France
 df, df_confirmed, dates, _, _, df_deconf, df_sursaud, _ = data.import_data()
 
 
-# In[4]:
+# In[8]:
 
 
 # Download and import data from INSEE
@@ -70,7 +70,7 @@ df_insee['jour'] = df_insee['jour'].dt.strftime('%Y-%m-%d')
 dates_insee = list(dict.fromkeys(list(df_insee.dropna()['jour'].values))) 
 
 
-# In[5]:
+# In[9]:
 
 
 df_insee_france = df_insee.groupby('jour').sum().reset_index()
@@ -82,14 +82,14 @@ df_insee_france["surmortalite20"] = (df_insee_france["dc20"] - df_insee_france["
 # 
 # ## Function definition
 
-# In[6]:
+# In[10]:
 
 
 with open('data/france/dep.geojson') as response:
     depa = json.load(response)
 
 
-# In[7]:
+# In[17]:
 
 
 
@@ -231,7 +231,7 @@ def map_gif(dates, imgs_folder, df, type_ppl, legend_title, min_scale, max_scale
 
 def build_gif(file_gif, imgs_folder, dates):
     i=0
-    with imageio.get_writer(file_gif, mode='I', duration=0.2) as writer: 
+    with imageio.get_writer(file_gif, mode='I', duration=0.15) as writer: 
         for date in tqdm(dates):
             image = imageio.imread(imgs_folder.format(date))
             writer.append_data(image)
@@ -241,7 +241,7 @@ def build_gif(file_gif, imgs_folder, dates):
                     writer.append_data(image)
 
 
-# In[13]:
+# In[8]:
 
 
 
@@ -313,19 +313,13 @@ def build_map(data_df, img_folder, date_str = "date", dep_str = "departement", c
     fig.write_image(img_folder.format(date), scale=2, width=1200, height=800)
 
 
-# In[14]:
+# In[9]:
 
 
 #build_map(df_deconf, img_folder="images/charts/france/deconf_synthese/{}.png", title="Départements déconfinés le 11/05")
 
 
-# In[15]:
-
-
-df_deconf
-
-
-# In[16]:
+# In[12]:
 
 
 def build_map_indic1(data_df, img_folder, legend_title="legend_title", title="title"):
@@ -397,7 +391,7 @@ def build_map_indic1(data_df, img_folder, legend_title="legend_title", title="ti
     
 
 
-# In[17]:
+# In[12]:
 
 
 """df_sursaud = df_sursaud[df_sursaud["sursaud_cl_age_corona"] == "0"]
@@ -411,7 +405,7 @@ df_sursaud_gb["taux_corona"] = df_sursaud_gb["nbre_pass_corona"]/df_sursaud_gb["
 #build_map_indic1(df_sursaud_gb, img_folder="images/charts/france/deconf_indic1/{}.png", title="Indic 1")
 
 
-# In[18]:
+# In[13]:
 
 
 #df_sursaud_gb = df_sursaud.groupby(["dep"]).rolling(window=7, on="date_de_passage").mean().reset_index()
@@ -430,40 +424,40 @@ df_sursaud_gb["taux_corona"] = df_sursaud_gb["nbre_pass_corona"]/df_sursaud_gb["
 # 
 # ## Function calls
 
-# In[19]:
+# In[13]:
 
 
 def dep_map():
     # GIF carte nb réanimations par habitant
     imgs_folder = "images/charts/france/dep-map-img/{}.png"
     sub = 'Nombre de <b>personnes en réanimation</b> <br>par habitant de chaque département.'
-    map_gif(dates, imgs_folder, df = df, type_ppl = "rea_deppop", legend_title="réan./100k hab", min_scale = 0, max_scale=-1, colorscale ="Reds", subtitle=sub)
+    #map_gif(dates, imgs_folder, df = df, type_ppl = "rea_deppop", legend_title="réan./100k hab", min_scale = 0, max_scale=-1, colorscale ="Reds", subtitle=sub)
     build_gif(file_gif = "images/charts/france/dep-map.gif", imgs_folder = "images/charts/france/dep-map-img/{}.png", dates=dates)
 
 
-# In[20]:
+# In[14]:
 
 
 def dep_map_dc_cum():
     # GIF carte décès cumulés par habitant
     imgs_folder = "images/charts/france/dep-map-img-dc-cum/{}.png"
     sub = 'Nombre de <b>décès cumulés</b> <br>par habitant de chaque département.'
-    map_gif(dates[1:], imgs_folder, df = df, type_ppl = "dc_deppop", legend_title="décès/100k hab", min_scale = 0, max_scale=-1, colorscale ="Reds", subtitle=sub)
+    #map_gif(dates[1:], imgs_folder, df = df, type_ppl = "dc_deppop", legend_title="décès/100k hab", min_scale = 0, max_scale=-1, colorscale ="Reds", subtitle=sub)
     build_gif(file_gif = "images/charts/france/dep-map-dc-cum.gif", imgs_folder = "images/charts/france/dep-map-img-dc-cum/{}.png", dates=dates[1:])
 
 
-# In[21]:
+# In[15]:
 
 
 def dep_map_dc_journ():
     # GIF carte décès quotidiens 
     imgs_folder = "images/charts/france/dep-map-img-dc-journ/{}.png"
     sub = 'Nombre de <b>décès quotidien</b> <br>par habitant de chaque département.'
-    map_gif(dates[1:], imgs_folder, df = df, type_ppl = "dc_new_deppop", legend_title="décès/100k hab", min_scale = 0, max_scale=-1, colorscale ="Reds", subtitle=sub)
+    #map_gif(dates[1:], imgs_folder, df = df, type_ppl = "dc_new_deppop", legend_title="décès/100k hab", min_scale = 0, max_scale=-1, colorscale ="Reds", subtitle=sub)
     build_gif(file_gif = "images/charts/france/dep-map-dc-journ.gif", imgs_folder = "images/charts/france/dep-map-img-dc-journ/{}.png", dates=dates[1:])
 
 
-# In[22]:
+# In[18]:
 
 
 dep_map()
@@ -471,7 +465,7 @@ dep_map_dc_cum()
 dep_map_dc_journ()
 
 
-# In[23]:
+# In[18]:
 
 
 """
@@ -484,7 +478,7 @@ map_gif(dates_insee, imgs_folder, df = df_insee.dropna(), type_ppl = ppl, legend
 build_gif(file_gif = "images/charts/france/dep-map-surmortalite.gif", imgs_folder = imgs_folder, dates=dates_insee)"""
 
 
-# In[24]:
+# In[19]:
 
 
 # Line chart évolution de la mortalité

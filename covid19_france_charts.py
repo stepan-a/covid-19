@@ -4,7 +4,7 @@
 # # COVID-19 French Charts
 # Guillaume Rozier, 2020
 
-# In[1]:
+# In[5]:
 
 
 """
@@ -26,7 +26,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[2]:
+# In[6]:
 
 
 from multiprocessing import Pool
@@ -53,13 +53,13 @@ show_charts = False
 
 # # Data download and import
 
-# In[5]:
+# In[7]:
 
 
 data.download_data()
 
 
-# In[3]:
+# In[8]:
 
 
 df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid = data.import_data()
@@ -379,7 +379,7 @@ fig.update_layout(
                 ),
                 ]
                  )
-for (data_temp, type_ppl, col) in [(dc_new_rolling, "décès", "black"), (rea_new_rolling, " réanimations", "red"), (hosp_non_rea_rolling, " hospitalisations<br> &#8205; (hors réa.)", "grey"), (rad_new_rolling, " retours à<br> &#8205; domicile", "green")]:
+for (data_temp, type_ppl, col, ay) in [(dc_new_rolling, "décès", "black", -5), (rea_new_rolling, " réanimations", "red", 5), (hosp_non_rea_rolling, " hospitalisations<br> &#8205; (hors réa.)", "grey", 10), (rad_new_rolling, " retours à<br> &#8205; domicile", "green", -10)]:
     fig['layout']['annotations'] += (dict(
             x=dates[-4], y = data_temp.values[-4], # annotation point
             xref='x1', 
@@ -394,7 +394,7 @@ for (data_temp, type_ppl, col) in [(dc_new_rolling, "décès", "black"), (rea_ne
                 ),
             opacity=0.8,
             ax=50,
-            ay=0,
+            ay=ay,
         arrowcolor=col,
             arrowsize=1.5,
             arrowwidth=1,
@@ -1132,8 +1132,12 @@ df_sursaud_france['taux_covid_acte_rolling'] = df_sursaud_france['taux_covid_act
 
 fig = make_subplots(rows=2, cols=1, shared_yaxes=True, subplot_titles=["Circulation du Coronavirus<br><sub><b>Taux d'admission aux urgences pour Covid19</b></sub>", "<sub><b>Taux d'actes SOS Médecin pour Covid19</b></sub>"], vertical_spacing = 0.08, horizontal_spacing = 0.1, specs=[[{"secondary_y": True}], [{"secondary_y": True}]])
 
-fig.add_trace(go.Bar(x = df_sursaud_france['date_de_passage'], y = df_sursaud_france['nbre_pass_tot'], opacity=0.3, marker_color='grey', name = "<b>nombre total</b> d'admissions aux urgences • d'actes SOS Médecin "),
+fig.add_trace(go.Bar(x = df_sursaud_france['date_de_passage'], y = df_sursaud_france['nbre_pass_corona'], opacity=0.2, marker_color='red', name = "nombre d'admissions aux urgences • d'actes SOS Médecin <b>pour Covid</b>"),
               1, 1, secondary_y=True)
+
+fig.add_trace(go.Bar(x = df_sursaud_france['date_de_passage'], y = df_sursaud_france['nbre_pass_tot']-df_sursaud_france['nbre_pass_corona'], opacity=0.3, marker_color='grey', name = "<b>nombre total</b> d'admissions aux urgences • d'actes SOS Médecin "),
+              1, 1, secondary_y=True)
+
 fig.add_trace(go.Scatter(x = df_sursaud_france['date_de_passage'], y = 100*df_sursaud_france['taux_covid_rolling'], marker_color='red', line_width=5, name = "<b>taux</b> d'admissions aux urgences • d'actes SOS Médecin <b>pour Covid</b>"),
               1, 1)
 fig.add_trace(go.Scatter(x = df_sursaud_france['date_de_passage'], y = 100*df_sursaud_france['taux_covid'], mode="markers", marker_color='red', marker_size=4, line_width=5, showlegend=False),
@@ -1142,8 +1146,10 @@ fig.add_trace(go.Scatter(x = [dates_sursaud[-4]], y = 100*df_sursaud_france.loc[
               1, 1)
 
 ##
+fig.add_trace(go.Bar(x = df_sursaud_france['date_de_passage'], y = df_sursaud_france['nbre_acte_corona'], opacity=0.2, marker_color='red', name = "", showlegend=False),
+              2, 1, secondary_y=True)
 
-fig.add_trace(go.Bar(x = df_sursaud_france['date_de_passage'], y = df_sursaud_france['nbre_acte_tot'], opacity=0.3, marker_color='grey', name = "", showlegend=False),
+fig.add_trace(go.Bar(x = df_sursaud_france['date_de_passage'], y = df_sursaud_france['nbre_acte_tot']-df_sursaud_france['nbre_acte_corona'], opacity=0.3, marker_color='grey', name = "", showlegend=False),
               2, 1, secondary_y=True)
 
 fig.add_trace(go.Scatter(x = df_sursaud_france['date_de_passage'], y = 100*df_sursaud_france['taux_covid_acte_rolling'], marker_color='red', line_width=5, name = "taux d'actes SOS Médecin pour Covid", showlegend=False),
@@ -1158,12 +1164,11 @@ fig.add_trace(go.Scatter(x = [dates_sursaud[-4]], y = 100*df_sursaud_france.loc[
 
 fig.update_xaxes(title_text="", range=["2020-03-15", last_day_plot], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, nticks=10, linewidth=1, linecolor='white', row=1, col=1)
 fig.update_yaxes(title_text="", gridcolor='white', range=[0, 28], linewidth=1, linecolor='white', row=1, col=1, secondary_y=False)
-#fig.update_yaxes(title_text="", range=[0, 500], row=1, col=1, secondary=True)
-
+fig.update_yaxes(range=[0, 42000], row=1, col=1, secondary_y=True)
 
 fig.update_xaxes(title_text="", range=["2020-03-15", last_day_plot], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, nticks=10, linewidth=1, linecolor='white', row=2, col=1)
 fig.update_yaxes(title_text="", gridcolor='white', range=[0, 30], linewidth=1, linecolor='white', row=2, col=1, secondary_y=False)
-
+fig.update_yaxes(range=[0, 11000], row=2, col=1, secondary_y=True)
 
 for i in fig['layout']['annotations']:
     i['font'] = dict(size=30)
@@ -1299,6 +1304,7 @@ fig['layout']['annotations'] += (dict(
     ),)
 
 fig.update_layout(
+    barmode='stack',
     margin=dict(
         l=0,
         r=0,
@@ -1350,7 +1356,7 @@ fig.add_layout_image(
 )
 
 name_fig = "indic1_france"
-fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=2, width=1100, height=1100)
+fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=2, width=1100, height=1400)
 
 fig["layout"]["annotations"] += (
                 dict(
@@ -1375,25 +1381,13 @@ print("> " + name_fig)
 # In[ ]:
 
 
-
-
-
-# In[ ]:
-
-
 df_incid_france
 
 
 # In[ ]:
 
 
-df_incid_france['p']+1
-
-
-# In[ ]:
-
-
-
+"""
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 incid_rolling = (df_incid_france['p']).rolling(window=7, center=True).mean()
@@ -1531,7 +1525,7 @@ plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(
 print("> " + name_fig)
 
 locale.setlocale(locale.LC_ALL, '')
-#fig.show()
+#fig.show()"""
 
 
 # In[ ]:
@@ -1798,27 +1792,42 @@ fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=2, width=
 # In[ ]:
 
 
+df_incid_france
+
+
+# In[ ]:
+
+
 #fig = go.Figure()
 fig = make_subplots(specs=[[{"secondary_y": True}]])
 
 df_sursaud_dep = df_sursaud.groupby(["date_de_passage"]).sum().reset_index()
 df_sursaud_dep = df_sursaud_dep.sort_values(by="date_de_passage")
-#.rolling(window=7).mean()   , win_type="gaussian"
 nbre_pass = df_sursaud_dep["nbre_pass_corona"]
 
 std_gauss= 3
 wind = 12
 delai = 5
+
 y_data = (nbre_pass.rolling(window= wind, win_type="gaussian").sum(std = std_gauss) / nbre_pass.rolling(window = wind, win_type="gaussian").sum(std = std_gauss).shift(delai) ).rolling(window=7).mean()
-print(y_data.min())
+y_data_tests = (df_incid_france['t'].rolling(window= wind, win_type="gaussian").sum(std = std_gauss) / df_incid_france['t'].rolling(window = wind, win_type="gaussian").sum(std = std_gauss).shift(delai) ).rolling(window=7).mean()
+
 fig.add_trace(go.Scatter(x = df_sursaud_dep["date_de_passage"], y = y_data.values,
                     mode='lines',
                     line=dict(width=4, color="rgba(0,51,153,1)"),
-                    name="R",
+                    name="À partir des données des admissions aux urgences",
                     marker_size=8,
-                    showlegend=False
+                    showlegend=True
+                         ))
+fig.add_trace(go.Scatter(x = df_incid_france["jour"], y = y_data_tests.shift(0).values,
+                    mode='lines',
+                    line=dict(width=2, color="rgba(102,102,153,1)"),
+                    name="À partir des données des tests PCR",
+                    marker_size=5,
+                    showlegend=True
                          ))
 y_std = (nbre_pass.rolling(window= wind, win_type="gaussian").sum(std= std_gauss) / nbre_pass.rolling(window = wind, win_type="gaussian").sum(std = std_gauss).shift(delai) ).rolling(window=7).std()
+y_std_tests = (df_incid_france['t'].rolling(window= wind, win_type="gaussian").sum(std= std_gauss) / df_incid_france['t'].rolling(window = wind, win_type="gaussian").sum(std = std_gauss).shift(delai) ).rolling(window=7).std()
 
 fig.add_trace(go.Scatter(x = dates_sursaud, y = y_data + y_std,
                     mode='lines',
@@ -1845,12 +1854,7 @@ fig.add_trace(go.Scatter(x = [dates_sursaud[-1]], y = [y_data.values[-1]],
                     marker_size=12,
                     showlegend=False
                             ))
-"""fig.add_trace(go.Scatter(x = dates_sursaud, y = (nbre_pass / nbre_pass.shift(delai) ),
-                    mode='lines+markers',
-                    line=dict(width=2),
-                    name="calc R effectif 2",
-                    marker_size=8,
-                            ))"""
+
 
 fig.update_layout(
     margin=dict(

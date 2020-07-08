@@ -25,6 +25,7 @@ import time
 import subprocess
 import requests
 import re
+import twitter_bot as t
 
 ### FUNCTION DEFINITIONS ###
 url_metadata = "https://www.data.gouv.fr/fr/organizations/sante-publique-france/datasets-resources.csv"
@@ -71,6 +72,11 @@ def try_update_france():
         push("France")
         print("update France charts: " + str(now.hour) + ":" + str(now.minute))
         
+        t.tweet_france()
+        print("data tweeted")
+        
+        subprocess.run(["sudo", "python3", "covid19_france_charts.py"])
+        
         subprocess.run(["sudo", "python3", "covid19_france_local_charts.py"])
         push("France local subplots")
         print("update France local: " + str(now.hour) + ":" + str(now.minute))
@@ -91,6 +97,7 @@ world_update = dt.datetime.now()
 k = 1
 l = 0
 print("will enter loop")
+tweet_world_data = False
 
 while True:
     now = dt.datetime.now() 
@@ -114,10 +121,17 @@ while True:
         subprocess.run(["sudo", "python3", "covid19_france_charts.py"])
         push("France")
         print("update France pushed: " + str(now.hour) + ":" + str(now.minute))
+        tweet_world_data = True
+        
         time.sleep(30)
         
-    print(str(now.hour>=19))
     print(str(now.hour))
+    
+    if tweet_world_data and (now.hour == 8):
+        t.tweet_world()
+        tweet_world_data = False
+        print("world tweet: done")
+        
     if ( (((now.hour == 18) & (now.minute >= 58)) or ((now.hour >= 19) & (now.hour<= 20))) ):
         print("if condition - now: {}, datetimes_spf: {}".format(now, datetime_spf))
         while ( (((now.hour == 18) & (now.minute >= 59)) or ((now.hour >= 19) & (now.hour<= 20))) & ( (now - datetime_spf).total_seconds()/3600 > 2.5 ) ):
