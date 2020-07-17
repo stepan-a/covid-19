@@ -132,7 +132,7 @@ while True:
         tweet_world_data = False
         print("world tweet: done")
         
-    if ( (((now.hour == 18) & (now.minute >= 58)) or ((now.hour >= 19) & (now.hour<= 20))) ):
+    if ( (now.hour == 19) & (now.minute >= 18) & (now.minute <= 30)  ): #(((now.hour == 18) & (now.minute >= 58)) or ((now.hour >= 19) & (now.hour<= 20)))
         print("if condition - now: {}, datetimes_spf: {}".format(now, datetime_spf))
         while ( (((now.hour == 18) & (now.minute >= 59)) or ((now.hour >= 19) & (now.hour<= 20))) & ( (now - datetime_spf).total_seconds()/3600 > 2.5 ) ):
             print("while loop - now: {}, datetimes_spf: {}".format(now, datetime_spf))            # Si l'heure comprise entre 18h59 et 21h59, ET les données PAS à jour depuis plus de 2h30
@@ -143,7 +143,7 @@ while True:
             
     else: # S'il n'est pas entre 18h59 et 21h59
         if( (now - datetime_spf).total_seconds()/3600 > 20 ): # S'il s'est écoulé plus de 20h depuis la dernière update
-            if (k%20 == 0): #Check 1 fois toutes les 20 sec * 30 (environ 10 min)
+            if (k%50 == 0): #Check 1 fois toutes les 50 sec * 30 (environ 25 min)
                 datetime_spf = try_update_france()
             k += 1
             

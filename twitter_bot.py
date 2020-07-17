@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[116]:
+# In[12]:
 
 
 # Guillaume Rozier - 2020 - MIT License
@@ -39,15 +39,36 @@ def tweet_france():
     df_incid_france = df_incid.groupby(["jour"]).sum().reset_index()
 
     hosp = df_new_france.iloc[len(df_new_france)-1]['incid_hosp']
+    hosp_j7 = df_new_france.iloc[len(df_new_france)-8]['incid_hosp']
     deaths = df_new_france.iloc[len(df_new_france)-1]['incid_dc']
-    cases = df_incid_france.iloc[len(df_incid_france)-1]['p']
+    deaths_j7 = df_new_france.iloc[len(df_new_france)-8]['incid_dc']
+    tests = df_incid_france.iloc[len(df_incid_france)-1]['P']
+    tests_j7 = df_incid_france.iloc[len(df_incid_france)-8]['P']
     date = datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B')
+    
+    hosp_tendance, hosp_sign = "en hausse", "+"
+    if hosp_j7>hosp:
+        hosp_tendance, hosp_sign = "en baisse", ""
+    deaths_tendance, deaths_sign = "en hausse", "+"
+    if deaths_j7>deaths:
+        deaths_tendance, deaths_sign = "en baisse", ""
+    tests_tendance, tests_sign = "en hausse", "+"
+    if tests_j7>tests:
+        tests_tendance, tests_sign = "en baisse", ""
+        
     date_incid = datetime.strptime(sorted(list(dict.fromkeys(list(df_incid_france['jour'].values))))[-1], '%Y-%m-%d').strftime('%d %B')
-    tweet ="#Covid19 en #France - Données du jour :\n• {} nouveaux cas positifs ({})\n• {} personnes décédées en milieu hosp. ({})\n• {} admissions à l'hôpital ({})\n➡️ Plus d'infos : covidtracker.fr/covidtracker-france".format(cases, date_incid, deaths, date, hosp, date) # toDo 
-    image_path ="images/charts/france/var_journ_lines.jpeg"
+    tweet ="Données #Covid19 en France au {} :\n• {} personnes décédées en milieu hospitalier, {} sur 7j ({}{})\n• {} admissions à l'hôpital, {} sur 7j ({}{})\n• {} cas positifs, {} sur 7j ({}{})\n➡️ Plus d'infos : covidtracker.fr/covidtracker-france".format(date, deaths, deaths_tendance, deaths_sign, deaths-deaths_j7, hosp, hosp_tendance, hosp_sign, hosp-hosp_j7, tests, tests_tendance, tests_sign, tests-tests_j7) # toDo 
+    
+    images_path =["images/charts/france/var_journ_lines_recent.jpeg", "images/charts/france/reffectif.jpeg"]
+    media_ids = []
+    
+    for filename in images_path:
+        res = api.media_upload(filename)
+        media_ids.append(res.media_id)
 
     # to attach the media file 
-    status = api.update_with_media(image_path, tweet)
+    api.update_status(status=tweet, media_ids=media_ids)
+    #status = api.update_with_media(image_path, tweet)
     #print(tweet)
     
 def tweet_world():
@@ -84,15 +105,16 @@ def tweet_world():
     
     # Write and publish tweet
     tweet ="Données du #Covid19 dans le monde au {} :\n+ {} cas en 24h, soit {} au total\n+ {} décès en 24h, soit {} au total\nPlus d'infos : covidtracker.fr/covidtracker-world\n".format(date_str, f"{new_cases:,d}".replace(',', ' '), f"{sum_cases:,d}".replace(',', ' '), f"{new_deaths:,d}".replace(',', ' '), f"{sum_deaths:,d}".replace(',', ' ')) # toDo 
-    image_path ="images/banniere.jpeg"
+    image_path ="images/charts/cases_world.jpeg"
 
     # to attach the media file 
     status = api.update_with_media(image_path, tweet)
     #print(tweet)
 
 
-# In[117]:
+# In[13]:
 
 
 #tweet_world()
+#tweet_france()
 
