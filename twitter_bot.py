@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[12]:
+# In[70]:
 
 
 # Guillaume Rozier - 2020 - MIT License
@@ -16,6 +16,7 @@ import locale
 import tweepy
 import pandas as pd
 import secrets as s
+from datetime import timedelta
 
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
@@ -37,13 +38,22 @@ def tweet_france():
     _, _, dates, df_new, _, _, _, df_incid = data.import_data()
     df_new_france = df_new.groupby(["jour"]).sum().reset_index()
     df_incid_france = df_incid.groupby(["jour"]).sum().reset_index()
-
-    hosp = df_new_france.iloc[len(df_new_france)-1]['incid_hosp']
-    hosp_j7 = df_new_france.iloc[len(df_new_france)-8]['incid_hosp']
-    deaths = df_new_france.iloc[len(df_new_france)-1]['incid_dc']
-    deaths_j7 = df_new_france.iloc[len(df_new_france)-8]['incid_dc']
-    tests = df_incid_france.iloc[len(df_incid_france)-1]['P']
-    tests_j7 = df_incid_france.iloc[len(df_incid_france)-8]['P']
+    
+    lastday_df_new = datetime.strptime(df_new_france['jour'].max(), '%Y-%m-%d')
+    print(lastday_df_new)
+    hosp = df_new_france[df_new_france['jour']==lastday_df_new.strftime('%Y-%m-%d')]['incid_hosp'].values[-1]
+    date_j7 = (lastday_df_new - timedelta(days=7)).strftime("%Y-%m-%d")
+    hosp_j7 = df_new_france[df_new_france['jour'] == date_j7]['incid_hosp'].values[-1]
+    
+    
+    deaths = df_new_france[df_new_france['jour']==lastday_df_new.strftime('%Y-%m-%d')]['incid_dc'].values[-1]
+    deaths_j7 = df_new_france[df_new_france['jour'] == date_j7]['incid_dc'].values[-1]
+    
+    lastday_df_incid = datetime.strptime(df_incid_france['jour'].max(), '%Y-%m-%d')
+    tests = df_incid_france[df_incid_france['jour']==lastday_df_incid.strftime('%Y-%m-%d')]['P'].values[-1]
+    date_j7 = (lastday_df_incid - timedelta(days=7)).strftime("%Y-%m-%d")
+    tests_j7 = df_incid_france[df_incid_france['jour'] == date_j7]['P'].values[-1]
+    
     date = datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B')
     
     hosp_tendance, hosp_sign = "en hausse", "+"
@@ -57,7 +67,7 @@ def tweet_france():
         tests_tendance, tests_sign = "en baisse", ""
         
     date_incid = datetime.strptime(sorted(list(dict.fromkeys(list(df_incid_france['jour'].values))))[-1], '%Y-%m-%d').strftime('%d %B')
-    tweet ="Données #Covid19 en France au {} :\n• {} personnes décédées en milieu hospitalier, {} sur 7j ({}{})\n• {} admissions à l'hôpital, {} sur 7j ({}{})\n• {} cas positifs, {} sur 7j ({}{})\n➡️ Plus d'infos : covidtracker.fr/covidtracker-france".format(date, deaths, deaths_tendance, deaths_sign, deaths-deaths_j7, hosp, hosp_tendance, hosp_sign, hosp-hosp_j7, tests, tests_tendance, tests_sign, tests-tests_j7) # toDo 
+    tweet ="Données #Covid19 en France au {} :\n• {} personnes décédées en milieu hospitalier, {} sur 7j ({}{})\n• {} admissions à l'hôpital, {} sur 7j ({}{})\n• {} cas positifs, {} sur 7j ({}{})\n➡️ Plus d'infos : covidtracker.fr/covidtracker-france".format(lastday_df_new.strftime('%d %B'), deaths, deaths_tendance, deaths_sign, deaths-deaths_j7, hosp, hosp_tendance, hosp_sign, hosp-hosp_j7, tests, tests_tendance, tests_sign, tests-tests_j7) # toDo 
     
     images_path =["images/charts/france/var_journ_lines_recent.jpeg", "images/charts/france/reffectif.jpeg"]
     media_ids = []
@@ -67,8 +77,8 @@ def tweet_france():
         media_ids.append(res.media_id)
 
     # to attach the media file 
-    api.update_status(status=tweet, media_ids=media_ids)
-    #status = api.update_with_media(image_path, tweet)
+    #api.update_status(status=tweet, media_ids=media_ids)
+    status = api.update_with_media(image_path, tweet)
     #print(tweet)
     
 def tweet_world():
@@ -112,7 +122,7 @@ def tweet_world():
     #print(tweet)
 
 
-# In[13]:
+# In[69]:
 
 
 #tweet_world()

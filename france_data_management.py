@@ -105,7 +105,7 @@ def import_data():
     df = df.merge(lits_reas, left_on="departmentName", right_on="nom_dpt")
     
     df_incid = df_incid[df_incid["cl_age90"] == 0]
-    df_tests_viro = df_tests_viro[df_tests_viro["cl_age90"] == 0]
+    #df_tests_viro = df_tests_viro[df_tests_viro["cl_age90"] == 0]
 
     df_incid = df_incid.merge(df_regions, left_on='dep', right_on='departmentCode')
     df_incid = df_incid.merge(df_tests_viro.drop("P", axis=1).drop("cl_age90", axis=1), left_on=['jour', 'dep'], right_on=['jour', 'dep'])
@@ -166,7 +166,7 @@ def import_data():
     df['jour'] = df['jour'].str.replace(r'(.*)/(.*)/(.*)',r'\3-\2-\1')     
     dates = sorted(list(dict.fromkeys(list(df['jour'].values))))
 
-    return df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid
+    return df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid, df_tests_viro
 
 
 # In[44]:

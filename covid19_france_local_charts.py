@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[88]:
 
 
 import france_data_management as data
@@ -19,15 +19,16 @@ import numpy as np
 import locale
 
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
+now = datetime.now()
 colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.colors.qualitative.Plotly + px.colors.qualitative.Dark24 + px.colors.qualitative.Alphabet
 
 
 # ## Data Import
 
-# In[43]:
+# In[89]:
 
 
-df, df_confirmed, dates, df_new, df_tests, _, df_sursaud, df_incid  = data.import_data()
+df, df_confirmed, dates, df_new, df_tests, _, df_sursaud, df_incid, _  = data.import_data()
 
 df_incid["incidence"] = df_incid["P"]/df_incid["pop"]*100000
 deps_incid = list(dict.fromkeys(list(df_incid['dep'].values))) 
@@ -67,13 +68,7 @@ df_incid_region = df_incid.groupby(["jour", "regionName"]).sum().reset_index()
 df_sursaud_region = df_sursaud.groupby(["date_de_passage", "regionName"]).sum().reset_index()
 
 
-# In[44]:
-
-
-df_sursaud[df_sursaud["dep"] == "95"]
-
-
-# In[3]:
+# In[90]:
 
 
 with open('data/france/dep.geojson') as response:
@@ -172,7 +167,7 @@ def build_map(data_df, img_folder, date = dates_sursaud[-1], subtitle="", legend
 # - nb de réanimations par habitant des régions,
 # et ce pour toutes les régions françaises
 
-# In[4]:
+# In[91]:
 
 
 """
@@ -339,7 +334,7 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
     #fig.show()"""
 
 
-# In[5]:
+# In[92]:
 
 
 
@@ -502,35 +497,38 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
     #fig.show()
 
 
-# In[31]:
+# In[93]:
 
 
 ni, nj = 5, 4
 i, j = 1, 1
-std_gauss= 3
-wind = 12
-delai = 5
+
+std_gauss= 5
+wind = 7
+delai = 7
 
 regions_ordered = list(dict.fromkeys(list(df_incid_region.sort_values(by=["regionName"], ascending=True)["regionName"].values)))[:]
 
 fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles=[ "<b>"+ str(r) +"</b>" for r in (regions_ordered)], vertical_spacing = 0.06, horizontal_spacing = 0.01)
 #&#8681;
 
-sub = "<sub>{} - covidtracker.fr</sub>"
-
+sub = "<sub>Mis à jour le {} - covidtracker.fr</sub>".format(now.strftime('%d %B'))
+reffectifs_now = []
+dates_reffectif_now = []
 for region in regions_ordered:
     
     df_incid_reg = df_incid_region[df_incid_region["regionName"] == region]
-    print(region)
-    print(df_incid_reg["regionCode"])
+    
     df_sursaud_reg = df_sursaud_region[df_sursaud_region["regionName"] == region]
     nbre_pass = df_sursaud_reg["nbre_pass_corona"]
     
-    reffectif_tests = (df_incid_reg['T'].rolling(window= wind, win_type="gaussian").sum(std = std_gauss) / df_incid_reg['T'].rolling(window = wind, win_type="gaussian").sum(std = std_gauss).shift(delai) ).rolling(window=7).mean()
-    reffectif_urgences = (nbre_pass.rolling(window= wind, win_type="gaussian").sum(std = std_gauss) / nbre_pass.rolling(window = wind, win_type="gaussian").sum(std = std_gauss).shift(delai) ).rolling(window=7).mean()
-    reffectif_mean = pd.DataFrame(reffectif_tests, reffectif_urgences).mean(axis=1, skipna=False)
-    
-    fig.add_trace(go.Scatter(x = df_incid_reg["jour"], y = reffectif_tests,
+    df_incid_reg['reffectif_tests'] = (df_incid_reg['P'].rolling(window= wind).sum() / df_incid_reg['P'].rolling(window = wind).sum().shift(delai) ).rolling(window=7).mean()
+    df_sursaud_reg['reffectif_urgences'] = (nbre_pass.rolling(window= wind).sum() / nbre_pass.rolling(window = wind).sum().shift(delai) ).rolling(window=7).mean()
+    df_sursaud_reg['reffectif_urgences'] = df_sursaud_reg['reffectif_urgences'].fillna(0)
+    df_reffectif = pd.merge(df_sursaud_reg, df_incid_reg, left_on="date_de_passage", right_on="jour", how="outer")
+    df_reffectif['reffectif_mean'] = df_reffectif[['reffectif_urgences', 'reffectif_tests']].mean(axis=1, skipna=False)
+        
+    fig.add_trace(go.Scatter(x = df_reffectif["jour"], y = df_reffectif['reffectif_tests'],
                     mode='lines',
                     line=dict(width=2, color="rgba(108, 212, 141, 0.9)"),
                     name="À partir des données des tests PCR",
@@ -539,7 +537,7 @@ for region in regions_ordered:
                          ),
                  i, j)
     
-    fig.add_trace(go.Scatter(x = df_sursaud_reg["date_de_passage"], y = reffectif_urgences,
+    fig.add_trace(go.Scatter(x = df_reffectif["date_de_passage"], y = df_reffectif['reffectif_urgences'],
                     mode='lines',
                     line=dict(width=2, color="rgba(96, 178, 219, 0.9)"),
                     name="À partir des données urgences",
@@ -548,25 +546,133 @@ for region in regions_ordered:
                          ),
                  i, j)
     
-    """fig.add_trace(go.Scatter(x = df_sursaud_reg["date_de_passage"], y = reffectif_mean,
+    reffectif_now = df_reffectif.dropna(subset=["reffectif_mean"])["reffectif_mean"].values
+    if len(reffectif_now) > 0:
+        reffectif_now=reffectif_now[-1]
+    else:
+        reffectif_now=-1
+    date_reffectif_now = df_reffectif.dropna(subset=["reffectif_mean"])["jour"].values
+    if len(date_reffectif_now) > 0:
+        date_reffectif_now= date_reffectif_now[-1]
+    else:
+        date_reffectif_now=dates[-1]
+        
+    reffectifs_now += [reffectif_now]
+    dates_reffectif_now += [date_reffectif_now]
+    
+    if reffectif_now >= 1.5:
+        col = 'red'
+    elif reffectif_now >= 1:
+        col = 'orange'
+    else:
+        col = 'green'
+    
+    fig.update_xaxes(title_text="", range=["2020-03-17", last_day_plot], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, linewidth=1, linecolor='white', row=i, col=j)
+    fig.update_yaxes(title_text="", range=[0, 5], gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
+    
+    fig.add_trace(go.Scatter(x = df_reffectif["jour"], y = df_reffectif['reffectif_tests'],
                     mode='lines',
-                    line=dict(width=2, color="rgba(96, 178, 219, 0.9)"),
+                    line=dict(width=0),
+                    name="",
+                    marker_size=8,
+                    showlegend=False
+                            ), i, j)
+
+    fig.add_trace(go.Scatter(x = df_reffectif["jour"].values[101:], y = df_reffectif['reffectif_urgences'].values[101:],
+                    mode='lines',
+                    line=dict(width=0),
+                    name="",
+                    marker_size=100,
+                    showlegend=False,
+                    fill = 'tonexty', fillcolor='rgba(247, 190, 67,0)'
+                            ), i, j)
+    
+    fig.add_trace(go.Scatter(x = df_reffectif["date_de_passage"], y = df_reffectif['reffectif_mean'],
+                    mode='lines',
+                    line=dict(width=4, color=col),
                     name="À partir des données urgences",
                     marker_size=5,
                     showlegend=True
                          ),
-                 i, j)"""
+                 i, j)
 
-    fig.update_xaxes(title_text="", range=["2020-03-17", last_day_plot], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, linewidth=1, linecolor='white', row=i, col=j)
-    fig.update_yaxes(title_text="", gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
-
+    
+    fig.add_trace(go.Scatter(x = [df_reffectif["jour"].dropna().max()], y = [reffectif_now],
+                    mode='markers',
+                    name="",
+                    line=dict(width=4, color="rgba(0,51,153,1)"),
+                    marker_color=col,
+                    marker_size=14,
+                    showlegend=False
+                            ), i, j)
     j+=1
     if j == nj+1:
         i+=1
         j=1
 
+shapes=[]
+cnt=0
+
+reffectifs_now = pd.Series(reffectifs_now).fillna(-1).values
 for i in fig['layout']['annotations']:
-    i['font'] = dict(size=15)
+    i['font'] = dict(size=17)
+    #i['y'] = i['y'] - 0.02
+    xref = "x"+str(cnt+1)
+    yref = "y"+str(cnt+1)
+    cnt+=1
+    shapes += [{'type': 'rect', 'x0': "2020-03-15", 'y0': 1, 'x1': last_day_plot, 'y1': 1, 'xref': xref, 'yref': yref, 'line_dash': 'dot', 'line_color': "orange", 'line_width':1, 'opacity' : 0.9}]
+    shapes += [{'type': 'rect', 'x0': "2020-03-15", 'y0': 1.5, 'x1': last_day_plot, 'y1': 1.5, 'xref': xref, 'yref': yref, 'line_dash': 'dot', 'line_color': "red", 'line_width':1, 'opacity' : 0.7}]
+
+
+fig['layout'].update(shapes=shapes)
+
+annot=()
+cnt=0
+for reg in regions_ordered:
+    if reffectifs_now[cnt] >= 1.5:
+        col = 'red'
+    elif reffectifs_now[cnt] >= 1:
+        col = 'orange'
+    else:
+        col = 'green'
+        
+    if reffectifs_now[cnt] != -1:
+        annot += (dict(
+            x = dates_reffectif_now[cnt], y = reffectifs_now[cnt], # annotation point
+            xref='x'+str(cnt+1), 
+            yref='y'+str(cnt+1),
+            text="{}".format(str(round(reffectifs_now[cnt], 1)).replace('.', ',')),
+            xshift=-5,
+            yshift=10,
+            align='center',
+            xanchor="center",
+            font=dict(
+                color=col,
+                size=25
+                ),
+            ax = -30,
+            ay = -60,
+            arrowcolor=col,
+            arrowsize=1.5,
+            arrowwidth=1,
+            arrowhead=4
+        ),)
+    cnt+=1
+
+fig.add_shape(
+        # filled Rectangle
+            type="rect",
+            x0="2020-03-15",
+            y0=1.5,
+            x1=last_day_plot,
+            y1=1.5,
+            line=dict(
+                color="red",
+                width=1,
+                dash="dot"
+            ),
+            opacity=0.8
+        )
 
 fig.update_layout(
     barmode="overlay",
@@ -584,7 +690,7 @@ fig.update_layout(
     showlegend=False,
 
     title={
-            'text': "COVID19 : <b>R_effectif</b><br>".format(),
+            'text': "Taux de reproduction <b>R<sub>effectif</sub> du Covid19</b><br>{}".format(sub),
             'y':0.97,
             'x':0.5,
             'xref':"paper",
@@ -596,9 +702,9 @@ fig.update_layout(
             )
 )
 
-fig["layout"]["annotations"] += ( dict(
+fig["layout"]["annotations"] += annot + (dict(
                         x=0.9,
-                        y=0.015,
+                        y=0.018,
                         xref='paper',
                         yref='paper',
                         xanchor='center',
@@ -607,7 +713,20 @@ fig["layout"]["annotations"] += ( dict(
                         showarrow = False,
                         font=dict(size=12), 
                         opacity=0.5
-                    ),)
+                    ),
+                        dict(
+                        x=0.52,
+                        y=0.14,
+                        xref='paper',
+                        yref='paper',
+                        align='left',
+                        xanchor='left',
+                        yanchor='top',
+                        text='La ligne bleue représente une estimation du R<sub>effectif</sub> basée sur les admissions aux urgences.<br>La ligne verte représente une estimation du R<sub>effectif</sub> basée sur les tests PCR.<br>La ligne épaisse correspond à la moyenne des deux autres.<br>Celle-ci est verte si inférieure à 1, orange si inférieure à 1.5, et rouge si supérieure à 2.<br><br><b>Comment interpréter le R<sub>effectif</sub> ?</b><br>Un R<sub>effectif</sub> = 1 signifie qu\'une personne malade contaminera 1 autre personne en tout.<br>Si ce chiffre est inférieur à 1, l\'épidémie régresse. S\'il est supérieur à 1, elle progresse.',
+                        showarrow = False,
+                        font=dict(size=14), 
+                        opacity=0.8
+                    ))
 
 name_fig = "subplots_reffectif" 
 fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=1.5, width=1300, height=1600)
@@ -629,7 +748,19 @@ print("> " + name_fig)
 #fig.show()
 
 
-# In[37]:
+# In[94]:
+
+
+df_sursaud_region[df_sursaud_region['regionName'] == 'Martinique']
+
+
+# In[95]:
+
+
+df_reffectif["reffectif_mean"]
+
+
+# In[96]:
 
 
 df_sursaud_region[df_sursaud_region["regionCode"] == 160]
@@ -640,7 +771,7 @@ df_sursaud_region[df_sursaud_region["regionCode"] == 160]
 # - nb d'hospitalisés par habitant des départements,
 # et ce pour toutes les régions françaises
 
-# In[6]:
+# In[97]:
 
 
 """
@@ -723,9 +854,6 @@ try:
                 i+=1
                 j=1
 
-            """if j == nj+1:
-                i+=1
-                j=1"""
         cnt=0
         for i in fig['layout']['annotations']:
             i['font'] = dict(size=14, color = str(colors[regions_ordered.index( df[df['departmentName'] == deps_ordered[cnt]]['regionName'].values[0] )]))
@@ -841,7 +969,7 @@ except:
     print("ERROR 1")"""
 
 
-# In[7]:
+# In[98]:
 
 
 
@@ -1009,7 +1137,7 @@ print("> " + name_fig)
 # ## Subplots : départements - classé par régions
 # Idem précédent mais les départements sont rangés dans leurs régions, et les régions classées par ordre décroissant du nb de personnes
 
-# In[8]:
+# In[ ]:
 
 
 """
@@ -1238,7 +1366,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()"""
 
 
-# In[9]:
+# In[ ]:
 
 
 #TODO A CORRIGER
@@ -1506,14 +1634,14 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()"""
 
 
-# In[10]:
+# In[ ]:
 
 
 #TODO A CORRIGER
 """build_map(df_sursaud, date_str="date_de_passage", legend_str="Rouge : > 10%<br>Orange : 6 à 10%<br>Vert : < 10%", dep_str="dep", color_str="indic1_clr", img_folder="images/charts/france/indic1/{}.png", title="Indicateur 1 : circulation du virus (par département)", subtitle="taux de suspicion Covid19 aux urgences")"""
 
 
-# In[11]:
+# In[ ]:
 
 
 """
@@ -1525,7 +1653,7 @@ fig.add_trace(go.Bar(x = dta["date_de_passage"], y = dta["taux_covid"]*100, mark
 fig.show()"""
 
 
-# In[12]:
+# In[ ]:
 
 
 
@@ -1770,20 +1898,20 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()
 
 
-# In[13]:
+# In[ ]:
 
 
 #build_map(df_sursaud, date_str="date_de_passage", dep_str="code", type_data="reg", color_str="indic2_clr", img_folder="images/charts/france/indic2/{}.png", title="Indicateur 2 : saturation des réa")
 
 
-# In[14]:
+# In[ ]:
 
 
 df_groupby = df.groupby(['code', 'jour']).sum().reset_index()
 df_groupby["capa_rea"] = 100 * df_groupby['rea'].values/df_groupby['LITS'].values
 
 
-# In[15]:
+# In[ ]:
 
 
 for code in codes_reg:
@@ -1800,25 +1928,25 @@ for code in codes_reg:
     df_groupby.loc[(df_groupby['jour'] == dates[-1]) & (df_groupby['code'] == code), 'synthese_indics'] = "green" 
 
 
-# In[16]:
+# In[ ]:
 
 
 build_map(df_groupby, date = dates[-1], date_str="jour", dep_str="code", type_data="reg", color_str="capa_rea_clr", img_folder="images/charts/france/indic2/{}.png", legend_str = "Rouge : > 80%<br>Orange : 60 à 80%<br>Vert : < 60%", title="Indicateur 2 : tension hospitalière (par région)", subtitle="proportion de lits de réa. occupés par des patients Covid19")
 
 
-# In[17]:
+# In[ ]:
 
 
 build_map(df_sursaud, date = dates[-1], date_str="date_de_passage", dep_str="dep", type_data="dep", color_str="indic2_clr", img_folder="images/charts/france/indic2_deps/{}.png", legend_str = "Rouge : > 80%<br>Orange : 60 à 80%<br>Vert : < 60%", title="Indicateur 2 : tension hospitalière (par département)", subtitle="proportion de lits de réa. occupés par des patients Covid19")
 
 
-# In[18]:
+# In[ ]:
 
 
 build_map(df_groupby, date = dates[-1], date_str="jour", dep_str="code", type_data="reg", color_str="synthese_indics", img_folder="images/charts/france/synthese_indics/{}.png", title="Synthèse des indicateurs de déconfinement", subtitle="synthèse des indicateurs 1 et 2")
 
 
-# In[19]:
+# In[ ]:
 
 
 """
