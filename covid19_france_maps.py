@@ -24,7 +24,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[6]:
+# In[1]:
 
 
 import france_data_management as data
@@ -41,11 +41,19 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 # ## Data import
 
-# In[7]:
+# In[2]:
 
 
 # Import data from Santé publique France
-df, df_confirmed, dates, _, _, df_deconf, df_sursaud, _ = data.import_data()
+df, df_confirmed, dates, _, _, df_deconf, df_sursaud, df_incid, _ = data.import_data()
+
+
+# In[16]:
+
+
+"""df_incid_lastday = df_incid[df_incid["jour"] == df_incid["jour"].max()]
+df_incid_lastday["incid"] = df_incid_lastday["P"]/df_incid_lastday["pop"]*100000
+df_incid_lastday[df_incid_lastday["dep"] == "75"]"""
 
 
 # In[8]:
@@ -241,15 +249,12 @@ def build_gif(file_gif, imgs_folder, dates):
                     writer.append_data(image)
 
 
-# In[8]:
+# In[ ]:
 
 
-
-    
 def build_map(data_df, img_folder, date_str = "date", dep_str = "departement", color_str = 'indic_synthese', legend_title="legend_title", title="title"):
-    dates_deconf = list(dict.fromkeys(list(data_df['date'].values))) 
+    dates_deconf = list(dict.fromkeys(list(data_df['date'].values)))
     date = dates_deconf[-1]
-    
     data_df = data_df[data_df[date_str] == date]
 
     fig = px.choropleth(geojson = depa, 
@@ -274,10 +279,10 @@ def build_map(data_df, img_folder, date_str = "date", dep_str = "departement", c
             'x':0.5,
             'xanchor': 'center',
             'yanchor': 'top'},
-        
+
         titlefont = dict(
             size=30),
-        
+
         annotations = [
             dict(
                 x=0.54,

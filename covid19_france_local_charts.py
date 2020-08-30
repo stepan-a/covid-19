@@ -497,7 +497,7 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
     #fig.show()
 
 
-# In[6]:
+# In[5]:
 
 
 ni, nj = 5, 4
@@ -722,7 +722,7 @@ fig["layout"]["annotations"] += annot + (dict(
                         align='left',
                         xanchor='left',
                         yanchor='top',
-                        text='La ligne bleue représente une estimation du R<sub>effectif</sub> basée sur les admissions aux urgences.<br>La ligne verte représente une estimation du R<sub>effectif</sub> basée sur les tests PCR.<br>La ligne épaisse correspond à la moyenne des deux autres.<br>Celle-ci est verte si inférieure à 1, orange si inférieure à 1.5, et rouge si supérieure à 2.<br><br><b>Comment interpréter le R<sub>effectif</sub> ?</b><br>Un R<sub>effectif</sub> = 1 signifie qu\'une personne malade contaminera 1 autre personne en tout.<br>Si ce chiffre est inférieur à 1, l\'épidémie régresse. S\'il est supérieur à 1, elle progresse.',
+                        text='La ligne bleue représente une estimation du R<sub>effectif</sub> basée sur les admissions aux urgences.<br>La ligne verte représente une estimation du R<sub>effectif</sub> basée sur les tests PCR.<br>La ligne épaisse correspond à la moyenne des deux estimations précédentes.<br>Celle-ci est verte si inférieure à 1, orange si inférieure à 1.5, et rouge si supérieure à 1.5.<br><br><b>Comment interpréter le R<sub>effectif</sub> ?</b><br>Un R<sub>effectif</sub> = 1 signifie qu\'une personne malade contaminera 1 autre personne en tout.<br>Si ce chiffre est inférieur à 1, l\'épidémie régresse. S\'il est supérieur à 1, elle progresse.',
                         showarrow = False,
                         font=dict(size=14), 
                         opacity=0.8
@@ -748,30 +748,12 @@ print("> " + name_fig)
 #fig.show()
 
 
-# In[7]:
-
-
-df_sursaud_region[df_sursaud_region['regionName'] == 'Martinique']
-
-
-# In[8]:
-
-
-df_reffectif["reffectif_mean"]
-
-
-# In[9]:
-
-
-df_sursaud_region[df_sursaud_region["regionCode"] == 160]
-
-
 # ## Subplots : départements
 # Ce script génère 4 graphiques contenant les graphiques de :
 # - nb d'hospitalisés par habitant des départements,
 # et ce pour toutes les régions françaises
 
-# In[10]:
+# In[7]:
 
 
 """
@@ -969,7 +951,7 @@ except:
     print("ERROR 1")"""
 
 
-# In[13]:
+# In[11]:
 
 
 
@@ -1001,10 +983,9 @@ for dep in tqdm(deps_incid):
     data_dep["taux_rolling"] = data_dep["taux"].rolling(window=7, center=True).mean()
     
     #max_values += data_dep["tot_rolling"].max()
-    
-    if data_dep["taux"].values[-1] > 5:
+    if data_dep["taux_rolling"].dropna().values[-1] > 5:
         clr = "red"
-    elif data_dep["taux"].values[-1] > 1:
+    elif data_dep["taux_rolling"].dropna().values[-1] > 1:
         clr = "darkorange"
     else:
         clr = "green"
@@ -1137,7 +1118,7 @@ print("> " + name_fig)
 # ## Subplots : départements - classé par régions
 # Idem précédent mais les départements sont rangés dans leurs régions, et les régions classées par ordre décroissant du nb de personnes
 
-# In[16]:
+# In[9]:
 
 
 """
@@ -1359,11 +1340,11 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()"""
 
 
-# In[17]:
+# In[10]:
 
 
 #TODO A CORRIGER
-"""
+
 for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     ni, nj = 13, 8
     i, j = 1, 1
@@ -1573,7 +1554,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                             yref='paper',
                             xanchor='center',
                             yanchor='top',
-                            text="La moyenne des 7 deniers jours est considérée pour déterminer la<br>couleur d'un département. Couleurs : rouge (> 10 %), orange (6 à 10%),<br>vert (< 6%).",
+                            text="Mis à jour : {}<br>La moyenne des 7 deniers jours est considérée pour déterminer la<br>couleur d'un département. Couleurs : rouge (> 10 %), orange (6 à 10%),<br>vert (< 6%).".format(now.strftime('%d %B %Y')),
                             showarrow = False,
                             font=dict(size=16), 
                             opacity=1,
@@ -1624,17 +1605,17 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     print("> " + name_fig)
 
 
-    #fig.show()"""
+    #fig.show()
 
 
-# In[18]:
+# In[11]:
 
 
 #TODO A CORRIGER
 """build_map(df_sursaud, date_str="date_de_passage", legend_str="Rouge : > 10%<br>Orange : 6 à 10%<br>Vert : < 10%", dep_str="dep", color_str="indic1_clr", img_folder="images/charts/france/indic1/{}.png", title="Indicateur 1 : circulation du virus (par département)", subtitle="taux de suspicion Covid19 aux urgences")"""
 
 
-# In[19]:
+# In[12]:
 
 
 """
@@ -1646,7 +1627,7 @@ fig.add_trace(go.Bar(x = dta["date_de_passage"], y = dta["taux_covid"]*100, mark
 fig.show()"""
 
 
-# In[20]:
+# In[13]:
 
 
 
@@ -1837,7 +1818,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                             yref='paper',
                             xanchor='center',
                             yanchor='top',
-                            text="La moyenne des 7 deniers jours est considérée pour déterminer la<br>couleur d'un département. Couleurs : rouge (> 80 %), orange (60 à 80%),<br>vert (< 60%).",
+                            text="Mis à jour : {}<br>La moyenne des 7 deniers jours est considérée pour déterminer la<br>couleur d'un département. Couleurs : rouge (> 80 %), orange (60 à 80%),<br>vert (< 60%).".format(now.strftime('%d %B %Y')),
                             showarrow = False,
                             font=dict(size=16), 
                             opacity=1,
@@ -1891,20 +1872,20 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()
 
 
-# In[21]:
+# In[14]:
 
 
 #build_map(df_sursaud, date_str="date_de_passage", dep_str="code", type_data="reg", color_str="indic2_clr", img_folder="images/charts/france/indic2/{}.png", title="Indicateur 2 : saturation des réa")
 
 
-# In[22]:
+# In[15]:
 
 
 df_groupby = df.groupby(['code', 'jour']).sum().reset_index()
 df_groupby["capa_rea"] = 100 * df_groupby['rea'].values/df_groupby['LITS'].values
 
 
-# In[23]:
+# In[16]:
 
 
 for code in codes_reg:
@@ -1921,25 +1902,25 @@ for code in codes_reg:
     df_groupby.loc[(df_groupby['jour'] == dates[-1]) & (df_groupby['code'] == code), 'synthese_indics'] = "green" 
 
 
-# In[24]:
+# In[17]:
 
 
 build_map(df_groupby, date = dates[-1], date_str="jour", dep_str="code", type_data="reg", color_str="capa_rea_clr", img_folder="images/charts/france/indic2/{}.png", legend_str = "Rouge : > 80%<br>Orange : 60 à 80%<br>Vert : < 60%", title="Indicateur 2 : tension hospitalière (par région)", subtitle="proportion de lits de réa. occupés par des patients Covid19")
 
 
-# In[25]:
+# In[18]:
 
 
 build_map(df_sursaud, date = dates[-1], date_str="date_de_passage", dep_str="dep", type_data="dep", color_str="indic2_clr", img_folder="images/charts/france/indic2_deps/{}.png", legend_str = "Rouge : > 80%<br>Orange : 60 à 80%<br>Vert : < 60%", title="Indicateur 2 : tension hospitalière (par département)", subtitle="proportion de lits de réa. occupés par des patients Covid19")
 
 
-# In[26]:
+# In[19]:
 
 
 build_map(df_groupby, date = dates[-1], date_str="jour", dep_str="code", type_data="reg", color_str="synthese_indics", img_folder="images/charts/france/synthese_indics/{}.png", title="Synthèse des indicateurs de déconfinement", subtitle="synthèse des indicateurs 1 et 2")
 
 
-# In[27]:
+# In[20]:
 
 
 """

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[70]:
+# In[2]:
 
 
 # Guillaume Rozier - 2020 - MIT License
@@ -35,12 +35,13 @@ auth.set_access_token(s.access_token, s.access_token_secret)
 api = tweepy.API(auth) 
     
 def tweet_france():
-    _, _, dates, df_new, _, _, _, df_incid = data.import_data()
+    #data.download_data()
+    _, _, dates, df_new, _, _, _, df_incid, _ = data.import_data()
     df_new_france = df_new.groupby(["jour"]).sum().reset_index()
     df_incid_france = df_incid.groupby(["jour"]).sum().reset_index()
     
     lastday_df_new = datetime.strptime(df_new_france['jour'].max(), '%Y-%m-%d')
-    print(lastday_df_new)
+    
     hosp = df_new_france[df_new_france['jour']==lastday_df_new.strftime('%Y-%m-%d')]['incid_hosp'].values[-1]
     date_j7 = (lastday_df_new - timedelta(days=7)).strftime("%Y-%m-%d")
     hosp_j7 = df_new_france[df_new_france['jour'] == date_j7]['incid_hosp'].values[-1]
@@ -51,8 +52,8 @@ def tweet_france():
     
     lastday_df_incid = datetime.strptime(df_incid_france['jour'].max(), '%Y-%m-%d')
     tests = df_incid_france[df_incid_france['jour']==lastday_df_incid.strftime('%Y-%m-%d')]['P'].values[-1]
-    date_j7 = (lastday_df_incid - timedelta(days=7)).strftime("%Y-%m-%d")
-    tests_j7 = df_incid_france[df_incid_france['jour'] == date_j7]['P'].values[-1]
+    date_j7_incid = (lastday_df_incid - timedelta(days=7)).strftime("%Y-%m-%d")
+    tests_j7 = df_incid_france[df_incid_france['jour'] == date_j7_incid]['P'].values[-1]
     
     date = datetime.strptime(dates[-1], '%Y-%m-%d').strftime('%d %B')
     
@@ -67,9 +68,9 @@ def tweet_france():
         tests_tendance, tests_sign = "en baisse", ""
         
     date_incid = datetime.strptime(sorted(list(dict.fromkeys(list(df_incid_france['jour'].values))))[-1], '%Y-%m-%d').strftime('%d %B')
-    tweet ="Données #Covid19 en France au {} :\n• {} personnes décédées en milieu hospitalier, {} sur 7j ({}{})\n• {} admissions à l'hôpital, {} sur 7j ({}{})\n• {} cas positifs, {} sur 7j ({}{})\n➡️ Plus d'infos : covidtracker.fr/covidtracker-france".format(lastday_df_new.strftime('%d %B'), deaths, deaths_tendance, deaths_sign, deaths-deaths_j7, hosp, hosp_tendance, hosp_sign, hosp-hosp_j7, tests, tests_tendance, tests_sign, tests-tests_j7) # toDo 
+    tweet ="Chiffres #Covid19 France:\n• {} personnes décédées en milieu hospitalier ({}), {} sur 7 jours ({}{})\n• {} admissions à l'hôpital ({}), {} sur 7 jours ({}{})\n• {} cas positifs ({}), {} sur 7 jours ({}{})\n➡️ Plus d'infos : covidtracker.fr/covidtracker-france".format(deaths, lastday_df_new.strftime('%d/%m'), deaths_tendance, deaths_sign, deaths-deaths_j7, hosp, lastday_df_new.strftime('%d/%m'), hosp_tendance, hosp_sign, hosp-hosp_j7, tests, lastday_df_incid.strftime('%d/%m'), tests_tendance, tests_sign, tests-tests_j7) # toDo 
     
-    images_path =["images/charts/france/var_journ_lines_recent.jpeg", "images/charts/france/reffectif.jpeg"]
+    images_path =["images/charts/france/var_journ_lines_recent.jpeg", "images/charts/france/entrees_sorties_hosp_rea_ROLLING_recent.jpeg", "images/charts/france/reffectif.jpeg"]
     media_ids = []
     
     for filename in images_path:
@@ -77,8 +78,7 @@ def tweet_france():
         media_ids.append(res.media_id)
 
     # to attach the media file 
-    #api.update_status(status=tweet, media_ids=media_ids)
-    status = api.update_with_media(image_path, tweet)
+    api.update_status(status=tweet, media_ids=media_ids)
     #print(tweet)
     
 def tweet_world():
@@ -115,14 +115,21 @@ def tweet_world():
     
     # Write and publish tweet
     tweet ="Données du #Covid19 dans le monde au {} :\n+ {} cas en 24h, soit {} au total\n+ {} décès en 24h, soit {} au total\nPlus d'infos : covidtracker.fr/covidtracker-world\n".format(date_str, f"{new_cases:,d}".replace(',', ' '), f"{sum_cases:,d}".replace(',', ' '), f"{new_deaths:,d}".replace(',', ' '), f"{sum_deaths:,d}".replace(',', ' ')) # toDo 
-    image_path ="images/charts/cases_world.jpeg"
+    #image_path ="images/charts/cases_world.jpeg"
+    
+    images_path =["images/charts/cases_world.jpeg", "images/charts/deaths_world.jpeg"]
+    media_ids = []
+    
+    for filename in images_path:
+        res = api.media_upload(filename)
+        media_ids.append(res.media_id)
 
     # to attach the media file 
-    status = api.update_with_media(image_path, tweet)
+    api.update_status(status=tweet, media_ids=media_ids)
     #print(tweet)
 
 
-# In[69]:
+# In[3]:
 
 
 #tweet_world()

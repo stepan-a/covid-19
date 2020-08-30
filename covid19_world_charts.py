@@ -200,48 +200,15 @@ def data_prep_csse(df0):
 
 
 def data_merge(data_confirmed, df_confirmed_perso, data_deaths, df_deaths_perso, df_france_data):
-    """data_confirmed['date'] = data_confirmed['date'].astype('datetime64[ns]') 
-    data_deaths['date'] = data_deaths['date'].astype('datetime64[ns]') 
-
-    df_france_data = df_france_data[df_france_data['granularite']=='pays']
-    df_france_data_deaths = pd.DataFrame()
-    df_france_data_deaths['date'] = df_france_data['date']
-    df_france_data_deaths['France'] = df_france_data['deces']
-    df_france_data_deaths = df_france_data_deaths.dropna().drop_duplicates(subset=['date'], keep='last').reset_index()
-    df_france_data_deaths['date'] = df_france_data_deaths['date'].astype('datetime64[ns]') 
-    #data_deaths = pd.merge(df_france_data_deaths, data_deaths, how='outer').drop_duplicates(subset=['date'])
-    #data_deaths = pd.merge(data_deaths[['date','France']], df_france_data_deaths, how='left') 
-    data_deaths.set_index('date').join(df_france_data_deaths.set_index('date'))
-    
-    df_france_data_confirmed = pd.DataFrame()
-    df_france_data_confirmed['date'] = df_france_data['date']
-    df_france_data_confirmed['France'] = df_france_data['cas_confirmes']
-    df_france_data_confirmed = df_france_data_confirmed.dropna().drop_duplicates(subset=['date']).reset_index()
-    df_france_data_confirmed['date'] = df_france_data_confirmed['date'].astype('datetime64[ns]') 
-    data_confirmed = pd.merge(data_confirmed, df_france_data_confirmed, how='outer').drop_duplicates(subset=['date'], keep='last')
-    """
     data_confirmed = pd.merge(data_confirmed, df_confirmed_perso, how='outer').drop_duplicates(subset='date')
     data_deaths = pd.merge(data_deaths, df_deaths_perso, how='outer').drop_duplicates(subset='date')
-
-    #######
-    #date_int = [i for i in range(len(data_confirmed))]
-    #data_confirmed["date_int"] = date_int
-
-    #date_int = [i for i in range(len(data_deaths))]
-    #data_deaths["date_int"] = date_int
-
-    "build : " + today
-    #data_confirmed['date']
-    #df_deaths_perso.iloc[-1]
-    
-    #for c in countries:
-     #    data_deaths[c+"_new"] = data_deaths[c].diff()
     return data_confirmed, data_deaths
 
 
 # In[10]:
 
 
+# Compute rolling mean and patch missing values
 def rolling(df):
     df_r = df
     df_r[:len(df_r)-1].fillna(method='pad',inplace=True)
@@ -249,21 +216,9 @@ def rolling(df):
     df_r['date'] = df['date'].values
     df_r.iloc[len(df_r)-2] = df.iloc[-2]
     df_r.iloc[len(df_r)-1] = df.iloc[-1]
-
-    #moins_2 = ((df.iloc[-3][:-1] + df.iloc[-1][:-1]) / 2).append(pd.Series([df.iloc[-2]["date"]]))
-    #moins_1 = ((df.iloc[-3][:-1] + df.iloc[-1][:-1]) / 2).append(pd.Series([df.iloc[-1]["date"]]))
-
-    #df_r.iloc[-2] = moins_2
-    #df_r.iloc[-1] = moins_1
-    #data_confirmed.loc[:, data_confirmed.columns != "date"]
-    #df_r = df_r.drop(len(df_r)-1)
-    #df_r = df_r.drop(len(df_r)-1)
     
     df_r.loc[len(df_r)-3, df_r.columns != "date" ] = ((df.iloc[-4][:-1] + df.iloc[-2][:-1])/2 + df.iloc[-3][:-1])/2
     df_r.loc[len(df_r)-3, "date"] = df.iloc[-3]["date"]
-    
-   # df_r.loc[len(df_r)-2, df_r.columns != "date" ] = ((df.iloc[-3][:-1] + df.iloc[-1][:-1])/2 + df.iloc[-2][:-1])/2
-    #df_r.loc[len(df_r)-2, "date"] = df.iloc[-2]["date"]
     
     df_r.loc[len(df_r)-2, df_r.columns != "date" ] = (df.iloc[-3][:-1] + (df.iloc[-3][:-1] - df.iloc[-4][:-1]) / 2 + df.iloc[-2][:-1])/2
     df_r.loc[len(df_r)-2, "date"] = df.iloc[-2]["date"] 
@@ -351,66 +306,11 @@ def update_data():
 
     data_confirmed, data_deaths = data_merge(df_confirmed_csse, df_confirmed_perso, df_deaths_csse, df_deaths_perso, df_france_data)
 
-    #data_confirmed_rolling = rolling(data_confirmed)
-    #data_deaths_rolling = rolling(data_deaths)
-
     data_confirmed, data_confirmed_rolling, data_deaths, data_deaths_rolling = final_data_prep(data_confirmed, "data_confirmed_rolling", data_deaths, "data_deaths_rolling")
     
     offset_compute_export(data_confirmed, data_deaths)
 
     final_df_exports(data_confirmed, data_deaths)
-
-
-# In[15]:
-
-
-"""df_confirmed_csse, df_deaths_csse, df_confirmed_perso, df_deaths_perso, df_france_data = import_files()
-
-df_confirmed_csse = data_prep_csse(df_confirmed_csse)
-df_deaths_csse = data_prep_csse(df_deaths_csse)
-df_confirmed_csse['date'] = df_confirmed_csse['date'].astype('datetime64[ns]') 
-
-df_france_data = df_france_data[df_france_data['granularite']=='pays']
-
-
-
-df_france_data_deaths = pd.DataFrame()
-df_france_data_deaths['date'] = df_france_data['date']
-df_france_data_deaths['France'] = df_france_data['deces']
-df_france_data_deaths = df_france_data_deaths.dropna().drop_duplicates(subset=['date']).reset_index()
-#df_france_data_deaths['date'] = df_france_data_deaths['date'].astype('datetime64[ns]') 
-data_confirmed = pd.merge(data_deaths_csse, df_france_data_deaths, how='outer')
-
-
-
-df_france_data_confirmed = pd.DataFrame()
-df_france_data_confirmed['date'] = df_france_data['date']
-df_france_data_confirmed['France'] = df_france_data['cas_confirmes']
-df_france_data_confirmed = df_france_data_confirmed.dropna().drop_duplicates(subset=['date']).reset_index()
-df_france_data_confirmed['date'] = df_france_data_confirmed['date'].astype('datetime64[ns]') 
-data_confirmed = pd.merge(df_confirmed_csse, df_france_data_confirmed, how='outer')"""
-
-
-# In[16]:
-
-
-"""download_data()
-df_confirmed_csse, df_deaths_csse, df_confirmed_perso, df_deaths_perso, df_france_data = import_files()
-
-df_confirmed_csse = data_prep_csse(df_confirmed_csse)
-df_deaths_csse = data_prep_csse(df_deaths_csse)
-
-#data_confirmed['date'] = data_confirmed['date'].astype('datetime64[ns]') 
-data_deaths['date'] = data_deaths['date'].astype('datetime64[ns]') 
-
-
-df_france_data_confirmed = pd.DataFrame()
-df_france_data_confirmed['date'] = df_france_data['date']
-df_france_data_confirmed['France_corr'] = df_france_data['cas_confirmes']
-df_france_data_confirmed = df_france_data_confirmed.dropna().drop_duplicates(subset=['date']).reset_index()
-#df_france_data_confirmed['date'] = df_france_data_confirmed['date'].astype('datetime64[ns]') 
-data_confirmed = pd.merge(data_confirmed, df_france_data_confirmed, how='outer').drop_duplicates(subset=['date'], keep='last')
-data_confirmed.join(df_france_data_confirmed.set_index('date'), lsuffix='_caller', rsuffix='_other', on="date")"""
 
 
 # 
@@ -428,7 +328,7 @@ data_confirmed.join(df_france_data_confirmed.set_index('date'), lsuffix='_caller
 # In[17]:
 
 
-def chart(data, data_rolling, countries, by_million_inh = False, align_curves = False, last_d = 15, offset_name = 'offset_confirmed', type_ppl = "confirmed cases", name_fig="", since=False, min_rate=0, log=False, new=""):
+def chart(data, data_rolling, countries, by_million_inh = False, align_curves = False, last_d = 15,          offset_name = 'offset_confirmed', type_ppl = "confirmed cases", name_fig = "", since = False,           min_rate=0, log=False, new=""):
     today = datetime.now().strftime("%Y-%m-%d %H:%M")
     ### Symbols
     symbols = []
@@ -643,6 +543,7 @@ def chart(data, data_rolling, countries, by_million_inh = False, align_curves = 
 # In[18]:
 
 
+### Main
 update_data()
 data_confirmed, data_deaths, countries = data_import()
 data_confirmed_t = data_confirmed.T
@@ -688,10 +589,11 @@ for (data, name_var, same_scale) in [(data_deaths_t, "deaths", True), (data_deat
     max_value_diff = 0
 
     for country in countries_ordered:
-
-        data_c = data.loc[country].rolling(window = 7, center=True).mean()
-        fig.add_trace(go.Bar(x = data.loc[country].index, y = data_c,
-                            marker=dict(color = data_c.diff(), coloraxis="coloraxis"), ),
+        
+        datac = data.loc[country]
+        data_c_rolling = datac.rolling(window = 7, center=True).mean()
+        fig.add_trace(go.Bar(x = data.loc[country].index, y = data_c_rolling,
+                            marker=dict(color = data_c_rolling.diff(), coloraxis="coloraxis"), ),
                       i, j)
         fig.add_trace(go.Scatter(x = data.loc[country].index, y = data.loc[country],
                     mode="markers",
@@ -700,12 +602,12 @@ for (data, name_var, same_scale) in [(data_deaths_t, "deaths", True), (data_deat
                     marker_line_color="Black", marker_line_width=0.6, opacity=0.5),
                      i, j)
 
-        max_value = max(max_value, data_c.max())
-        max_value_diff = max(max_value_diff, data_c.diff().max())
+        max_value = max(max_value, datac.max())
+        max_value_diff = max(max_value_diff, data_c_rolling.diff().max())
 
         rangemin = "2020-02-02"
 
-        fig.update_xaxes(title_text="", range=[rangemin, dates[-1]], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, nticks=10, linewidth=1, linecolor='white', row=i, col=j)
+        fig.update_xaxes(title_text="", range=[rangemin, dates[-1]], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, tickfont=dict(size=9), nticks=15, linewidth=1, linecolor='white', row=i, col=j)
 
         rge = None
         if same_scale:
@@ -810,8 +712,12 @@ for (data, name_var, same_scale) in [(data_deaths_t, "deaths", True), (data_deat
 # In[20]:
 
 
-update_data()
+#update_data()
 data_confirmed, data_deaths, countries = data_import()
+
+
+# In[21]:
+
 
 last_d_default = math.trunc((datetime.now() - datetime.strptime("2020-03-05", "%Y-%m-%d")).total_seconds()/(3600*24))
 
@@ -965,21 +871,12 @@ for log in False, True:
     
 
 
-# In[21]:
-
-
-data_deaths_t.sum()
-
+# # World charts
 
 # In[22]:
 
 
-data_deaths_t.sum()
-
-
-# In[23]:
-
-
+from datetime import timedelta
 #locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 for a in range(1):
     print("hey")
@@ -988,17 +885,13 @@ for (dataf, name_fig, title) in [(data_deaths_t, "deaths_world", 'deaths'), (dat
     data = dataf.sum()
     data_diff = dataf.sum().diff()
     fig = go.Figure()
-    fig.add_trace(go.Bar(x=data_diff.index, y=data_diff.rolling(window=7).mean(),
-                        marker=dict(color = data_diff.rolling(window=14).mean().diff(), coloraxis="coloraxis"), ))
+    fig.add_trace(go.Bar(x=data_diff.index, y=data_diff.rolling(window=7, center=True).mean(),
+                        marker=dict(color = data_diff.diff().rolling(window=7, center=True).mean(), coloraxis="coloraxis"), ))
+    
+    fig.add_trace(go.Scatter(x=data_diff.index, y=data_diff, mode="markers",marker_size=6,
+                    marker_symbol="x-thin",
+                    marker_line_color="Black", marker_line_width=0.6, opacity=0.5))
 
-    """fig.add_trace(go.Scatter(x=df_france.iloc[data.index]['jour'], y=df_france['dc_new'][1:],
-                        mode="markers",
-                        marker_size=6,
-                        marker_symbol="x-thin",
-                        marker_line_color="Black", marker_line_width=0.6, opacity=0.5))"""
-
-    fig.update_xaxes(title_text="", gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, nticks=10, linewidth=1, linecolor='white')
-    fig.update_yaxes(title_text="", gridcolor='white', linewidth=1, linecolor='white')
 
     fig.update_layout(
         margin=dict(
@@ -1031,8 +924,11 @@ for (dataf, name_fig, title) in [(data_deaths_t, "deaths_world", 'deaths'), (dat
                     showlegend=False,
 
     )
-
-
+    
+    date_plus_1 = (datetime.strptime(data_diff.index.max(), '%Y-%m-%d') + timedelta(days=1)).strftime('%Y-%m-%d')
+    fig.update_yaxes(title_text="", gridcolor='white', range=[0, data_diff.max()*1.02], ticks="inside", tickangle=0, nticks=10, linewidth=1, linecolor='white', tickcolor="white")
+    fig.update_xaxes(nticks=15, ticks='outside', range=[data_diff.index.min(), date_plus_1], tickformat='%d/%m')
+    
     fig["layout"]["annotations"] += ( dict(
                             x=0.5,
                             y=0.5,
@@ -1051,7 +947,7 @@ for (dataf, name_fig, title) in [(data_deaths_t, "deaths_world", 'deaths'), (dat
                             xref='paper',
                             yref='paper',
                             xanchor='center',
-                            text='rolling mean of 7 days - covidtracker.fr',
+                            text='colored bars are a rolling mean of 7 days, grey x are raw data - covidtracker.fr',
                             font=dict(size=15),
                             showarrow = False),)
 
@@ -1085,16 +981,16 @@ for (dataf, name_fig, title) in [(data_deaths_t, "deaths_world", 'deaths'), (dat
     #fig.show()
 
 
-# In[24]:
+# In[ ]:
 
 
-data_deaths_t.T.sum(axis=1)
+
 
 
 # # EXPERIMENTATIONS (SEIR model)
 # Currently not working.
 
-# In[25]:
+# In[23]:
 
 
 # Define parameters
@@ -1111,7 +1007,7 @@ params = alpha, beta, gamma, rho
 # Run simulation
 
 
-# In[26]:
+# In[24]:
 
 
 def seir_model_with_soc_dist(init_vals, params, t):
@@ -1131,7 +1027,7 @@ def seir_model_with_soc_dist(init_vals, params, t):
     return np.stack([S, E, I, R]).T
 
 
-# In[27]:
+# In[25]:
 
 
 #results = seir_model_with_soc_dist(init_vals, params, t)

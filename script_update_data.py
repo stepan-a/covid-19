@@ -72,8 +72,11 @@ def try_update_france():
         push("France")
         print("update France charts: " + str(now.hour) + ":" + str(now.minute))
         
-        t.tweet_france()
-        print("data tweeted")
+        try:
+            t.tweet_france()
+            print("data tweeted")
+        except:
+            pass
         
         subprocess.run(["sudo", "python3", "covid19_france_charts.py"])
         
@@ -97,6 +100,7 @@ world_update = dt.datetime.now()
 k = 1
 l = 0
 print("will enter loop")
+
 tweet_world_data = False
 
 while True:
@@ -121,7 +125,11 @@ while True:
         subprocess.run(["sudo", "python3", "covid19_france_charts.py"])
         push("France")
         print("update France pushed: " + str(now.hour) + ":" + str(now.minute))
-        tweet_world_data = True
+        
+        try:
+            tweet_world_data = True
+        except:
+            pass
         
         time.sleep(30)
         
@@ -132,19 +140,26 @@ while True:
         tweet_world_data = False
         print("world tweet: done")
         
-    if ( (now.hour == 19) & (now.minute >= 18) & (now.minute <= 30)  ): #(((now.hour == 18) & (now.minute >= 58)) or ((now.hour >= 19) & (now.hour<= 20)))
+    if ( (now.hour == 19) & (now.minute >= 25) & (now.minute <= 30)  & (now.weekday() != 5) & (now.weekday() != 6)): #(((now.hour == 18) & (now.minute >= 58)) or ((now.hour >= 19) & (now.hour<= 20)))
         print("if condition - now: {}, datetimes_spf: {}".format(now, datetime_spf))
         while ( (((now.hour == 18) & (now.minute >= 59)) or ((now.hour >= 19) & (now.hour<= 20))) & ( (now - datetime_spf).total_seconds()/3600 > 2.5 ) ):
             print("while loop - now: {}, datetimes_spf: {}".format(now, datetime_spf))            # Si l'heure comprise entre 18h59 et 21h59, ET les données PAS à jour depuis plus de 2h30
             now = dt.datetime.now()
-            datetime_spf = try_update_france()
+            
+            try:
+                datetime_spf = try_update_france()
+            except:
+                print("error update SPF")
             
             time.sleep(20)
             
     else: # S'il n'est pas entre 18h59 et 21h59
         if( (now - datetime_spf).total_seconds()/3600 > 20 ): # S'il s'est écoulé plus de 20h depuis la dernière update
             if (k%50 == 0): #Check 1 fois toutes les 50 sec * 30 (environ 25 min)
-                datetime_spf = try_update_france()
+                try:
+                    datetime_spf = try_update_france()
+                except:
+                    print("error update SPF")
             k += 1
             
     time.sleep(30)

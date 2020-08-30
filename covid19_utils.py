@@ -20,3 +20,9 @@ im2 = cv2.imread('images/charts/france/tests_combinaison.jpeg')
 im_h = cv2.vconcat([im1, im2])
 cv2.imwrite('images/charts/france/tests_combinaison.jpeg', im_h)
 
+
+# In[ ]:
+
+
+
+
