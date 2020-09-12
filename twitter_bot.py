@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
+# In[4]:
 
 
 # Guillaume Rozier - 2020 - MIT License
@@ -60,15 +60,23 @@ def tweet_france():
     hosp_tendance, hosp_sign = "en hausse", "+"
     if hosp_j7>hosp:
         hosp_tendance, hosp_sign = "en baisse", ""
+    if hosp_j7==hosp:
+        hosp_tendance, hosp_sign = "stable", "+"
+        
     deaths_tendance, deaths_sign = "en hausse", "+"
     if deaths_j7>deaths:
         deaths_tendance, deaths_sign = "en baisse", ""
+    if deaths_j7==deaths:
+        deaths_tendance, deaths_sign = "stable", "+"
+        
     tests_tendance, tests_sign = "en hausse", "+"
     if tests_j7>tests:
         tests_tendance, tests_sign = "en baisse", ""
+    if tests_j7==tests:
+        tests_tendance, tests_sign = "stable", "+"
         
     date_incid = datetime.strptime(sorted(list(dict.fromkeys(list(df_incid_france['jour'].values))))[-1], '%Y-%m-%d').strftime('%d %B')
-    tweet ="Chiffres #Covid19 France:\n• {} personnes décédées en milieu hospitalier ({}), {} sur 7 jours ({}{})\n• {} admissions à l'hôpital ({}), {} sur 7 jours ({}{})\n• {} cas positifs ({}), {} sur 7 jours ({}{})\n➡️ Plus d'infos : covidtracker.fr/covidtracker-france".format(deaths, lastday_df_new.strftime('%d/%m'), deaths_tendance, deaths_sign, deaths-deaths_j7, hosp, lastday_df_new.strftime('%d/%m'), hosp_tendance, hosp_sign, hosp-hosp_j7, tests, lastday_df_incid.strftime('%d/%m'), tests_tendance, tests_sign, tests-tests_j7) # toDo 
+    tweet ="Chiffres #Covid19 France :\n• {} personnes décédées en milieu hospitalier ({}), {} sur 7 jours ({}{})\n• {} admissions à l'hôpital ({}), {} sur 7 jours ({}{})\n• {} cas positifs ({}), {} sur 7 jours ({}{})\n➡️ Plus d'infos : covidtracker.fr/covidtracker-france".format(deaths, lastday_df_new.strftime('%d/%m'), deaths_tendance, deaths_sign, deaths-deaths_j7, hosp, lastday_df_new.strftime('%d/%m'), hosp_tendance, hosp_sign, hosp-hosp_j7, tests, lastday_df_incid.strftime('%d/%m'), tests_tendance, tests_sign, tests-tests_j7) # toDo 
     
     images_path =["images/charts/france/var_journ_lines_recent.jpeg", "images/charts/france/entrees_sorties_hosp_rea_ROLLING_recent.jpeg", "images/charts/france/reffectif.jpeg"]
     media_ids = []
@@ -114,7 +122,7 @@ def tweet_world():
     new_deaths = math.trunc(df_deaths_diff_lastd.sum(axis=1).values[0])
     
     # Write and publish tweet
-    tweet ="Données du #Covid19 dans le monde au {} :\n+ {} cas en 24h, soit {} au total\n+ {} décès en 24h, soit {} au total\nPlus d'infos : covidtracker.fr/covidtracker-world\n".format(date_str, f"{new_cases:,d}".replace(',', ' '), f"{sum_cases:,d}".replace(',', ' '), f"{new_deaths:,d}".replace(',', ' '), f"{sum_deaths:,d}".replace(',', ' ')) # toDo 
+    tweet ="Données du #Covid19 dans le monde au {} :\n+ {} cas en 24h, soit {} au total\n+ {} décès en 24h, soit {} au total\n➡️ Plus d'infos : covidtracker.fr/covidtracker-world\n".format(date_str, f"{new_cases:,d}".replace(',', ' '), f"{sum_cases:,d}".replace(',', ' '), f"{new_deaths:,d}".replace(',', ' '), f"{sum_deaths:,d}".replace(',', ' ')) # toDo 
     #image_path ="images/charts/cases_world.jpeg"
     
     images_path =["images/charts/cases_world.jpeg", "images/charts/deaths_world.jpeg"]
@@ -129,7 +137,7 @@ def tweet_world():
     #print(tweet)
 
 
-# In[3]:
+# In[5]:
 
 
 #tweet_world()

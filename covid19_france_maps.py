@@ -4,7 +4,7 @@
 # # COVID-19 French Maps
 # Guillaume Rozier, 2020
 
-# In[1]:
+# In[2]:
 
 
 """
@@ -24,7 +24,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[1]:
+# In[3]:
 
 
 import france_data_management as data
@@ -36,27 +36,31 @@ from datetime import datetime
 import imageio
 import multiprocessing
 import locale
+import shutil
+import os
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 
 # ## Data import
 
-# In[2]:
+# In[4]:
 
 
 # Import data from Santé publique France
 df, df_confirmed, dates, _, _, df_deconf, df_sursaud, df_incid, _ = data.import_data()
 
 
-# In[16]:
+# In[5]:
 
 
-"""df_incid_lastday = df_incid[df_incid["jour"] == df_incid["jour"].max()]
-df_incid_lastday["incid"] = df_incid_lastday["P"]/df_incid_lastday["pop"]*100000
-df_incid_lastday[df_incid_lastday["dep"] == "75"]"""
+#df_incid["incidence"] = df_incid["P"]/df_incid["pop"]*100
+#df_incid.loc[:,"incidence_color"] = ["white"] * len(df_incid)
+for dep in pd.unique(df_incid["dep"].values):
+    df_incid.loc[df_incid["dep"] == dep,"incidence"] = df_incid["P"].rolling(window=7).sum()/df_incid["pop"]*100000
+df_incid.loc[:,"incidence_color"] = ['Rouge (>50)' if x >= 50 else 'Orange (25-50)' if x >= 25 else 'Vert (<25)' for x in df_incid['incidence']]
 
 
-# In[8]:
+# In[6]:
 
 
 # Download and import data from INSEE
@@ -78,7 +82,7 @@ df_insee['jour'] = df_insee['jour'].dt.strftime('%Y-%m-%d')
 dates_insee = list(dict.fromkeys(list(df_insee.dropna()['jour'].values))) 
 
 
-# In[9]:
+# In[7]:
 
 
 df_insee_france = df_insee.groupby('jour').sum().reset_index()
@@ -90,29 +94,32 @@ df_insee_france["surmortalite20"] = (df_insee_france["dc20"] - df_insee_france["
 # 
 # ## Function definition
 
-# In[10]:
+# In[8]:
 
 
 with open('data/france/dep.geojson') as response:
     depa = json.load(response)
 
 
-# In[17]:
+# In[9]:
 
 
 
-    
 def map_gif(dates, imgs_folder, df, type_ppl, legend_title, min_scale, max_scale, colorscale, subtitle):
+    try:
+        shutil.rmtree(imgs_folder)
+    except:
+        print("folder not removed")
+    os.mkdir(imgs_folder)
     i=1
+    
+    df = df[df['jour'].isin(dates)]
+    
     for date in tqdm(dates):
         if max_scale == -1:
             max_scale = df[type_ppl].max()
         df_map = pd.melt(df, id_vars=['jour','dep'], value_vars=[type_ppl])
         df_map = df_map[df_map["jour"] == date]
-
-        data={}
-        for dep in df_map["dep"].values:
-            data[dep] = df_map[df_map["dep"] == dep]["value"]
 
         fig = px.choropleth(geojson=depa, 
                             locations=df_map['dep'], 
@@ -164,7 +171,7 @@ def map_gif(dates, imgs_folder, df, type_ppl, legend_title, min_scale, max_scale
                     xref='paper',
                     yref='paper',
                     xanchor = 'center',
-                    text='Source : INSEE. Auteur : @guillaumerozier.',
+                    text='Source : Santé publique France. Auteur : @guillaumerozier - CovidTracker.fr',
                     showarrow = False
                 ),
                 dict(
@@ -234,26 +241,27 @@ def map_gif(dates, imgs_folder, df, type_ppl, legend_title, min_scale, max_scale
             projection_rotation=dict(lon=12, lat=30, roll=8),
             #lataxis_range=[-50,20], lonaxis_range=[0, 200]
         )
-        fig.write_image(imgs_folder.format(date), scale=1, width=900, height=700)
-
+        fig.write_image((imgs_folder+"/{}.jpeg").format(date), scale=1, width=900, height=700)
+    return max_scale
 
 def build_gif(file_gif, imgs_folder, dates):
     i=0
-    with imageio.get_writer(file_gif, mode='I', duration=0.15) as writer: 
+    with imageio.get_writer(file_gif, mode='I', duration=0.3) as writer: 
         for date in tqdm(dates):
-            image = imageio.imread(imgs_folder.format(date))
+            print((imgs_folder+"/{}.jpeg").format(date))
+            image = imageio.imread((imgs_folder+"/{}.jpeg").format(date))
             writer.append_data(image)
             i+=1
             if i==len(dates):
-                for k in range(4):
+                for k in range(8):
                     writer.append_data(image)
 
 
-# In[ ]:
+# In[11]:
 
 
-def build_map(data_df, img_folder, date_str = "date", dep_str = "departement", color_str = 'indic_synthese', legend_title="legend_title", title="title"):
-    dates_deconf = list(dict.fromkeys(list(data_df['date'].values)))
+def build_map(data_df, img_folder, date_str = "date", dep_str = "departement", color_str = 'indic_synthese', legend_title="legend_title", title="title", subtitle=""):
+    dates_deconf = list(dict.fromkeys(list(data_df[date_str].values)))
     date = dates_deconf[-1]
     data_df = data_df[data_df[date_str] == date]
 
@@ -262,13 +270,15 @@ def build_map(data_df, img_folder, date_str = "date", dep_str = "departement", c
                         featureidkey="properties.code",
                         color = data_df[color_str],
                         scope='europe',
-                        #labels={'indic_synthese':"Couleur"},
+                        labels={color_str:"Couleur"},
                         #color_discrete_sequence = ["green", "orange", "red"],
-                        color_discrete_map = {"vert":"green", "orange":"orange", "rouge":"red"}
+                        #labels={'red':"Couleur", 'orange':'bla', 'green':'lol'},
+                        color_discrete_map = {"Vert (<25)":"green", "Orange (25-50)":"orange", "Rouge (>50)":"red"}
                         #category_orders = {"indic_synthese" :["vert", "orange", "rouge"]}
                               )
     date_title = datetime.strptime(dates_deconf[-1], '%Y-%m-%d').strftime('%d %B')
-
+    date_now = datetime.now().strftime('%d %B')
+    
     fig.update_geos(fitbounds="locations", visible=False)
 
     fig.update_layout(
@@ -290,7 +300,7 @@ def build_map(data_df, img_folder, date_str = "date", dep_str = "departement", c
                 xref='paper',
                 yref='paper',
                 xanchor = 'center',
-                text='Source : Ministère de la Santé. Auteur : @guillaumerozier.',
+                text='Source : Santé publique France. Auteur : @guillaumerozier.',
                 showarrow = False
             ),
 
@@ -299,7 +309,7 @@ def build_map(data_df, img_folder, date_str = "date", dep_str = "departement", c
                 y=0.94,
                 xref='paper',
                 yref='paper',
-                text= "Mis à jour le {}".format(date_title),
+                text= "{}<br>{} (données du {})".format(subtitle, date_now, date_title),
                 showarrow = False,
                 font=dict(
                     size=20
@@ -314,17 +324,17 @@ def build_map(data_df, img_folder, date_str = "date", dep_str = "departement", c
     )
     #fig.show()
     if date == dates_deconf[-1]:
-        fig.write_image(img_folder.format("latest"), scale=2, width=1200, height=800)
-    fig.write_image(img_folder.format(date), scale=2, width=1200, height=800)
+        fig.write_image((img_folder+"/{}.jpeg").format("latest"), scale=2, width=1200, height=800)
+    fig.write_image((img_folder+"/{}.jpeg").format(date), scale=2, width=1200, height=800)
 
 
-# In[9]:
+# In[47]:
 
 
 #build_map(df_deconf, img_folder="images/charts/france/deconf_synthese/{}.png", title="Départements déconfinés le 11/05")
 
 
-# In[12]:
+# In[32]:
 
 
 def build_map_indic1(data_df, img_folder, legend_title="legend_title", title="title"):
@@ -332,14 +342,14 @@ def build_map_indic1(data_df, img_folder, legend_title="legend_title", title="ti
     date = dates_deconf[-1]
     
     data_df = data_df[data_df["date_de_passage"] == date]
-
+    
     fig = px.choropleth(geojson = depa, 
                         locations = data_df['dep'], 
                         featureidkey="properties.code",
                         color = data_df['taux_corona'],
                         scope='europe',
-                        range_color=(0, 0.1)
-                        #labels={'indic_synthese':"Couleur"},
+                        range_color=(0, 0.1),
+                        #labels={'red':"Couleur", 'orange':'bla', 'green':'lol'},
                         #color_discrete_sequence = ["green", "orange", "red"],
                         #color_discrete_map = {"vert":"green", "orange":"orange", "rouge":"red"}
                         #category_orders = {"indic_synthese" :["vert", "orange", "rouge"]}
@@ -349,7 +359,7 @@ def build_map_indic1(data_df, img_folder, legend_title="legend_title", title="ti
     fig.update_geos(fitbounds="locations", visible=False)
 
     fig.update_layout(
-        margin={"r":0,"t":0,"l":0,"b":0},
+        margin={"r":0,"t":20,"l":0,"b":0},
         title={
             'text': title,
             'y':0.98,
@@ -419,6 +429,31 @@ df_sursaud_gb["taux_corona"] = df_sursaud_gb["nbre_pass_corona"]/df_sursaud_gb["
 #df_sursaud_gb
 
 
+# In[12]:
+
+
+build_map(df_incid, "images/charts/france/dep-map-incid-cat", date_str = "jour", dep_str = "dep", color_str = 'incidence_color', legend_title="", title="Incidence", subtitle="Nombre de cas hebdomadaires pour 100 000 habitants")
+
+
+# In[21]:
+
+
+df_incid
+
+
+# In[34]:
+
+
+df_incid_lastday = df_incid.loc[df_incid['jour']==df_incid['jour'].max(), :]
+df_incid_lastday.loc[df_incid_lastday['incidence_color']=='Rouge (>50)', :]
+
+
+# In[40]:
+
+
+df_incid.loc[df_incid["departmentCode"] == '972', :]
+
+
 # <br>
 # 
 # <br>
@@ -429,44 +464,56 @@ df_sursaud_gb["taux_corona"] = df_sursaud_gb["nbre_pass_corona"]/df_sursaud_gb["
 # 
 # ## Function calls
 
-# In[13]:
+# In[14]:
 
 
 def dep_map():
     # GIF carte nb réanimations par habitant
-    imgs_folder = "images/charts/france/dep-map-img/{}.png"
+    imgs_folder = "images/charts/france/dep-map-img"
     sub = 'Nombre de <b>personnes en réanimation</b> <br>par habitant de chaque département.'
-    #map_gif(dates, imgs_folder, df = df, type_ppl = "rea_deppop", legend_title="réan./100k hab", min_scale = 0, max_scale=-1, colorscale ="Reds", subtitle=sub)
-    build_gif(file_gif = "images/charts/france/dep-map.gif", imgs_folder = "images/charts/france/dep-map-img/{}.png", dates=dates)
-
-
-# In[14]:
-
-
-def dep_map_dc_cum():
-    # GIF carte décès cumulés par habitant
-    imgs_folder = "images/charts/france/dep-map-img-dc-cum/{}.png"
-    sub = 'Nombre de <b>décès cumulés</b> <br>par habitant de chaque département.'
-    #map_gif(dates[1:], imgs_folder, df = df, type_ppl = "dc_deppop", legend_title="décès/100k hab", min_scale = 0, max_scale=-1, colorscale ="Reds", subtitle=sub)
-    build_gif(file_gif = "images/charts/france/dep-map-dc-cum.gif", imgs_folder = "images/charts/france/dep-map-img-dc-cum/{}.png", dates=dates[1:])
+    map_gif(dates[-30:], imgs_folder, df = df, type_ppl = "rea_deppop", legend_title="réan./100k hab", min_scale = 0, max_scale=-1, colorscale ="Reds", subtitle=sub)
+    build_gif(file_gif = "images/charts/france/dep-map.gif", imgs_folder = "images/charts/france/dep-map-img", dates=dates[-30:])
 
 
 # In[15]:
 
 
+def dep_map_dc_cum():
+    # GIF carte décès cumulés par habitant
+    imgs_folder = "images/charts/france/dep-map-img-dc-cum"
+    sub = 'Nombre de <b>décès cumulés</b> <br>par habitant de chaque département.'
+    map_gif(dates[-30:], imgs_folder, df = df, type_ppl = "dc_deppop", legend_title="décès/100k hab", min_scale = 0, max_scale=-1, colorscale ="Reds", subtitle=sub)
+    build_gif(file_gif = "images/charts/france/dep-map-dc-cum.gif", imgs_folder = "images/charts/france/dep-map-img-dc-cum", dates=dates[-30:])
+
+
+# In[16]:
+
+
 def dep_map_dc_journ():
     # GIF carte décès quotidiens 
-    imgs_folder = "images/charts/france/dep-map-img-dc-journ/{}.png"
+    imgs_folder = "images/charts/france/dep-map-img-dc-journ"
     sub = 'Nombre de <b>décès quotidien</b> <br>par habitant de chaque département.'
-    #map_gif(dates[1:], imgs_folder, df = df, type_ppl = "dc_new_deppop", legend_title="décès/100k hab", min_scale = 0, max_scale=-1, colorscale ="Reds", subtitle=sub)
-    build_gif(file_gif = "images/charts/france/dep-map-dc-journ.gif", imgs_folder = "images/charts/france/dep-map-img-dc-journ/{}.png", dates=dates[1:])
+    map_gif(dates[-30:], imgs_folder, df = df, type_ppl = "dc_new_deppop", legend_title="décès/100k hab", min_scale = 0, max_scale=-1, colorscale ="Reds", subtitle=sub)
+    build_gif(file_gif = "images/charts/france/dep-map-dc-journ.gif", imgs_folder = "images/charts/france/dep-map-img-dc-journ", dates=dates[-30:])
 
 
-# In[18]:
+# In[26]:
 
 
+def dep_map_incidence():
+    # GIF carte décès quotidiens 
+    imgs_folder = "images/charts/france/dep-map-incid"
+    sub = '<b>Incidence</b> : nombre de cas hebdomadaires <br>pour 100 000 habitants'
+    map_gif(dates[-30:-3], imgs_folder, df = df_incid, type_ppl = "incidence", legend_title="cas sur 7j/100k hab", min_scale = 0, max_scale=-1,                                     colorscale = "Reds", subtitle=sub)
+    build_gif(file_gif = "images/charts/france/dep-map-incid.gif", imgs_folder = "images/charts/france/dep-map-incid", dates=dates[-30:-3])
+
+
+# In[30]:
+
+
+dep_map_incidence()
 dep_map()
-dep_map_dc_cum()
+#dep_map_dc_cum()
 dep_map_dc_journ()
 
 
@@ -556,5 +603,5 @@ fig.show()
 # In[ ]:
 
 
-
+print(datetime.now())
 

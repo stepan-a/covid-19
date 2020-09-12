@@ -497,7 +497,7 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
     #fig.show()
 
 
-# In[5]:
+# In[6]:
 
 
 ni, nj = 5, 4
@@ -951,7 +951,7 @@ except:
     print("ERROR 1")"""
 
 
-# In[11]:
+# In[8]:
 
 
 
@@ -1608,14 +1608,14 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()
 
 
-# In[11]:
+# In[ ]:
 
 
 #TODO A CORRIGER
 """build_map(df_sursaud, date_str="date_de_passage", legend_str="Rouge : > 10%<br>Orange : 6 à 10%<br>Vert : < 10%", dep_str="dep", color_str="indic1_clr", img_folder="images/charts/france/indic1/{}.png", title="Indicateur 1 : circulation du virus (par département)", subtitle="taux de suspicion Covid19 aux urgences")"""
 
 
-# In[12]:
+# In[ ]:
 
 
 """
@@ -1627,7 +1627,7 @@ fig.add_trace(go.Bar(x = dta["date_de_passage"], y = dta["taux_covid"]*100, mark
 fig.show()"""
 
 
-# In[13]:
+# In[ ]:
 
 
 
@@ -1872,20 +1872,20 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()
 
 
-# In[14]:
+# In[ ]:
 
 
 #build_map(df_sursaud, date_str="date_de_passage", dep_str="code", type_data="reg", color_str="indic2_clr", img_folder="images/charts/france/indic2/{}.png", title="Indicateur 2 : saturation des réa")
 
 
-# In[15]:
+# In[ ]:
 
 
 df_groupby = df.groupby(['code', 'jour']).sum().reset_index()
 df_groupby["capa_rea"] = 100 * df_groupby['rea'].values/df_groupby['LITS'].values
 
 
-# In[16]:
+# In[ ]:
 
 
 for code in codes_reg:
@@ -1902,25 +1902,25 @@ for code in codes_reg:
     df_groupby.loc[(df_groupby['jour'] == dates[-1]) & (df_groupby['code'] == code), 'synthese_indics'] = "green" 
 
 
-# In[17]:
+# In[ ]:
 
 
 build_map(df_groupby, date = dates[-1], date_str="jour", dep_str="code", type_data="reg", color_str="capa_rea_clr", img_folder="images/charts/france/indic2/{}.png", legend_str = "Rouge : > 80%<br>Orange : 60 à 80%<br>Vert : < 60%", title="Indicateur 2 : tension hospitalière (par région)", subtitle="proportion de lits de réa. occupés par des patients Covid19")
 
 
-# In[18]:
+# In[ ]:
 
 
 build_map(df_sursaud, date = dates[-1], date_str="date_de_passage", dep_str="dep", type_data="dep", color_str="indic2_clr", img_folder="images/charts/france/indic2_deps/{}.png", legend_str = "Rouge : > 80%<br>Orange : 60 à 80%<br>Vert : < 60%", title="Indicateur 2 : tension hospitalière (par département)", subtitle="proportion de lits de réa. occupés par des patients Covid19")
 
 
-# In[19]:
+# In[ ]:
 
 
 build_map(df_groupby, date = dates[-1], date_str="jour", dep_str="code", type_data="reg", color_str="synthese_indics", img_folder="images/charts/france/synthese_indics/{}.png", title="Synthèse des indicateurs de déconfinement", subtitle="synthèse des indicateurs 1 et 2")
 
 
-# In[20]:
+# In[ ]:
 
 
 """

@@ -385,7 +385,7 @@ for (range_x, name_fig) in [(["2020-03-22", last_day_plot], "var_journ_lines"), 
         showlegend=False
     ))
 
-    fig.update_yaxes(zeroline=True, range=[df_france["hosp_nonrea_new"].min(), df_incid_france['P'].max()/2], zerolinewidth=2, zerolinecolor='Grey', secondary_y=False)
+    fig.update_yaxes(zeroline=True, range=[df_france["hosp_nonrea_new"].min(), df_incid_france['P'].max()], zerolinewidth=2, zerolinecolor='Grey', secondary_y=False)
     fig.update_yaxes(zeroline=True, range=[df_france["hosp_nonrea_new"].min(), df_incid_france['P'].max()], zerolinewidth=2, zerolinecolor='Grey', secondary_y=True)
     fig.update_xaxes(range=range_x, nticks=30, ticks='inside', tickangle=0)
 
@@ -423,11 +423,11 @@ for (range_x, name_fig) in [(["2020-03-22", last_day_plot], "var_journ_lines"), 
                     ),
                     ]
                      )
-    for (data_temp, type_ppl, col, ys, ay, date) in [(dc_new_rolling, "décès", "black", 3, -10, dates[-1]), (incid_rolling, "tests positifs", "blue", 8, -25, df_incid_france['jour'].max()), (rea_new_rolling, "réanimations", "red", -3, 10, dates[-1]), (hosp_non_rea_rolling, "hospitalisations<br> &#8205; (hors réa.)", "grey", -10, 30, dates[-1]), (rad_new_rolling, "retours à<br> &#8205; domicile", "green", 10, -30, dates[-1])]:
+    for (data_temp, type_ppl, col, ys, ay, date, yref) in [(dc_new_rolling, "décès", "black", 3, -10, dates[-1], 'y1'), (incid_rolling, "tests positifs", "blue", 8, -25, df_incid_france['jour'].max(), 'y2'), (rea_new_rolling, "réanimations", "red", -3, 10, dates[-1], 'y1'), (hosp_non_rea_rolling, "hospitalisations<br> &#8205; (hors réa.)", "grey", -10, 30, dates[-1], 'y1'), (rad_new_rolling, "retours à<br> &#8205; domicile", "green", 10, -30, dates[-1], 'y1')]:
         fig['layout']['annotations'] += (dict(
                 x=date, y = data_temp.values[-1], # annotation point
                 xref='x1', 
-                yref='y1',
+                yref=yref,
                 text=" <b>{}</b> {}".format('%+d' % math.trunc(round(data_temp.values[-1], 2)), type_ppl),
                 xshift=15,
                 yshift=ys,
@@ -1582,7 +1582,7 @@ date_plus_1 = (datetime.strptime(dates_incid[-1], '%Y-%m-%d') + timedelta(days=2
 fig.update_xaxes(title_text="", range=["2020-05-18", date_plus_1],gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=30), tickangle=0, linewidth=0, linecolor='white')
 #fig.update_yaxes(title_text="", range=[0, 5], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j, secondary_y=True)
 fig.update_yaxes(title_text="", titlefont=dict(size=30),gridcolor='white', linewidth=0, ticksuffix=" tests", linecolor='white', tickfont=dict(size=30), nticks=8, secondary_y=False, type="log")
-fig.update_yaxes(title_text="", titlefont=dict(size=30, color="blue"), range=[0, 5], ticksuffix=" %", gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=30, color=clr), nticks=8,  secondary_y=True)
+fig.update_yaxes(title_text="", titlefont=dict(size=30, color="blue"), ticksuffix=" %", range=[0, taux.max()*1.5], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=30, color=clr), nticks=8,  secondary_y=True)
 
 for i in fig['layout']['annotations']:
     i['font'] = dict(size=30)
