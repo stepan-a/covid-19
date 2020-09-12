@@ -78,7 +78,7 @@ def try_update_france():
         except:
             pass
         
-        subprocess.run(["sudo", "python3", "covid19_france_charts.py"])
+        #subprocess.run(["sudo", "python3", "covid19_france_charts.py"])
         
         subprocess.run(["sudo", "python3", "covid19_france_local_charts.py"])
         push("France local subplots")
@@ -91,6 +91,13 @@ def try_update_france():
         subprocess.run(["sudo", "python3", "covid19_france_maps.py"])
         push("France GIF")
         print("update France GIF: " + str(now.hour) + ":" + str(now.minute))
+        
+        try:
+            t.tweet_france_maps()
+            print("data tweeted")
+        except:
+            pass
+        
     return datetime_spf
 
     

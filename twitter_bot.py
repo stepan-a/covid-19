@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[4]:
+# In[1]:
 
 
 # Guillaume Rozier - 2020 - MIT License
@@ -89,6 +89,23 @@ def tweet_france():
     api.update_status(status=tweet, media_ids=media_ids)
     #print(tweet)
     
+    
+def tweet_france_maps():
+    ## TWEET2
+    df_incid_lastday = df_incid.loc[df_incid['jour']==df_incid['jour'].max(), :]
+    nb_dep = len(df_incid_lastday.loc[df_incid_lastday['incidence_color']=='Rouge (>50)', :])
+    
+    images_path2 =["images/charts/france/dep-map-incid-cat/latest.jpeg"]
+    media_ids2 = []
+    
+    for filename in images_path2:
+        res = api.media_upload(filename)
+        media_ids2.append(res.media_id)
+        
+    tweet2 = "{} départements classés rouge (données du {}), et dépassent le niveau d'alerte de 50 cas pour 100 000 habitants sur 7 jours".format(nb_dep, lastday_df_incid.strftime('%d/%m'))
+    api.update_status(status=tweet2, media_ids=media_ids2)
+    #print(tweet2)
+    
 def tweet_world():
     # Import data
     df_confirmed_csse = pd.read_csv('data/total_cases_csse.csv')
@@ -137,7 +154,7 @@ def tweet_world():
     #print(tweet)
 
 
-# In[5]:
+# In[2]:
 
 
 #tweet_world()
