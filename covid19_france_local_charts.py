@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[9]:
 
 
 import france_data_management as data
@@ -25,7 +25,7 @@ colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.col
 
 # ## Data Import
 
-# In[2]:
+# In[16]:
 
 
 df, df_confirmed, dates, df_new, df_tests, _, df_sursaud, df_incid, _  = data.import_data()
@@ -964,7 +964,7 @@ max_value = df_incid["incidence"].max()
 
 titles = []
 k=0
-for case in range(1, 102):
+for case in range(1, min(len(deps_incid)+1, 102)):
     titles += ["<b>" + deps_incid[k] + "</b><br>" + deps_incid_name[k]]
     k+=1
 
@@ -992,7 +992,7 @@ for dep in tqdm(deps_incid):
     
     fig.add_trace(go.Bar(x = data_dep["jour"].values[:-1], y = data_dep["incid_rolling"], marker_color='rgba(252, 19, 3, 0.3)'),
                   i, j, secondary_y=False)
-    fig.add_trace(go.Bar(x = data_dep['jour'], y = data_dep["tot_rolling"], name = "Nombre de tests réalisés", showlegend=False, marker_color='rgba(186, 186, 186, 0.3)'),
+    fig.add_trace(go.Bar(x = data_dep['jour'], y = data_dep["tot_rolling"]-data_dep["incid_rolling"], name = "Nombre de tests réalisés", showlegend=False, marker_color='rgba(186, 186, 186, 0.3)'),
                   i, j, secondary_y=False)
     fig.add_trace(go.Scatter(x = data_dep['jour'], y = data_dep["taux_rolling"], name = "Taux de tests positifs", showlegend=False, marker_opacity=0, line_width = 4, marker_color= clr),
                   i, j, secondary_y=True)
@@ -1002,7 +1002,7 @@ for dep in tqdm(deps_incid):
 
     fig.update_xaxes(title_text="", range=["2020-05-18", data_dep["jour"].values[-1]],gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=7), tickangle=0, nticks=6, linewidth=0, linecolor='white', row=i, col=j)
     #fig.update_yaxes(title_text="", range=[0, 5], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j, secondary_y=True)
-    fig.update_yaxes(title_text="", range=[0, 2.5], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j, secondary_y=False, type="log")
+    fig.update_yaxes(title_text="", gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j, secondary_y=False) #, type="log"
     fig.update_yaxes(title_text="", range=[0, 15], gridcolor='white', linewidth=0, linecolor='white', ticksuffix="%", tickfont=dict(size=7, color=clr), nticks=8, row=i, col=j, secondary_y=True)
 
     #, range=[0, max_value]
@@ -1115,10 +1115,16 @@ print("> " + name_fig)
 #fig.show()
 
 
+# In[7]:
+
+
+deps_incid
+
+
 # ## Subplots : départements - classé par régions
 # Idem précédent mais les départements sont rangés dans leurs régions, et les régions classées par ordre décroissant du nb de personnes
 
-# In[9]:
+# In[13]:
 
 
 """
@@ -1340,7 +1346,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     #fig.show()"""
 
 
-# In[10]:
+# In[11]:
 
 
 #TODO A CORRIGER
@@ -1535,7 +1541,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
             xanchor="right",
             font=dict(
                 color=current_values[1][cnt-1],
-                size=10
+                size=14
                 ),
             ax = 0,
             ay = -20,
@@ -1580,7 +1586,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
                             yref='paper',
                             xanchor='center',
                             yanchor='middle',
-                            text='taux de suspicion Covid aux urgences - guillaumerozier.fr',
+                            text='taux de suspicion Covid aux urgences - GRZ - covidtracker.fr',
                             showarrow = False,
                             font=dict(size=30), 
                             opacity=1
@@ -1606,6 +1612,13 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
 
 
     #fig.show()
+
+
+# In[15]:
+
+
+df_sursaud_dep = df_sursaud[df_sursaud["dep"] == '10']
+df_sursaud_dep
 
 
 # In[ ]:

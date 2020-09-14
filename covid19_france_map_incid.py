@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[4]:
+# In[1]:
 
 
 """
@@ -21,7 +21,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[5]:
+# In[2]:
 
 
 import france_data_management as data
@@ -38,7 +38,7 @@ import os
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 
-# In[9]:
+# In[3]:
 
 
 # Import data from Santé publique France
@@ -47,12 +47,10 @@ with open('data/france/dep.geojson') as response:
     depa = json.load(response)
 
 
-# In[10]:
+# In[4]:
 
 
-def build_map(data_df, img_folder, date_str = "date", dep_str = "departement", color_str = 'indic_synthese', legend_title="legend_title", title="title", subtitle=""):
-    dates_deconf = list(dict.fromkeys(list(data_df[date_str].values)))
-    date = dates_deconf[-1]
+def build_map(data_df, img_folder, date_val, date_str = "date", dep_str = "departement", color_str = 'indic_synthese', legend_title="legend_title", title="title", subtitle=""):
     data_df = data_df[data_df[date_str] == date]
 
     fig = px.choropleth(geojson = depa, 
@@ -66,7 +64,7 @@ def build_map(data_df, img_folder, date_str = "date", dep_str = "departement", c
                         color_discrete_map = {"Vert (<25)":"green", "Orange (25-50)":"orange", "Rouge (>50)":"red"}
                         #category_orders = {"indic_synthese" :["vert", "orange", "rouge"]}
                               )
-    date_title = datetime.strptime(dates_deconf[-1], '%Y-%m-%d').strftime('%d %B')
+    date_title = datetime.strptime(date_val, '%Y-%m-%d').strftime('%d %B')
     date_now = datetime.now().strftime('%d %B')
     
     fig.update_geos(fitbounds="locations", visible=False)
@@ -118,8 +116,33 @@ def build_map(data_df, img_folder, date_str = "date", dep_str = "departement", c
     fig.write_image((img_folder+"/{}.jpeg").format(date), scale=2, width=1200, height=800)
 
 
-# In[11]:
+# In[5]:
 
 
-build_map(df_incid, "images/charts/france/dep-map-incid-cat", date_str = "jour", dep_str = "dep", color_str = 'incidence_color', legend_title="", title="Incidence", subtitle="Nombre de cas hebdomadaires pour 100 000 habitants")
+def build_gif(file_gif, imgs_folder, dates):
+    i=0
+    with imageio.get_writer(file_gif, mode='I', duration=0.3) as writer: 
+        for date in tqdm(dates):
+            print((imgs_folder+"/{}.jpeg").format(date))
+            image = imageio.imread((imgs_folder+"/{}.jpeg").format(date))
+            writer.append_data(image)
+            i+=1
+            if i==len(dates):
+                for k in range(8):
+                    writer.append_data(image)
+
+
+# In[6]:
+
+
+dates_deconf = list(dict.fromkeys(list(df_incid["jour"].values)))
+
+date = dates_deconf[-1]
+build_map(df_incid, "images/charts/france/dep-map-incid-cat", date_val=date, date_str = "jour", dep_str = "dep", color_str = 'incidence_color', legend_title="", title="Incidence", subtitle="Nombre de cas hebdomadaires pour 100 000 habitants")
+
+
+# In[7]:
+
+
+build_gif("images/charts/france/incid-cat.gif", "images/charts/france/dep-map-incid-cat", dates_deconf[-30:-1])
 

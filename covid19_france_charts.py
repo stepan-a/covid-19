@@ -385,7 +385,7 @@ for (range_x, name_fig) in [(["2020-03-22", last_day_plot], "var_journ_lines"), 
         showlegend=False
     ))
 
-    fig.update_yaxes(zeroline=True, range=[df_france["hosp_nonrea_new"].min(), df_incid_france['P'].max()], zerolinewidth=2, zerolinecolor='Grey', secondary_y=False)
+    fig.update_yaxes(zeroline=True, range=[df_france["hosp_nonrea_new"].min(), df_france['rad_new'].max()], zerolinewidth=2, zerolinecolor='Grey', secondary_y=False)
     fig.update_yaxes(zeroline=True, range=[df_france["hosp_nonrea_new"].min(), df_incid_france['P'].max()], zerolinewidth=2, zerolinecolor='Grey', secondary_y=True)
     fig.update_xaxes(range=range_x, nticks=30, ticks='inside', tickangle=0)
 
@@ -1546,7 +1546,7 @@ locale.setlocale(locale.LC_ALL, '')
 
 # ## Tests France
 
-# In[16]:
+# In[89]:
 
 
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
@@ -1567,7 +1567,7 @@ fig = make_subplots(specs=[[{"secondary_y": True}]])
 
 fig.add_trace(go.Bar(x = df_incid_france["jour"], y = incid_rolling, marker_color='rgba(252, 19, 3, 0.5)', showlegend = False),
                   secondary_y=False)
-fig.add_trace(go.Bar(x = df_incid_france['jour'], y = tests_tot_rolling, name = "Nombre de tests réalisés", showlegend = False, marker_color ='rgba(186, 186, 186, 0.5)'),
+fig.add_trace(go.Bar(x = df_incid_france['jour'], y = tests_tot_rolling-incid_rolling, name = "Nombre de tests réalisés", showlegend = False, marker_color ='rgba(186, 186, 186, 0.5)'),
               secondary_y=False)
 fig.add_trace(go.Scatter(x = df_incid_france['jour'], y = taux, name = "Taux de tests positifs", showlegend = False, marker_opacity=0, line_width = 10, marker_color=clr),
               secondary_y=True)
@@ -1581,14 +1581,14 @@ date_plus_1 = (datetime.strptime(dates_incid[-1], '%Y-%m-%d') + timedelta(days=2
 
 fig.update_xaxes(title_text="", range=["2020-05-18", date_plus_1],gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=30), tickangle=0, linewidth=0, linecolor='white')
 #fig.update_yaxes(title_text="", range=[0, 5], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j, secondary_y=True)
-fig.update_yaxes(title_text="", titlefont=dict(size=30),gridcolor='white', linewidth=0, ticksuffix=" tests", linecolor='white', tickfont=dict(size=30), nticks=8, secondary_y=False, type="log")
+fig.update_yaxes(title_text="", titlefont=dict(size=30),gridcolor='white', linewidth=0, ticksuffix=" tests", linecolor='white', tickfont=dict(size=30), nticks=8, secondary_y=False) #, type="log"
 fig.update_yaxes(title_text="", titlefont=dict(size=30, color="blue"), ticksuffix=" %", range=[0, taux.max()*1.5], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=30, color=clr), nticks=8,  secondary_y=True)
 
 for i in fig['layout']['annotations']:
     i['font'] = dict(size=30)
 
 fig['layout']['annotations'] += (dict(
-        x=dates_incid[-1], y = math.log10(incid_rolling.values[-1]), # annotation point
+        x=dates_incid[-1], y = incid_rolling.values[-1], # annotation point math.log10(
         xref='x1', 
         yref='y1',
         text="<b>{} tests positifs</b><br>chaque jour<br>".format(math.trunc(round(incid_rolling.values[-1], 1)), datetime.strptime(dates_incid[-7], '%Y-%m-%d').strftime('%d'), datetime.strptime(dates_incid[-1], '%Y-%m-%d').strftime('%d %B')),
@@ -1597,9 +1597,9 @@ fig['layout']['annotations'] += (dict(
         align='center',
         font=dict(
             color="red",
-            size=35,
+            size=30,
             ),
-        ax=-350,
+        ax=-250,
         ay=-150,
         arrowcolor="red",
         opacity=0.8,
@@ -1611,15 +1611,15 @@ fig['layout']['annotations'] += (dict(
         x=dates_incid[-1], y = taux.values[-1], # annotation point
         xref='x1', 
         yref='y2',
-        text="<b>{} %</b> des tests<br>sont <b>positifs</b>".format(round(taux.values[-1],2), datetime.strptime(dates_incid[-7], '%Y-%m-%d').strftime('%d'), datetime.strptime(dates_incid[-1], '%Y-%m-%d').strftime('%d %B')),
+        text="<b>{} %</b> des tests<br>sont <b>positifs</b>".format(str(round(taux.values[-1],2)).replace(".", ","), datetime.strptime(dates_incid[-7], '%Y-%m-%d').strftime('%d'), datetime.strptime(dates_incid[-1], '%Y-%m-%d').strftime('%d %B')),
         yshift=15,
         xanchor="center",
         align='center',
         font=dict(
             color=clr,
-            size=35,
+            size=30,
             ),
-        ax=-350,
+        ax=-300,
         ay=-160,
         arrowcolor=clr,
         opacity=1,
@@ -1628,7 +1628,7 @@ fig['layout']['annotations'] += (dict(
         arrowhead=4
     ),
         dict(
-        x=dates_incid[-1], y = math.log10(tests_tot_rolling.values[-1]), # annotation point
+        x=dates_incid[-1], y = tests_tot_rolling.values[-1], # annotation point math.log10(
         xref='x1', 
         yref='y1',
         text="<b>{} tests</b> sont réalisés<br>chaque jour<br>".format(math.trunc(round(tests_tot_rolling.values[-1], 0)), datetime.strptime(dates_incid[-7], '%Y-%m-%d').strftime('%d'), datetime.strptime(dates_incid[-1], '%Y-%m-%d').strftime('%d %B')),
@@ -1637,14 +1637,14 @@ fig['layout']['annotations'] += (dict(
         align='center',
         font=dict(
             color="black",
-            size=35,
+            size=30,
             ),
         ax=-170,
         ay=-90,
         arrowcolor="black",
         opacity=0.7,
         arrowsize=1,
-        arrowwidth=4,
+        arrowwidth=3,
         arrowhead=0
     ))
 
@@ -1713,6 +1713,12 @@ print("> " + name_fig)
 
 locale.setlocale(locale.LC_ALL, '')
 #fig.show()
+
+
+# In[83]:
+
+
+tests_tot_rolling.max()
 
 
 # ## Titre composition tests
@@ -2004,7 +2010,7 @@ if show_charts:
     fig.show()
 
 
-# In[19]:
+# In[8]:
 
 
 df_tests_viros_france = df_tests_viros.groupby(['jour', 'cl_age90']).sum().reset_index()
@@ -2151,10 +2157,10 @@ for (val, valname) in [('P', 'positifs'), ('T', '')]:
     plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
 
 
-# In[22]:
+# In[72]:
 
 
-for (name, data, title, scale_txt, data_example) in [("cas", 'P', "Nombre de tests positifs", "", "112 positifs"), ("taux", 'P_taux', "Taux de positivité", "%", "1,8% des tests étaient positifs")]:
+for (name, data, title, scale_txt, data_example, digits) in [("cas", 'P', "Nombre de<br>tests positifs", "", "", 0), ("taux", 'P_taux', "Taux de<br>positivité", "%", "%", 1)]:
     locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
     fig = go.Figure(data=go.Heatmap(
@@ -2165,12 +2171,43 @@ for (name, data, title, scale_txt, data_example) in [("cas", 'P', "Nombre de tes
             ))
 
     #fig['layout']['annotations'] += (,)
+    
+    annot = []
+    
+        
+    for cl_age in range(9, 109, 10):
+        val = round(df_tests_rolling.loc[(df_tests_rolling["cl_age90"]==cl_age) & (df_tests_rolling["jour"]==df_tests_rolling["jour"].max()), data].values[0], digits)
+    
+        if digits == 0:
+            val = math.trunc(val)
+        
+        annot += [dict(
+                    x=df_tests_rolling['jour'].max(), y = cl_age, # annotation point
+                    xref='x1', 
+                    yref='y1',
+                    text="{}{}".format(str(val).replace(".", ","), data_example),
+                    xshift=0,
+                    xanchor="center",
+                    align='left',
+                    font=dict(
+                        color="black",
+                        size=10
+                        ),
+                    opacity=0.6,
+                    ax=20,
+                    ay=0,
+                    arrowcolor="black",
+                    arrowsize=0.7,
+                    arrowwidth=0.6,
+                    arrowhead=4,
+                    showarrow=True
+                )]
 
     fig.update_xaxes(title_text="", tickformat='%d/%m', nticks=20, ticks='inside', tickcolor='white')
-    fig.update_yaxes(title_text="Tranche d'âge", ticksuffix=" ans", ticktext=["< 10", "10 - 20", "20 - 30", "30 - 40", "40 - 50", "50 - 60", "60 - 70", "70 - 80", "80 - 90", "> 90"], tickmode='array', tickvals=[9, 19, 29, 39, 49, 59, 69, 79, 89, 99], tickcolor="white", ticks='inside')
+    fig.update_yaxes(title_text="Tranche d'âge", ticksuffix=" ans", ticktext=["< 10", "10 - 20", "20 - 30", "30 - 40", "40 - 50", "50 - 60", "60 - 70", "70 - 80", "80 - 90", "> 90"], tickmode='array', tickvals=[9, 19, 29, 39, 49, 59, 69, 79, 89, 99], tickcolor="white")
     fig.update_layout(
         title={
-            'text': "{} du Covid19 en fonction de l\'âge".format(title),
+            'text': "{} du Covid19 en fonction de l\'âge".format(title.replace("<br>", " ")),
             'y':0.98,
             'x':0.5,
             'xanchor': 'center',
@@ -2178,16 +2215,18 @@ for (name, data, title, scale_txt, data_example) in [("cas", 'P', "Nombre de tes
             titlefont = dict(
             size=20),
         coloraxis=dict(
-            #cmin=0, cmax=100, #colorscale='viridis',
+            #cmin=0, cmax=100,
+            colorscale='Inferno',
             colorbar=dict(
-                title="{}<br>du Covid19<br> &#8205;".format(title),
-                thicknessmode="pixels", thickness=20,
-                lenmode="pixels", len=350,
+                #title="{}<br>du Covid19<br> &#8205;".format(title),
+                thicknessmode="pixels", thickness=12,
+                lenmode="pixels", len=300,
                 yanchor="middle", y=0.5,
-                ticks="outside", ticksuffix="{} positifs".format(scale_txt),
+                tickfont=dict(size=9),
+                ticks="outside", ticksuffix="{}".format(scale_txt),
                 )
         ),
-        annotations = [
+        annotations = annot + [
                     dict(
                         x=0.5,
                         y=-0.16,
@@ -2196,30 +2235,10 @@ for (name, data, title, scale_txt, data_example) in [("cas", 'P', "Nombre de tes
                         xanchor='center',
                         opacity=0.6,
                         font=dict(color="black", size=12),
-                        text='Lecture : une case correspond au {} pour une tranche d\'âge (à lire à gauche) et à une date donnée (à lire en bas).<br>Du orange correspond à un {} élevé.  <i>Date : {} - Source : covidtracker.fr - Données : Santé publique France</i>'.format(title.lower(), title.lower(), now.strftime('%d %B')),
+                        text='Lecture : une case correspond au {} pour une tranche d\'âge (à lire à gauche) et à une date donnée (à lire en bas).<br>Du orange correspond à un {} élevé.  <i>Date : {} - Source : covidtracker.fr - Données : Santé publique France</i>'.format(title.lower().replace("<br>", " "), title.lower().replace("<br>", " "), now.strftime('%d %B')),
                         showarrow = False
                     ),
-                dict(
-                    x="2020-07-13", y = 29, # annotation point
-                    xref='x1', 
-                    yref='y1',
-                    text="{} le 13/07<br>sur la tranche d'âge 20 - 30 ans".format(data_example),
-                    xshift=0,
-                    xanchor="center",
-                    align='center',
-                    font=dict(
-                        color="white",
-                        size=12
-                        ),
-                    opacity=0.6,
-                    ax=-50,
-                    ay=-40,
-                    arrowcolor="white",
-                    arrowsize=1.5,
-                    arrowwidth=1,
-                    arrowhead=4,
-                    showarrow=True
-                )],
+                ],
     margin=dict(
                     b=80,
                     t=40,
@@ -2230,6 +2249,24 @@ for (name, data, title, scale_txt, data_example) in [("cas", 'P', "Nombre de tes
     fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=3, width=900, height=550)
     #fig.show()
     plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[18]:
+
+
+
 
 
 # In[23]:

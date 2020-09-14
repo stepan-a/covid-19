@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[11]:
 
 
 # Guillaume Rozier - 2020 - MIT License
@@ -91,6 +91,9 @@ def tweet_france():
     
     
 def tweet_france_maps():
+    _, _, dates, _, _, _, _, df_incid, _ = data.import_data()
+    lastday_df_incid = datetime.strptime(df_incid['jour'].max(), '%Y-%m-%d')
+    
     ## TWEET2
     df_incid_lastday = df_incid.loc[df_incid['jour']==df_incid['jour'].max(), :]
     nb_dep = len(df_incid_lastday.loc[df_incid_lastday['incidence_color']=='Rouge (>50)', :])
@@ -102,7 +105,7 @@ def tweet_france_maps():
         res = api.media_upload(filename)
         media_ids2.append(res.media_id)
         
-    tweet2 = "{} départements classés rouge (données du {}), et dépassent le niveau d'alerte de 50 cas pour 100 000 habitants sur 7 jours".format(nb_dep, lastday_df_incid.strftime('%d/%m'))
+    tweet2 = "🔴 {} départements devraient être classés rouge, car ils dépassent le niveau d'alerte de 50 cas pour 100 000 habitants en 7 jours (données du {})\n➡️ Plus d'infos : covidtracker.fr/covidtracker-france".format(nb_dep, lastday_df_incid.strftime('%d/%m'))
     api.update_status(status=tweet2, media_ids=media_ids2)
     #print(tweet2)
     
@@ -154,9 +157,10 @@ def tweet_world():
     #print(tweet)
 
 
-# In[2]:
+# In[12]:
 
 
 #tweet_world()
 #tweet_france()
+#tweet_france_maps()
 

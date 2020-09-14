@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[3]:
+# In[1]:
 
 
 import requests
@@ -10,7 +10,7 @@ import json
 from tqdm import tqdm
 
 
-# In[16]:
+# In[85]:
 
 
 # Download data from Santé publique France and export it to local files
@@ -81,8 +81,9 @@ def import_data():
     pbar = tqdm(total=4)
     pbar.update(1)
     df = pd.read_csv('data/france/donnes-hospitalieres-covid19.csv', sep=";")
+    
     df_sursaud = pd.read_csv('data/france/sursaud-covid19-departement.csv', sep=";")
-    df_sursaud["dep"] = df_sursaud["dep"].astype('str')
+    df_sursaud["dep"] = df_sursaud["dep"].astype('str').str.replace(r"^([1-9])$", lambda m: "0"+m.group(0), regex=True)
     
     df_new = pd.read_csv('data/france/donnes-hospitalieres-covid19-nouveaux.csv', sep=";")
     df_tests = pd.read_csv('data/france/donnes-tests-covid19-quotidien.csv', sep=";")
@@ -116,6 +117,7 @@ def import_data():
     df_new['incid_hosp_nonrea'] = df_new['incid_hosp'] - df_new['incid_rea']
     
     df_sursaud = df_sursaud.merge(df_regions, left_on='dep', right_on='departmentCode')
+    print(df_sursaud)
     df_sursaud = df_sursaud.merge(df_reg_pop, left_on='regionName', right_on='regionName')
     df_sursaud = df_sursaud.merge(df_dep_pop, left_on='dep', right_on='dep')
     
@@ -188,10 +190,4 @@ df_tests_viro = df_tests_viro[df_tests_viro["cl_age90"] == 0]
 df_incid = df_incid.merge(df_regions, left_on='dep', right_on='departmentCode')
 df_incid = df_incid.merge(df_tests_viro.drop("p", axis=1).drop("cl_age90", axis=1), left_on=['jour', 'dep'], right_on=['jour', 'dep'])
     """
-
-
-# In[17]:
-
-
-#df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid = import_data()
 

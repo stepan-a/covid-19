@@ -4,7 +4,7 @@
 # # COVID-19 French Maps
 # Guillaume Rozier, 2020
 
-# In[2]:
+# In[1]:
 
 
 """
@@ -24,7 +24,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[3]:
+# In[2]:
 
 
 import france_data_management as data
@@ -43,14 +43,14 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 # ## Data import
 
-# In[4]:
+# In[3]:
 
 
 # Import data from Santé publique France
 df, df_confirmed, dates, _, _, df_deconf, df_sursaud, df_incid, _ = data.import_data()
 
 
-# In[5]:
+# In[4]:
 
 
 #df_incid["incidence"] = df_incid["P"]/df_incid["pop"]*100
@@ -60,10 +60,10 @@ for dep in pd.unique(df_incid["dep"].values):
 df_incid.loc[:,"incidence_color"] = ['Rouge (>50)' if x >= 50 else 'Orange (25-50)' if x >= 25 else 'Vert (<25)' for x in df_incid['incidence']]
 
 
-# In[6]:
+# In[5]:
 
 
-# Download and import data from INSEE
+"""# Download and import data from INSEE
 dict_insee = pd.read_excel('data/france/deces_quotidiens_departement.xlsx', header=[3], index_col=None, sheet_name=None, usecols='A:H', nrows=44)
 dict_insee.pop('France')
 dict_insee.pop('Documentation')
@@ -79,14 +79,14 @@ df_insee["surmortalite20"] = (df_insee["dc20"] - df_insee["moy1819"])/df_insee["
 df_insee['jour'] = pd.to_datetime(df_insee['jour'])
 df_insee['jour'] = df_insee['jour'].dt.strftime('%Y-%m-%d')
 
-dates_insee = list(dict.fromkeys(list(df_insee.dropna()['jour'].values))) 
+dates_insee = list(dict.fromkeys(list(df_insee.dropna()['jour'].values))) """
 
 
-# In[7]:
+# In[6]:
 
 
-df_insee_france = df_insee.groupby('jour').sum().reset_index()
-df_insee_france["surmortalite20"] = (df_insee_france["dc20"] - df_insee_france["moy1819"])/df_insee_france["moy1819"]
+"""df_insee_france = df_insee.groupby('jour').sum().reset_index()
+df_insee_france["surmortalite20"] = (df_insee_france["dc20"] - df_insee_france["moy1819"])/df_insee_france["moy1819"]"""
 
 
 # <br>
@@ -94,14 +94,14 @@ df_insee_france["surmortalite20"] = (df_insee_france["dc20"] - df_insee_france["
 # 
 # ## Function definition
 
-# In[8]:
+# In[11]:
 
 
 with open('data/france/dep.geojson') as response:
     depa = json.load(response)
 
 
-# In[9]:
+# In[10]:
 
 
 
@@ -257,19 +257,13 @@ def build_gif(file_gif, imgs_folder, dates):
                     writer.append_data(image)
 
 
-# In[11]:
-
-
-
-
-
-# In[47]:
+# In[49]:
 
 
 #build_map(df_deconf, img_folder="images/charts/france/deconf_synthese/{}.png", title="Départements déconfinés le 11/05")
 
 
-# In[32]:
+# In[50]:
 
 
 def build_map_indic1(data_df, img_folder, legend_title="legend_title", title="title"):
@@ -341,7 +335,7 @@ def build_map_indic1(data_df, img_folder, legend_title="legend_title", title="ti
     
 
 
-# In[12]:
+# In[51]:
 
 
 """df_sursaud = df_sursaud[df_sursaud["sursaud_cl_age_corona"] == "0"]
@@ -355,19 +349,13 @@ df_sursaud_gb["taux_corona"] = df_sursaud_gb["nbre_pass_corona"]/df_sursaud_gb["
 #build_map_indic1(df_sursaud_gb, img_folder="images/charts/france/deconf_indic1/{}.png", title="Indic 1")
 
 
-# In[13]:
+# In[52]:
 
 
 #df_sursaud_gb = df_sursaud.groupby(["dep"]).rolling(window=7, on="date_de_passage").mean().reset_index()
 #df_sursaud_gb["date_de_passage"] = df_sursaud["date_de_passage"].values
 #df_sursaud_gb[df_sursaud_gb["dep"]=="01"]
 #df_sursaud_gb
-
-
-# In[12]:
-
-
-
 
 
 # <br>
@@ -380,7 +368,7 @@ df_sursaud_gb["taux_corona"] = df_sursaud_gb["nbre_pass_corona"]/df_sursaud_gb["
 # 
 # ## Function calls
 
-# In[14]:
+# In[53]:
 
 
 def dep_map():
@@ -391,7 +379,7 @@ def dep_map():
     build_gif(file_gif = "images/charts/france/dep-map.gif", imgs_folder = "images/charts/france/dep-map-img", dates=dates[-30:])
 
 
-# In[15]:
+# In[54]:
 
 
 def dep_map_dc_cum():
@@ -402,7 +390,7 @@ def dep_map_dc_cum():
     build_gif(file_gif = "images/charts/france/dep-map-dc-cum.gif", imgs_folder = "images/charts/france/dep-map-img-dc-cum", dates=dates[-30:])
 
 
-# In[16]:
+# In[55]:
 
 
 def dep_map_dc_journ():
@@ -413,18 +401,21 @@ def dep_map_dc_journ():
     build_gif(file_gif = "images/charts/france/dep-map-dc-journ.gif", imgs_folder = "images/charts/france/dep-map-img-dc-journ", dates=dates[-30:])
 
 
-# In[26]:
+# In[29]:
 
 
 def dep_map_incidence():
     # GIF carte décès quotidiens 
     imgs_folder = "images/charts/france/dep-map-incid"
+    dates_incid = list(dict.fromkeys(list(df_incid.dropna()['jour'].values)))
+    dates_incid.sort()
+    
     sub = '<b>Incidence</b> : nombre de cas hebdomadaires <br>pour 100 000 habitants'
-    map_gif(dates[-30:-3], imgs_folder, df = df_incid, type_ppl = "incidence", legend_title="cas sur 7j/100k hab", min_scale = 0, max_scale=-1,                                     colorscale = "Reds", subtitle=sub)
-    build_gif(file_gif = "images/charts/france/dep-map-incid.gif", imgs_folder = "images/charts/france/dep-map-incid", dates=dates[-30:-3])
+    map_gif(dates_incid[-30:], imgs_folder, df = df_incid, type_ppl = "incidence", legend_title="cas sur 7j/100k hab", min_scale = 0, max_scale=-1,                                     colorscale = "Reds", subtitle=sub)
+    build_gif(file_gif = "images/charts/france/dep-map-incid.gif", imgs_folder = "images/charts/france/dep-map-incid", dates=dates_incid[-30:])
 
 
-# In[30]:
+# In[57]:
 
 
 dep_map_incidence()
@@ -433,7 +424,7 @@ dep_map()
 dep_map_dc_journ()
 
 
-# In[18]:
+# In[58]:
 
 
 """
@@ -446,10 +437,10 @@ map_gif(dates_insee, imgs_folder, df = df_insee.dropna(), type_ppl = ppl, legend
 build_gif(file_gif = "images/charts/france/dep-map-surmortalite.gif", imgs_folder = imgs_folder, dates=dates_insee)"""
 
 
-# In[19]:
+# In[59]:
 
 
-# Line chart évolution de la mortalité
+"""# Line chart évolution de la mortalité
 
 import plotly.graph_objects as go
 import plotly
@@ -513,11 +504,5 @@ fig.write_image("images/charts/france/{}.png".format(name_fig), scale=2, width=1
 plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
 print("> " + name_fig)
 
-fig.show()
-
-
-# In[ ]:
-
-
-print(datetime.now())
+fig.show()"""
 
