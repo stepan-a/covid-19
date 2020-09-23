@@ -173,7 +173,7 @@ def import_data():
     
     for dep in pd.unique(df_incid["dep"].values):
         df_incid.loc[df_incid["dep"] == dep,"incidence"] = df_incid["P"].rolling(window=7).sum()/df_incid["pop"]*100000
-    df_incid.loc[:,"incidence_color"] = ['Rouge (>50)' if x >= 50 else 'Orange (25-50)' if x >= 25 else 'Vert (<25)' for x in df_incid['incidence']]
+    df_incid.loc[:,"incidence_color"] = ['Alerte Maximale' if x>= 250 else 'Alerte Renforcée' if x>=150 else 'Alerte' if x >= 50 else 'Risque Faible' for x in df_incid['incidence']]
 
     return df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid, df_tests_viro
 

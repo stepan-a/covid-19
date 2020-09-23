@@ -21,7 +21,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[2]:
+# In[7]:
 
 
 import france_data_management as data
@@ -38,7 +38,7 @@ import os
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 
-# In[3]:
+# In[8]:
 
 
 # Import data from Santé publique France
@@ -47,7 +47,7 @@ with open('data/france/dep.geojson') as response:
     depa = json.load(response)
 
 
-# In[4]:
+# In[9]:
 
 
 def build_map(data_df, img_folder, date_val, date_str = "date", dep_str = "departement", color_str = 'indic_synthese', legend_title="legend_title", title="title", subtitle=""):
@@ -61,7 +61,7 @@ def build_map(data_df, img_folder, date_val, date_str = "date", dep_str = "depar
                         labels={color_str:"Couleur"},
                         #color_discrete_sequence = ["green", "orange", "red"],
                         #labels={'red':"Couleur", 'orange':'bla', 'green':'lol'},
-                        color_discrete_map = {"Vert (<25)":"green", "Orange (25-50)":"orange", "Rouge (>50)":"red"}
+                        color_discrete_map = {"Risque Faible":"green", "Alerte":"red", "Alerte Renforcée":"red", "Alerte Maximale":"black"}
                         #category_orders = {"indic_synthese" :["vert", "orange", "rouge"]}
                               )
     date_title = datetime.strptime(date_val, '%Y-%m-%d').strftime('%d %B')
@@ -116,7 +116,7 @@ def build_map(data_df, img_folder, date_val, date_str = "date", dep_str = "depar
     fig.write_image((img_folder+"/{}.jpeg").format(date), scale=2, width=1200, height=800)
 
 
-# In[5]:
+# In[10]:
 
 
 def build_gif(file_gif, imgs_folder, dates):
@@ -132,7 +132,7 @@ def build_gif(file_gif, imgs_folder, dates):
                     writer.append_data(image)
 
 
-# In[6]:
+# In[15]:
 
 
 dates_deconf = list(dict.fromkeys(list(df_incid["jour"].values)))
