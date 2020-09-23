@@ -762,7 +762,7 @@ if show_charts:
 # In[100]:
 
 
-for (rge_x, rge_y, suffix) in [(["2020-03-21", last_day_plot], [-2500, 3700], ""), (["2020-06-10", last_day_plot], [-400, 500], "_recent")]:
+for (rge_x, rge_y, suffix) in [(["2020-03-21", last_day_plot], [-2500, 3700], ""), (["2020-06-10", last_day_plot], [-1000, 1000], "_recent")]:
     fig = go.Figure()
     #fig = make_subplots(specs=[[{"secondary_y": True}]])
     incid_rea = df_new_tot_last15["incid_rea"].rolling(window=7, center=True).mean()
