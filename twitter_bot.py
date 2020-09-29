@@ -96,7 +96,7 @@ def tweet_france_maps():
     
     ## TWEET2
     df_incid_lastday = df_incid.loc[df_incid['jour']==df_incid['jour'].max(), :]
-    nb_dep = len(df_incid_lastday.loc[df_incid_lastday['incidence_color']=='Rouge (>50)', :])
+    nb_dep = len(df_incid_lastday.loc[df_incid_lastday['incidence_color']=='Alerte', :]) + len(df_incid_lastday.loc[df_incid_lastday['incidence_color']=='Alerte Renforcée', :]) + len(df_incid_lastday.loc[df_incid_lastday['incidence_color']=='Alerte Maximale', :])
     
     images_path2 =["images/charts/france/dep-map-incid-cat/latest.jpeg"]
     media_ids2 = []
