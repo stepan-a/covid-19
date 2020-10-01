@@ -325,7 +325,7 @@ def update_data():
 # ## Function
 # This fonction builds and export graphs.
 
-# In[17]:
+# In[15]:
 
 
 def chart(data, data_rolling, countries, by_million_inh = False, align_curves = False, last_d = 15,          offset_name = 'offset_confirmed', type_ppl = "confirmed cases", name_fig = "", since = False,           min_rate=0, log=False, new=""):
@@ -540,7 +540,7 @@ def chart(data, data_rolling, countries, by_million_inh = False, align_curves = 
     return fig
 
 
-# In[18]:
+# In[16]:
 
 
 ### Main
@@ -559,7 +559,7 @@ data_deaths_t = data_deaths_t.drop(data_deaths_t.index[-1])
 data_deaths_t = data_deaths_t.drop(data_deaths_t.index[0])
 
 
-# In[19]:
+# In[17]:
 
 
 for (data, name_var, same_scale) in [(data_deaths_t, "deaths", True), (data_deaths_t, "deaths", False), (data_confirmed_t, "confirmed", True), (data_confirmed_t, "confirmed", False)]: 
@@ -709,14 +709,14 @@ for (data, name_var, same_scale) in [(data_deaths_t, "deaths", True), (data_deat
 # ## Function calls
 # This block contains calls to above function for every chart.
 
-# In[20]:
+# In[18]:
 
 
 #update_data()
 data_confirmed, data_deaths, countries = data_import()
 
 
-# In[21]:
+# In[19]:
 
 
 last_d_default = math.trunc((datetime.now() - datetime.strptime("2020-03-05", "%Y-%m-%d")).total_seconds()/(3600*24))
@@ -873,7 +873,7 @@ for log in False, True:
 
 # # World charts
 
-# In[22]:
+# In[20]:
 
 
 from datetime import timedelta
@@ -990,7 +990,7 @@ for (dataf, name_fig, title) in [(data_deaths_t, "deaths_world", 'deaths'), (dat
 # # EXPERIMENTATIONS (SEIR model)
 # Currently not working.
 
-# In[23]:
+# In[21]:
 
 
 # Define parameters
@@ -1007,7 +1007,7 @@ params = alpha, beta, gamma, rho
 # Run simulation
 
 
-# In[24]:
+# In[22]:
 
 
 def seir_model_with_soc_dist(init_vals, params, t):
@@ -1027,7 +1027,7 @@ def seir_model_with_soc_dist(init_vals, params, t):
     return np.stack([S, E, I, R]).T
 
 
-# In[25]:
+# In[23]:
 
 
 #results = seir_model_with_soc_dist(init_vals, params, t)

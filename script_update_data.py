@@ -25,7 +25,6 @@ import time
 import subprocess
 import requests
 import re
-import twitter_bot as t
 
 ### FUNCTION DEFINITIONS ###
 url_metadata = "https://www.data.gouv.fr/fr/organizations/sante-publique-france/datasets-resources.csv"
@@ -73,7 +72,7 @@ def try_update_france():
         print("update France charts: " + str(now.hour) + ":" + str(now.minute))
         
         try:
-            t.tweet_france()
+            subprocess.run(["sudo", "python3", "tweetbot_france.py"])
             print("data tweeted")
         except:
             pass
@@ -83,7 +82,7 @@ def try_update_france():
         print("update France local: " + str(now.hour) + ":" + str(now.minute))
         
         try:
-            t.tweet_france_maps()
+            subprocess.run(["sudo", "python3", "tweetbot_france_maps.py"])
             print("map tweeted")
         except:
             pass
@@ -91,6 +90,10 @@ def try_update_france():
         subprocess.run(["sudo", "python3", "covid19_france_local_charts.py"])
         push("France local subplots")
         print("update France local: " + str(now.hour) + ":" + str(now.minute))
+        
+        subprocess.run(["sudo", "python3", "covid19_france_heatmaps.py"])
+        push("Dep heatmaps")
+        print("update France utils: " + str(now.hour) + ":" + str(now.minute))
         
         subprocess.run(["sudo", "python3", "covid19_utils.py"])
         push("Utils")
@@ -146,7 +149,7 @@ while True:
     print(str(now.hour))
     
     if tweet_world_data and (now.hour == 8):
-        t.tweet_world()
+        subprocess.run(["sudo", "python3", "tweetbot_world.py"])
         tweet_world_data = False
         print("world tweet: done")
         

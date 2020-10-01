@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[18]:
+# In[1]:
 
 
 import requests
@@ -10,7 +10,7 @@ import json
 from tqdm import tqdm
 
 
-# In[27]:
+# In[25]:
 
 
 # Download data from Santé publique France and export it to local files
@@ -94,6 +94,8 @@ def import_data():
     df_tests_viro = pd.read_csv('data/france/tests_viro-dep-quot.csv', sep=";")
     df_tests_viro["dep"] = df_tests_viro["dep"].astype('str')
     
+    pop_df_incid = df_incid["pop"]
+    
     lits_reas = pd.read_csv('data/france/lits_rea.csv', sep=",")
     
     df_regions = pd.read_csv('data/france/departments_regions_france_2016.csv', sep=",")
@@ -174,24 +176,19 @@ def import_data():
     for dep in pd.unique(df_incid["dep"].values):
         df_incid.loc[df_incid["dep"] == dep,"incidence"] = df_incid["P"].rolling(window=7).sum()/df_incid["pop"]*100000
     df_incid.loc[:,"incidence_color"] = ['Alerte Maximale' if x>= 250 else 'Alerte Renforcée' if x>=150 else 'Alerte' if x >= 50 else 'Risque Faible' for x in df_incid['incidence']]
-
+    
+    df_tests_viro["pop"] = pop_df_incid
     return df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid, df_tests_viro
 
 
-# In[28]:
+# In[26]:
 
 
 #download_data()
 #df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid, df_tests_viro = import_data()
 
 
-# In[29]:
-
-
-#df_incid
-
-
-# In[22]:
+# In[12]:
 
 
 """df_incid = pd.read_csv('data/france/taux-incidence-dep-quot.csv', sep=",")
@@ -206,4 +203,10 @@ df_tests_viro = df_tests_viro[df_tests_viro["cl_age90"] == 0]
 df_incid = df_incid.merge(df_regions, left_on='dep', right_on='departmentCode')
 df_incid = df_incid.merge(df_tests_viro.drop("p", axis=1).drop("cl_age90", axis=1), left_on=['jour', 'dep'], right_on=['jour', 'dep'])
     """
+
+
+# In[ ]:
+
+
+
 
