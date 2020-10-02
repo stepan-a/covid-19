@@ -93,7 +93,7 @@ def try_update_france():
         
         subprocess.run(["sudo", "python3", "covid19_france_heatmaps.py"])
         push("Dep heatmaps")
-        print("update France utils: " + str(now.hour) + ":" + str(now.minute))
+        print("update France heatmaps: " + str(now.hour) + ":" + str(now.minute))
         
         subprocess.run(["sudo", "python3", "covid19_utils.py"])
         push("Utils")

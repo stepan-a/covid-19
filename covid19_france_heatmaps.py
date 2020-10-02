@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[9]:
+# In[1]:
 
 
 """
@@ -23,7 +23,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[10]:
+# In[2]:
 
 
 from multiprocessing import Pool
@@ -42,20 +42,135 @@ import json
 import locale
 import france_data_management as data
 import numpy as np
+import plotly.figure_factory as ff
 
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 now = datetime.now()
 
 
-# In[11]:
+# In[3]:
 
 
 df, df_confirmed, dates, _, _, _, _, _, df_tests_viros = data.import_data()
 
 
-# In[12]:
+# In[14]:
 
 
+deps_tests = list(dict.fromkeys(list(df_tests_viros['dep'].values))) 
+deps_name = np.array(list(dict.fromkeys(list(df["departmentName"].values)))[:])
+
+df_tests_viros = df_tests_viros[df_tests_viros['cl_age90'] != 0]
+
+for (name, data, title, scale_txt, data_example, digits) in [("cas", '', "Taux d'<br>incidence", " cas", " cas", 1)]:
+    for idx,dep in enumerate(deps_tests): #deps_tests.drop("975", "976", "977", "978")
+        locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
+        
+        df_tests_viros_dep = df_tests_viros[df_tests_viros["dep"] == dep]
+        #df_tests_viros_dep = df_tests_viros_dep.groupby(['jour', 'cl_age90']).sum().reset_index()
+        
+        df_tests_rolling = pd.DataFrame()
+        array_positif = []
+        array_taux = []
+        array_incidence = []
+        for age in list(dict.fromkeys(list(df_tests_viros_dep['cl_age90'].values))): 
+            tranche = df_tests_viros_dep[df_tests_viros_dep["cl_age90"]==age]
+            tranche.index = pd.to_datetime(tranche["jour"])
+            tranche = tranche[tranche.index.max() - timedelta(days=7*18-1):].resample('7D').sum()
+            
+            array_positif += [tranche["P"].astype(int)]
+            array_taux += [np.round((tranche["P"].fillna(0)/tranche["T"].fillna(1)).fillna(0)*100, 1)]
+            array_incidence += [np.trunc(tranche["P"].fillna(0) / tranche["pop"] * 7 * 100000).astype(int)]
+            dates_heatmap = list(tranche.index.astype(str).values)
+
+        
+        dates_heatmap_firstday = tranche.index.values
+        dates_heatmap_lastday = tranche.index + timedelta(days=6)
+        dates_heatmap = [str(dates_heatmap_firstday[i])[8:10] + "/" + str(dates_heatmap_firstday[i])[5:7] + "<br>" + str(dates_heatmap_lastday[i])[8:10] + "/" + str(dates_heatmap_lastday[i])[5:7] for i, val in enumerate(dates_heatmap_firstday)]
+
+        fig = ff.create_annotated_heatmap(
+            z=array_incidence, #df_tests_rolling[data].to_numpy()
+            x=dates_heatmap,
+            y=[str(x-9) + " à " + str(x)+" ans" if x!=99 else "+ 90 ans" for x in range(9, 109, 10)],
+            showscale=True,
+            coloraxis="coloraxis",
+            #text=df_tests_rolling[data],
+            annotation_text = array_incidence
+            )
+
+        annot = []
+
+        fig.update_xaxes(side="bottom", tickfont=dict(size=9))
+        fig.update_yaxes(tickfont=dict(size=9))
+    
+        fig.update_layout(
+            title={
+                'text': "{} du Covid19 en fonction de l\'âge".format(title.replace("<br>", " ")),
+                'y':0.98,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'},
+                titlefont = dict(
+                size=20),
+            coloraxis=dict(
+                cmin=0, cmax=250,
+                #colorscale='Inferno',
+                colorbar=dict(
+                    #title="{}<br>du Covid19<br> &#8205;".format(title),
+                    thicknessmode="pixels", thickness=12,
+                    lenmode="pixels", len=300,
+                    yanchor="middle", y=0.5,
+                    tickfont=dict(size=9),
+                    ticks="outside", ticksuffix="{}".format(scale_txt),
+                    )
+            ),
+        margin=dict(
+                        b=80,
+                        t=40,
+                        pad=0
+                    ))
+        
+        annotations = annot + [
+                        dict(
+                            x=0.5,
+                            y=0.5,
+                            xref='paper',
+                            yref='paper',
+                            opacity=0.6,
+                            font=dict(color="white", size=55),
+                            text="Dép. <b>{}</b>".format(dep),
+                            showarrow=False
+                        ),
+                        dict(
+                            x=0.5,
+                            y=-0.16,
+                            xref='paper',
+                            yref='paper',
+                            xanchor='center',
+                            opacity=0.6,
+                            font=dict(color="black", size=12),
+                            text='Lecture : une case correspond au {} pour une tranche d\'âge (à lire à gauche) et à une date donnée (à lire en bas).<br>Du orange correspond à un {} élevé.  <i>Date : {} - Source : covidtracker.fr - Données : Santé publique France</i>'.format(title.lower().replace("<br>", " "), title.lower().replace("<br>", " "), now.strftime('%d %B')),
+                            showarrow = False
+                        ),
+                    ]
+        
+        for i in range(len(fig.layout.annotations)):
+            fig.layout.annotations[i].font.size = 7
+        
+        for annot in annotations:
+            fig.add_annotation(annot)
+
+        name_fig = "heatmaps_deps/heatmap_"+"taux"+"_"+dep
+        fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=2, width=900, height=550)
+        fig.write_image("images/charts/france/{}_SD.jpeg".format(name_fig), scale=0.5, width=900, height=550)
+        #fig.show()
+        plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+
+
+# In[5]:
+
+
+"""OLD
 deps_tests = list(dict.fromkeys(list(df_tests_viros['dep'].values))) 
 deps_name = np.array(list(dict.fromkeys(list(df["departmentName"].values)))[:])
 
@@ -177,19 +292,19 @@ for (name, data, title, scale_txt, data_example, digits) in [("taux", 'P_taux', 
         name_fig = "heatmaps_deps/heatmap_"+name+"_"+dep
         fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=3, width=900, height=550)
         #fig.show()
-        plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+        plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)"""
 
 
-# In[13]:
+# In[17]:
 
 
 """string= ""
 for dep in deps_tests:
-    string += "<a href=\"https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/heatmaps_deps/heatmap_taux_{}.jpeg\" target=\"_blank\" rel=\"noopener noreferrer\"> <img src=\"https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/heatmaps_deps/heatmap_taux_{}.jpeg\" width=\"20%\"</a>\n".format(dep, dep)
+    string += "<a href=\"https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/heatmaps_deps/heatmap_taux_{}.jpeg\" target=\"_blank\" rel=\"noopener noreferrer\"> <img src=\"https://raw.githubusercontent.com/rozierguillaume/covid-19/master/images/charts/france/heatmaps_deps/heatmap_taux_{}_SD.jpeg\" width=\"20%\"</a>\n".format(dep, dep)
 print(string)"""
 
 
-# In[14]:
+# In[7]:
 
 
 """for (name, data, title, scale_txt, data_example, digits) in [("taux_reg", 'P_taux', "Taux de<br>positivité", "%", "%", 1)]:
