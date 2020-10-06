@@ -36,6 +36,8 @@ api = tweepy.API(auth)
     
 def tweet_france_maps():
     _, _, dates, _, _, _, _, df_incid, _ = data.import_data()
+    df_incid = df_incid[df_incid["cl_age90"] == 0]
+    
     lastday_df_incid = datetime.strptime(df_incid['jour'].max(), '%Y-%m-%d')
     
     ## TWEET2

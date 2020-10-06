@@ -25,11 +25,12 @@ colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.col
 
 # ## Data Import
 
-# In[2]:
+# In[4]:
 
 
-df, df_confirmed, dates, df_new, df_tests, _, df_sursaud, df_incid, _  = data.import_data()
+df, df_confirmed, dates, df_new, df_tests, _, df_sursaud, df_incid, df_tests_viro = data.import_data()
 
+df_incid = df_incid[df_incid["cl_age90"] == 0]
 df_incid["incidence"] = df_incid["P"]/df_incid["pop"]*100000
 deps_incid = list(dict.fromkeys(list(df_incid['dep'].values))) 
 deps_incid_name = list(dict.fromkeys(list(df_incid['departmentName'].values))) 

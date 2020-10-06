@@ -67,6 +67,8 @@ data.download_data()
 
 df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid, df_tests_viros = data.import_data()
 
+df_incid = df_incid[df_incid["cl_age90"] == 0]
+
 df_incid_france = df_incid.groupby("jour").sum().reset_index()
 
 df_sursaud_france = df_sursaud.groupby(['date_de_passage']).sum().reset_index()

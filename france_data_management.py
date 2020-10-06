@@ -110,7 +110,6 @@ def import_data():
     df['hosp_nonrea'] = df['hosp'] - df['rea']
     df = df.merge(lits_reas, left_on="departmentName", right_on="nom_dpt")
     
-    df_incid = df_incid[df_incid["cl_age90"] == 0]
     #df_tests_viro = df_tests_viro[df_tests_viro["cl_age90"] == 0]
     
     df_incid = df_incid.merge(df_regions, left_on='dep', right_on='departmentCode')

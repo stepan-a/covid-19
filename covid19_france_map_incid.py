@@ -43,6 +43,8 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 # Import data from Santé publique France
 _, _, _, _, _, _, _, df_incid, _ = data.import_data()
+df_incid = df_incid[df_incid["cl_age90"] == 0]
+
 with open('data/france/dep.geojson') as response:
     depa = json.load(response)
 

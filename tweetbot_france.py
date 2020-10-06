@@ -37,6 +37,8 @@ api = tweepy.API(auth)
 def tweet_france():
     #data.download_data()
     _, _, dates, df_new, _, _, _, df_incid, _ = data.import_data()
+    df_incid = df_incid[df_incid["cl_age90"] == 0]
+    
     df_new_france = df_new.groupby(["jour"]).sum().reset_index()
     df_incid_france = df_incid.groupby(["jour"]).sum().reset_index()
     
