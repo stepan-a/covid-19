@@ -150,6 +150,18 @@ date = [dates_deconf[-1]]
 build_map(df_incid.sort_values(by=['incidence']), "images/charts/france/dep-map-incid-cat", date_val=date, date_str = "jour", dep_str = "dep", color_str = 'incidence_color', legend_title="", title="Incidence", subtitle="Nombre de cas hebdomadaires pour 100 000 habitants")
 
 
+# In[7]:
+
+
+#df_incid[df_incid["dep"]=="75"][-7:]
+
+
+# In[17]:
+
+
+#df_incid.loc[df_incid["dep"] == "75"]["P"].rolling(window=7).sum()/df_incid.loc[df_incid["dep"] == "75"]["pop"]*100000
+
+
 # In[ ]:
 
 

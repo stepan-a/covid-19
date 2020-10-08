@@ -25,10 +25,11 @@ colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.col
 
 # ## Data Import
 
-# In[4]:
+# In[2]:
 
 
 df, df_confirmed, dates, df_new, df_tests, _, df_sursaud, df_incid, df_tests_viro = data.import_data()
+df_incid_all = df_incid
 
 df_incid = df_incid[df_incid["cl_age90"] == 0]
 df_incid["incidence"] = df_incid["P"]/df_incid["pop"]*100000
@@ -463,6 +464,128 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
                         ),)
     
     name_fig = "subplots_" + val 
+    fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=1.5, width=1300, height=1600)
+
+    fig["layout"]["annotations"] += (
+                    dict(
+                        x=0.5,
+                        y=1,
+                        xref='paper',
+                        yref='paper',
+                        xanchor='center',
+                        text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
+                        showarrow = False
+                        ),
+                        )
+    plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+    print("> " + name_fig)
+
+
+    #fig.show()
+
+
+# In[6]:
+
+
+for age in list(dict.fromkeys(list(df_incid_all['cl_age90'].values))) + [61]: 
+    ni, nj = 5, 4
+    i, j = 1, 1
+
+    df_incid_all_regions = df_incid_all.groupby(["regionName", "jour"]).sum().reset_index()
+
+    regions_ordered = df_incid_all_regions[df_incid_all_regions['jour'] == df_incid_all_regions['jour'].max()].sort_values(by=["incidence"], ascending=False)["regionName"].values
+    regions_ordered = list(dict.fromkeys(list(regions_ordered)))[:]
+
+    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles=[ "<b>"+ str(r) +"</b>" for r in (regions_ordered[:11] + regions_ordered[11:14]+regions_ordered[14:])], vertical_spacing = 0.06, horizontal_spacing = 0.01)
+    #&#8681;
+
+    sub = "<sub>Nombre de cas par semaine pour 100 000 habitants - covidtracker.fr</sub>"
+    type_ppl = "hospitalisées"
+
+    for region in regions_ordered:
+        if age == 61:
+            data_r = df_incid_all[df_incid_all["cl_age90"] >= 69]
+        else:
+            data_r = df_incid_all[df_incid_all["cl_age90"] == age]
+        data_r = data_r.groupby(["regionName", "jour"]).sum().reset_index()
+        data_r = data_r[data_r["regionName"] == region]
+        data_r.index = pd.to_datetime(data_r["jour"])
+        data_r = data_r[data_r.index.max() - timedelta(days=7*18-1):].resample('7D').sum()
+        data_r["incidence"] = data_r["P"] / (data_r["pop"]/7) * 100000
+        
+        data_r_color = ["darkred" if c>200 else "red" if c>50 else "green" for c in data_r["incidence"].values]
+
+        fig.add_trace(go.Bar(x=data_r.index, y=data_r["incidence"], marker=dict(color = data_r_color)),
+                      i, j)
+
+        rangemin = "2020-03-15"
+
+        fig.update_xaxes(title_text="", range=[rangemin, last_day_plot], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, linewidth=1, linecolor='white', row=i, col=j)
+        fig.update_yaxes(title_text="", range=[0, 350], gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
+
+        j+=1
+        if j == nj+1:
+            i+=1
+            j=1
+
+    for i in fig['layout']['annotations']:
+        i['font'] = dict(size=15)
+        
+    age_str = "tous âges"
+    
+    if age != 0:
+        age_str = str(age-9) + " à " + str(age) + " ans"
+        
+    if age == 90:
+        age_str = "> 90 ans"
+        
+    if age == 61:
+        age_str = "> 60 ans"
+    
+    fig.update_layout(
+        barmode="overlay",
+        margin=dict(
+            l=0,
+            r=15,
+            b=0,
+            t=170,
+            pad=0
+        ),
+        bargap=0,
+        paper_bgcolor='#fffdf5',#fcf8ed #faf9ed
+        plot_bgcolor='#f5f0e4',#f5f0e4 fcf8ed f0e8d5, 
+
+        showlegend=False,
+
+                     title={
+                        'text': ("<b>Taux d'incidence</b>, populations de {}<br>".format(age_str)+sub),
+                        'y':0.97,
+                        'x':0.5,
+                        'xref':"paper",
+                         'yref':"container",
+                        'xanchor': 'center',
+                        'yanchor': 'middle'},
+                        titlefont = dict(
+                        size=35,
+                        )
+    )
+
+    fig["layout"]["annotations"] += ( 
+                            dict(
+                            x=0.85,
+                            y=0.05,
+                            xref='paper',
+                            yref='paper',
+                            xanchor='center',
+                            yanchor='top',
+                            text='Données : Santé publique France<br>MàJ {}'.format(datetime.now().strftime('%d %B')),
+                            showarrow = False,
+                            font=dict(size=15), 
+                            opacity=1,
+                            align='left'
+                        ),)
+
+    name_fig = "subplots_" + "incid" + "_" + str(age)
     fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=1.5, width=1300, height=1600)
 
     fig["layout"]["annotations"] += (
