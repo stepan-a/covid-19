@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[22]:
 
 
 """
@@ -23,7 +23,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[2]:
+# In[23]:
 
 
 from multiprocessing import Pool
@@ -48,13 +48,13 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 now = datetime.now()
 
 
-# In[3]:
+# In[24]:
 
 
 df, df_confirmed, dates, _, _, _, _, _, df_tests_viros = data.import_data()
 
 
-# In[14]:
+# In[29]:
 
 
 deps_tests = list(dict.fromkeys(list(df_tests_viros['dep'].values))) 
@@ -93,6 +93,7 @@ for (name, data, title, scale_txt, data_example, digits) in [("cas", '', "Taux d
             x=dates_heatmap,
             y=[str(x-9) + " à " + str(x)+" ans" if x!=99 else "+ 90 ans" for x in range(9, 109, 10)],
             showscale=True,
+            font_colors=["white", "white"],
             coloraxis="coloraxis",
             #text=df_tests_rolling[data],
             annotation_text = array_incidence
@@ -113,8 +114,9 @@ for (name, data, title, scale_txt, data_example, digits) in [("cas", '', "Taux d
                 titlefont = dict(
                 size=20),
             coloraxis=dict(
-                cmin=0, cmax=250,
-                #colorscale='Inferno',
+                cmin=0, cmax=300,
+                colorscale = [[0, "green"], [0.2, "#ffcc66"], [0.8, "#f50000"], [1, "#b30000"]],
+                #color_continuous_scale=["green", "red"],
                 colorbar=dict(
                     #title="{}<br>du Covid19<br> &#8205;".format(title),
                     thicknessmode="pixels", thickness=12,
@@ -155,7 +157,8 @@ for (name, data, title, scale_txt, data_example, digits) in [("cas", '', "Taux d
                     ]
         
         for i in range(len(fig.layout.annotations)):
-            fig.layout.annotations[i].font.size = 7
+            fig.layout.annotations[i].font.size = 12
+            fig.layout.annotations[i].text = "<b>"+fig.layout.annotations[i].text+"</b>"
         
         for annot in annotations:
             fig.add_annotation(annot)
@@ -167,7 +170,19 @@ for (name, data, title, scale_txt, data_example, digits) in [("cas", '', "Taux d
         plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
 
 
-# In[5]:
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[26]:
 
 
 """OLD
@@ -295,7 +310,7 @@ for (name, data, title, scale_txt, data_example, digits) in [("taux", 'P_taux', 
         plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)"""
 
 
-# In[17]:
+# In[27]:
 
 
 """string= ""
@@ -304,7 +319,7 @@ for dep in deps_tests:
 print(string)"""
 
 
-# In[7]:
+# In[28]:
 
 
 """for (name, data, title, scale_txt, data_example, digits) in [("taux_reg", 'P_taux', "Taux de<br>positivité", "%", "%", 1)]:

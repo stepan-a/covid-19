@@ -4,7 +4,7 @@
 # # COVID-19 World Charts
 # Guillaume Rozier, 2020
 
-# In[1]:
+# In[63]:
 
 
 """
@@ -23,7 +23,7 @@ Data is download to/imported from 'data/'.
 """
 
 
-# In[2]:
+# In[64]:
 
 
 import requests
@@ -57,7 +57,7 @@ today = datetime.now().strftime("%Y-%m-%d %H:%M")
 
 # If you want to display charts here, please change "show" variable to True:
 
-# In[3]:
+# In[65]:
 
 
 upload = False
@@ -65,7 +65,7 @@ show = False
 export = True
 
 
-# In[4]:
+# In[66]:
 
 
 
@@ -86,7 +86,7 @@ if len(sys.argv) >= 4:
 
 # ## Functions
 
-# In[5]:
+# In[67]:
 
 
 def compute_offset(df, col_of_reference, col_to_align, countries):
@@ -118,7 +118,7 @@ def compute_offset(df, col_of_reference, col_to_align, countries):
 
 # #### Download data
 
-# In[6]:
+# In[68]:
 
 
 def download_data():
@@ -155,7 +155,7 @@ def download_data():
 
 # #### Import data and merge
 
-# In[7]:
+# In[69]:
 
 
 def import_files(): 
@@ -176,7 +176,7 @@ def import_files():
     return df_confirmed_csse, df_deaths_csse, df_confirmed_perso, df_deaths_perso, df_france_data
 
 
-# In[8]:
+# In[70]:
 
 
 def data_prep_csse(df0):
@@ -196,7 +196,7 @@ def data_prep_csse(df0):
 #"build : " + today
 
 
-# In[9]:
+# In[71]:
 
 
 def data_merge(data_confirmed, df_confirmed_perso, data_deaths, df_deaths_perso, df_france_data):
@@ -205,7 +205,7 @@ def data_merge(data_confirmed, df_confirmed_perso, data_deaths, df_deaths_perso,
     return data_confirmed, data_deaths
 
 
-# In[10]:
+# In[72]:
 
 
 # Compute rolling mean and patch missing values
@@ -246,7 +246,7 @@ def final_data_prep(data_confirmed, data_confirmed_rolling, data_deaths, data_de
     return data_confirmed, data_confirmed_rolling, data_deaths, data_deaths_rolling
 
 
-# In[11]:
+# In[73]:
 
 
 #print(data_confirmed_rolling.tail)
@@ -254,7 +254,7 @@ def final_data_prep(data_confirmed, data_confirmed_rolling, data_deaths, data_de
 
 # #### Informations on countries (population, offset)
 
-# In[12]:
+# In[74]:
 
 
 
@@ -279,7 +279,7 @@ def offset_compute_export(data_confirmed, data_deaths):
     "build : " + today
 
 
-# In[13]:
+# In[75]:
 
 
 def final_df_exports(data_confirmed, data_deaths):
@@ -293,7 +293,7 @@ def data_import():
     return pd.read_csv('data/data_confirmed.csv'), pd.read_csv('data/data_deaths.csv'), countries
 
 
-# In[14]:
+# In[76]:
 
 
 def update_data():
@@ -325,7 +325,7 @@ def update_data():
 # ## Function
 # This fonction builds and export graphs.
 
-# In[15]:
+# In[77]:
 
 
 def chart(data, data_rolling, countries, by_million_inh = False, align_curves = False, last_d = 15,          offset_name = 'offset_confirmed', type_ppl = "confirmed cases", name_fig = "", since = False,           min_rate=0, log=False, new=""):
@@ -540,7 +540,7 @@ def chart(data, data_rolling, countries, by_million_inh = False, align_curves = 
     return fig
 
 
-# In[16]:
+# In[78]:
 
 
 ### Main
@@ -559,7 +559,7 @@ data_deaths_t = data_deaths_t.drop(data_deaths_t.index[-1])
 data_deaths_t = data_deaths_t.drop(data_deaths_t.index[0])
 
 
-# In[17]:
+# In[86]:
 
 
 for (data, name_var, same_scale) in [(data_deaths_t, "deaths", True), (data_deaths_t, "deaths", False), (data_confirmed_t, "confirmed", True), (data_confirmed_t, "confirmed", False)]: 
@@ -611,7 +611,7 @@ for (data, name_var, same_scale) in [(data_deaths_t, "deaths", True), (data_deat
 
         rge = None
         if same_scale:
-            rge = [0, max_value]
+            rge = [0, max_value_diff]
         fig.update_yaxes(title_text="", range=rge, gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
 
         j+=1
@@ -709,14 +709,14 @@ for (data, name_var, same_scale) in [(data_deaths_t, "deaths", True), (data_deat
 # ## Function calls
 # This block contains calls to above function for every chart.
 
-# In[18]:
+# In[80]:
 
 
 #update_data()
 data_confirmed, data_deaths, countries = data_import()
 
 
-# In[19]:
+# In[81]:
 
 
 last_d_default = math.trunc((datetime.now() - datetime.strptime("2020-03-05", "%Y-%m-%d")).total_seconds()/(3600*24))
@@ -873,7 +873,7 @@ for log in False, True:
 
 # # World charts
 
-# In[20]:
+# In[82]:
 
 
 from datetime import timedelta
@@ -981,16 +981,10 @@ for (dataf, name_fig, title) in [(data_deaths_t, "deaths_world", 'deaths'), (dat
     #fig.show()
 
 
-# In[ ]:
-
-
-
-
-
 # # EXPERIMENTATIONS (SEIR model)
 # Currently not working.
 
-# In[21]:
+# In[83]:
 
 
 # Define parameters
@@ -1007,7 +1001,7 @@ params = alpha, beta, gamma, rho
 # Run simulation
 
 
-# In[22]:
+# In[84]:
 
 
 def seir_model_with_soc_dist(init_vals, params, t):
@@ -1027,7 +1021,7 @@ def seir_model_with_soc_dist(init_vals, params, t):
     return np.stack([S, E, I, R]).T
 
 
-# In[23]:
+# In[85]:
 
 
 #results = seir_model_with_soc_dist(init_vals, params, t)

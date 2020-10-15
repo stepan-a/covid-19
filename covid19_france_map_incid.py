@@ -156,13 +156,13 @@ build_map(df_incid.sort_values(by=['incidence']), "images/charts/france/dep-map-
 #df_incid[df_incid["dep"]=="75"][-7:]
 
 
-# In[17]:
+# In[8]:
 
 
 #df_incid.loc[df_incid["dep"] == "75"]["P"].rolling(window=7).sum()/df_incid.loc[df_incid["dep"] == "75"]["pop"]*100000
 
 
-# In[ ]:
+# In[9]:
 
 
 build_gif("images/charts/france/incid-cat.gif", "images/charts/france/dep-map-incid-cat", dates_deconf[-30:])

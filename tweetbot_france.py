@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[3]:
 
 
 # Guillaume Rozier - 2020 - MIT License
@@ -78,9 +78,9 @@ def tweet_france():
         tests_tendance, tests_sign = "stable", "+"
         
     date_incid = datetime.strptime(sorted(list(dict.fromkeys(list(df_incid_france['jour'].values))))[-1], '%Y-%m-%d').strftime('%d %B')
-    tweet ="Chiffres #Covid19 France :\n• {} personnes décédées en milieu hospitalier ({}), {} sur 7 jours ({}{})\n• {} admissions à l'hôpital ({}), {} sur 7 jours ({}{})\n• {} cas positifs ({}), {} sur 7 jours ({}{})\n➡️ Plus d'infos : covidtracker.fr/covidtracker-france".format(deaths, lastday_df_new.strftime('%d/%m'), deaths_tendance, deaths_sign, deaths-deaths_j7, hosp, lastday_df_new.strftime('%d/%m'), hosp_tendance, hosp_sign, hosp-hosp_j7, tests, lastday_df_incid.strftime('%d/%m'), tests_tendance, tests_sign, tests-tests_j7) # toDo 
+    tweet ="Chiffres #Covid19 :\n• {} personnes décédées en milieu hospitalier ({}), {} sur 7 jours ({}{})\n• {} admissions à l'hôpital ({}), {} sur 7 jours ({}{})\n• {} cas positifs ({}), {} sur 7 jours ({}{})\n➡️ Plus d'infos : covidtracker.fr/covidtracker-france".format(deaths, lastday_df_new.strftime('%d/%m'), deaths_tendance, deaths_sign, deaths-deaths_j7, hosp, lastday_df_new.strftime('%d/%m'), hosp_tendance, hosp_sign, hosp-hosp_j7, tests, lastday_df_incid.strftime('%d/%m'), tests_tendance, tests_sign, tests-tests_j7) # toDo 
     
-    images_path =["images/charts/france/var_journ_lines_recent.jpeg", "images/charts/france/entrees_sorties_hosp_rea_ROLLING_recent.jpeg", "images/charts/france/dc_new_bar.jpeg", "images/charts/france/reffectif.jpeg"]
+    images_path =["images/charts/france/dashboard_jour.jpeg", "images/charts/france/heatmap_incidence.jpeg"]
     media_ids = []
     
     for filename in images_path:

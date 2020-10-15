@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[2]:
 
 
 import france_data_management as data
@@ -25,7 +25,7 @@ colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.col
 
 # ## Data Import
 
-# In[2]:
+# In[3]:
 
 
 df, df_confirmed, dates, df_new, df_tests, _, df_sursaud, df_incid, df_tests_viro = data.import_data()
@@ -70,7 +70,7 @@ df_incid_region = df_incid.groupby(["jour", "regionName"]).sum().reset_index()
 df_sursaud_region = df_sursaud.groupby(["date_de_passage", "regionName"]).sum().reset_index()
 
 
-# In[3]:
+# In[4]:
 
 
 with open('data/france/dep.geojson') as response:
@@ -484,7 +484,7 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
     #fig.show()
 
 
-# In[6]:
+# In[21]:
 
 
 for age in list(dict.fromkeys(list(df_incid_all['cl_age90'].values))) + [61]: 
@@ -501,7 +501,8 @@ for age in list(dict.fromkeys(list(df_incid_all['cl_age90'].values))) + [61]:
 
     sub = "<sub>Nombre de cas par semaine pour 100 000 habitants - covidtracker.fr</sub>"
     type_ppl = "hospitalisées"
-
+    
+    current_values = [[], []]
     for region in regions_ordered:
         if age == 61:
             data_r = df_incid_all[df_incid_all["cl_age90"] >= 69]
@@ -517,11 +518,13 @@ for age in list(dict.fromkeys(list(df_incid_all['cl_age90'].values))) + [61]:
 
         fig.add_trace(go.Bar(x=data_r.index, y=data_r["incidence"], marker=dict(color = data_r_color)),
                       i, j)
-
+        
+        current_values[0] += [data_r["incidence"][-1]]
+        current_values[1] += [data_r_color[-1]]
+        
         rangemin = "2020-03-15"
-
         fig.update_xaxes(title_text="", range=[rangemin, last_day_plot], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, linewidth=1, linecolor='white', row=i, col=j)
-        fig.update_yaxes(title_text="", range=[0, 350], gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
+        fig.update_yaxes(title_text="", range=[0, 600], gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
 
         j+=1
         if j == nj+1:
@@ -541,6 +544,31 @@ for age in list(dict.fromkeys(list(df_incid_all['cl_age90'].values))) + [61]:
         
     if age == 61:
         age_str = "> 60 ans"
+        
+    annot=()
+    cnt=1
+    for reg in regions_ordered:
+        annot += (dict(
+            x=data_r.index[-1], y = current_values[0][cnt-1], # annotation point
+            xref='x'+str(cnt), 
+            yref='y'+str(cnt),
+            text="<b>{}</b><br>".format(math.trunc(round(current_values[0][cnt-1]))),
+            xshift=0,
+            yshift=3,
+            align='center',
+            xanchor="center",
+            font=dict(
+                color=current_values[1][cnt-1],
+                size=15
+                ),
+            ax = 0,
+            ay = -25,
+            arrowcolor=current_values[1][cnt-1],
+            arrowsize=1,
+            arrowwidth=1,
+            arrowhead=0
+        ),)
+        cnt+=1
     
     fig.update_layout(
         barmode="overlay",
@@ -570,7 +598,7 @@ for age in list(dict.fromkeys(list(df_incid_all['cl_age90'].values))) + [61]:
                         )
     )
 
-    fig["layout"]["annotations"] += ( 
+    fig["layout"]["annotations"] += annot + ( 
                             dict(
                             x=0.85,
                             y=0.05,
@@ -604,6 +632,157 @@ for age in list(dict.fromkeys(list(df_incid_all['cl_age90'].values))) + [61]:
 
 
     #fig.show()
+
+
+# In[10]:
+
+
+for age in list(dict.fromkeys(list(df_incid_all['cl_age90'].values))) + [61]: 
+    ni, nj = 5, 4
+    i, j = 1, 1
+
+    regions_ordered = df_region[df_region['jour'] == df_region['jour'].max()].sort_values(by=["hosp"], ascending=False)["regionName"].values
+    regions_ordered = list(dict.fromkeys(list(regions_ordered)))[:]
+
+    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles=[ "<b>"+ str(r) +"</b>" for r in (regions_ordered[:11] + regions_ordered[11:14]+regions_ordered[14:])], vertical_spacing = 0.06, horizontal_spacing = 0.01)
+    #&#8681;
+
+    sub = "<sub>Nombre de cas par semaine pour 100 000 habitants - covidtracker.fr</sub>"
+    type_ppl = "hospitalisées"
+    
+    current_values = [[], []]
+    for region in regions_ordered:
+        if age == 61:
+            data_r = df_region[df_region["cl_age90"] >= 69]
+        else:
+            data_r = df_region[df_region["cl_age90"] == age]
+        data_r = data_r.groupby(["regionName", "jour"]).sum().reset_index()
+        data_r = data_r[data_r["regionName"] == region]
+        
+        data_r_color = ["darkred" if c>200 else "red" if c>50 else "green" for c in data_r["incidence"].values]
+
+        fig.add_trace(go.Bar(x=data_r.index, y=data_r["hosp"], marker=dict(color = data_r_color)),
+                      i, j)
+        
+        current_values[0] += [data_r["hosp"][-1]]
+        current_values[1] += [data_r_color[-1]]
+        
+        rangemin = "2020-03-15"
+        fig.update_xaxes(title_text="", range=[rangemin, last_day_plot], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, linewidth=1, linecolor='white', row=i, col=j)
+        fig.update_yaxes(title_text="", range=[0, 600], gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
+
+        j+=1
+        if j == nj+1:
+            i+=1
+            j=1
+
+    for i in fig['layout']['annotations']:
+        i['font'] = dict(size=15)
+        
+    age_str = "tous âges"
+    
+    if age != 0:
+        age_str = str(age-9) + " à " + str(age) + " ans"
+        
+    if age == 90:
+        age_str = "> 90 ans"
+        
+    if age == 61:
+        age_str = "> 60 ans"
+        
+    annot=()
+    cnt=1
+    for reg in regions_ordered:
+        annot += (dict(
+            x=data_r.index[-1], y = current_values[0][cnt-1], # annotation point
+            xref='x'+str(cnt), 
+            yref='y'+str(cnt),
+            text="<b>{}</b><br>".format(math.trunc(round(current_values[0][cnt-1]))),
+            xshift=0,
+            yshift=3,
+            align='center',
+            xanchor="center",
+            font=dict(
+                color=current_values[1][cnt-1],
+                size=15
+                ),
+            ax = 0,
+            ay = -25,
+            arrowcolor=current_values[1][cnt-1],
+            arrowsize=1,
+            arrowwidth=1,
+            arrowhead=0
+        ),)
+        cnt+=1
+    
+    fig.update_layout(
+        barmode="overlay",
+        margin=dict(
+            l=0,
+            r=15,
+            b=0,
+            t=170,
+            pad=0
+        ),
+        bargap=0,
+        paper_bgcolor='#fffdf5',#fcf8ed #faf9ed
+        plot_bgcolor='#f5f0e4',#f5f0e4 fcf8ed f0e8d5, 
+
+        showlegend=False,
+
+                     title={
+                        'text': ("<b>Taux d'incidence</b>, populations de {}<br>".format(age_str)+sub),
+                        'y':0.97,
+                        'x':0.5,
+                        'xref':"paper",
+                         'yref':"container",
+                        'xanchor': 'center',
+                        'yanchor': 'middle'},
+                        titlefont = dict(
+                        size=35,
+                        )
+    )
+
+    fig["layout"]["annotations"] += annot + ( 
+                            dict(
+                            x=0.85,
+                            y=0.05,
+                            xref='paper',
+                            yref='paper',
+                            xanchor='center',
+                            yanchor='top',
+                            text='Données : Santé publique France<br>MàJ {}'.format(datetime.now().strftime('%d %B')),
+                            showarrow = False,
+                            font=dict(size=15), 
+                            opacity=1,
+                            align='left'
+                        ),)
+
+    name_fig = "subplots_" + "incid_hosp_" + str(age)
+    fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=1.5, width=1300, height=1600)
+
+    fig["layout"]["annotations"] += (
+                    dict(
+                        x=0.5,
+                        y=1,
+                        xref='paper',
+                        yref='paper',
+                        xanchor='center',
+                        text='Cliquez sur des éléments de légende pour les ajouter/supprimer',
+                        showarrow = False
+                        ),
+                        )
+    plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
+    print("> " + name_fig)
+
+
+    #fig.show()
+
+
+# In[11]:
+
+
+df_region
 
 
 # In[6]:
@@ -1060,7 +1239,7 @@ except:
     print("ERROR 1")"""
 
 
-# In[8]:
+# In[4]:
 
 
 
@@ -1118,7 +1297,7 @@ for dep in tqdm(deps_incid):
     fig.update_xaxes(title_text="", range=["2020-05-18", data_dep["jour"].values[-1]],gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=7), tickangle=0, nticks=6, linewidth=0, linecolor='white', row=i, col=j)
     #fig.update_yaxes(title_text="", range=[0, 5], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j, secondary_y=True)
     fig.update_yaxes(title_text="", gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j, secondary_y=False) #, type="log"
-    fig.update_yaxes(title_text="", range=[0, 15], gridcolor='white', linewidth=0, linecolor='white', ticksuffix="%", tickfont=dict(size=7, color=clr), nticks=8, row=i, col=j, secondary_y=True)
+    fig.update_yaxes(title_text="", range=[0, 20], gridcolor='white', linewidth=0, linecolor='white', ticksuffix="%", tickfont=dict(size=7, color=clr), nticks=8, row=i, col=j, secondary_y=True)
 
     #, range=[0, max_value]
     
@@ -1770,7 +1949,7 @@ fig.add_trace(go.Bar(x = dta["date_de_passage"], y = dta["taux_covid"]*100, mark
 fig.show()"""
 
 
-# In[13]:
+# In[7]:
 
 
 
@@ -1809,7 +1988,7 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
         titles += ["<b>" + deps_ordered_nb[k] + "</b> - " + deps_ordered[k] + ""] #&#9661; 
         k+=1
 
-    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles= titles, vertical_spacing = 0.025, horizontal_spacing = 0.002)
+    fig = make_subplots(rows=ni, cols=nj, shared_yaxes=True, subplot_titles= titles, vertical_spacing = 0.025, horizontal_spacing = 0.006)
     #&#8681;
     
     df_nonobj = df.select_dtypes(exclude=['object'])

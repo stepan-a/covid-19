@@ -35,7 +35,7 @@ def download_data():
         
     pbar.update(5)
     df_metadata = pd.read_csv('data/france/metadata.csv', sep=";")
-    url_data = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-covid19")]["url"].values[0]
+    url_data = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-covid19")]["url"].values[0] #donnees-hospitalieres-classe-age-covid19-2020-10-14-19h00.csv 
     url_data_new = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-nouveaux")]["url"].values[0]
     url_tests = df_metadata[df_metadata['url'].str.contains("/donnees-tests-covid19-labo-quotidien")]["url"].values[0]
     url_incidence = df_metadata[df_metadata['url'].str.contains("/sp-pe-tb-quot")]["url"].values[0]
