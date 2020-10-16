@@ -170,18 +170,6 @@ for (name, data, title, scale_txt, data_example, digits) in [("cas", '', "Taux d
         plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
 
 
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
 # In[26]:
 
 

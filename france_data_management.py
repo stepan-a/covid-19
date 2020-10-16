@@ -10,7 +10,7 @@ import json
 from tqdm import tqdm
 
 
-# In[14]:
+# In[17]:
 
 
 # Download data from Santé publique France and export it to local files
@@ -35,9 +35,11 @@ def download_data():
         
     pbar.update(5)
     df_metadata = pd.read_csv('data/france/metadata.csv', sep=";")
+    
     url_data = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-covid19")]["url"].values[0] #donnees-hospitalieres-classe-age-covid19-2020-10-14-19h00.csv 
     url_data_new = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-nouveaux")]["url"].values[0]
     url_tests = df_metadata[df_metadata['url'].str.contains("/donnees-tests-covid19-labo-quotidien")]["url"].values[0]
+    url_metropoles = df_metadata[df_metadata['url'].str.contains("/sg-metro-opendata")]["url"].values[0]
     url_incidence = df_metadata[df_metadata['url'].str.contains("/sp-pe-tb-quot")]["url"].values[0]
     url_tests_viro = df_metadata[df_metadata['url'].str.contains("/sp-pos-quot-dep")]["url"].values[0]
     url_sursaud = df_metadata[df_metadata['url'].str.contains("sursaud.*quot.*dep")]["url"].values[0]
@@ -46,6 +48,7 @@ def download_data():
     data = requests.get(url_data)
     data_new = requests.get(url_data_new)
     data_tests = requests.get(url_tests)
+    data_metropoles = requests.get(url_metropoles)
     data_deconf = requests.get(url_deconf)
     data_sursaud = requests.get(url_sursaud)
     data_incidence = requests.get(url_incidence)
@@ -60,6 +63,9 @@ def download_data():
         
     with open('data/france/donnes-tests-covid19-quotidien.csv', 'wb') as f:
         f.write(data_tests.content)
+        
+    with open('data/france/donnes-incidence-metropoles.csv', 'wb') as f:
+        f.write(data_metropoles.content)
         
     with open('data/france/indicateurs-deconf.csv', 'wb') as f:
         f.write(data_deconf.content)
@@ -159,16 +165,7 @@ def import_data():
     # Correction du 14/05 (pas de données)
     #cols_to_change = df.select_dtypes(include=np.number).columns.tolist()
     cols_to_change = [s for s in df.columns.tolist() if "new" in s]
-    
-    #for dep in deps:
-        #ligne = df.loc[(df["jour"] == "2020-05-15") & (df["dep"] == dep),:]
 
-        #moitié = ligne.loc[:, cols_to_change]/2
-        #df.loc[ (df["jour"] == "2020-05-15") & (df["dep"] == dep), cols_to_change] = moitié
-
-        #ligne.loc[:, cols_to_change] = moitié
-        #ligne.loc[:,["jour"]] = ["2020-05-14"]
-        #df = df.append(ligne)
     df['jour'] = df['jour'].str.replace(r'(.*)/(.*)/(.*)',r'\3-\2-\1')     
     dates = sorted(list(dict.fromkeys(list(df['jour'].values))))
     
@@ -180,11 +177,20 @@ def import_data():
     df_tests_viro["pop"] = pop_df_incid
     return df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid, df_tests_viro
 
+def import_data_metropoles():
+    df_metro = pd.read_csv('data/france/donnes-incidence-metropoles.csv', sep=";")
+    epci = pd.read_csv('data/france/metropole-epci.csv', sep=";", encoding="'windows-1252'")
+    
+    df_metro = df_metro.merge(epci, left_on='epci2020', right_on='EPCI').drop(['EPCI'], axis=1)
+    
+    return df_metro
+        
 
-# In[15]:
+
+# In[5]:
 
 
-#download_data()
+download_data()
 #df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid, df_tests_viro = import_data()
 
 
