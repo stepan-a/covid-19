@@ -87,6 +87,10 @@ def try_update_france():
         except:
             pass
         
+        subprocess.run(["sudo", "python3", "covid19_france_metropoles.py"])
+        push("France map incid")
+        print("update France local: " + str(now.hour) + ":" + str(now.minute))
+        
         subprocess.run(["sudo", "python3", "covid19_france_local_charts.py"])
         push("France local subplots")
         print("update France local: " + str(now.hour) + ":" + str(now.minute))

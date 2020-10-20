@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[12]:
+# In[1]:
 
 
 import france_data_management as data
@@ -25,7 +25,7 @@ colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.col
 
 # ## Data Import
 
-# In[13]:
+# In[2]:
 
 
 df, df_confirmed, dates, df_new, df_tests, _, df_sursaud, df_incid, df_tests_viro = data.import_data()
@@ -70,7 +70,7 @@ df_incid_region = df_incid.groupby(["jour", "regionName"]).sum().reset_index()
 df_sursaud_region = df_sursaud.groupby(["date_de_passage", "regionName"]).sum().reset_index()
 
 
-# In[14]:
+# In[3]:
 
 
 with open('data/france/dep.geojson') as response:
@@ -484,7 +484,7 @@ for val in ["hosp_regpop", "rea_regpop", "dc_new_regpop_rolling7"]: #
     #fig.show()
 
 
-# In[17]:
+# In[4]:
 
 
 for age in list(dict.fromkeys(list(df_incid_all['cl_age90'].values))) + [61]: 
@@ -524,7 +524,7 @@ for age in list(dict.fromkeys(list(df_incid_all['cl_age90'].values))) + [61]:
         
         rangemin = "2020-03-15"
         fig.update_xaxes(title_text="", range=[rangemin, last_day_plot], gridcolor='white', ticks="inside", tickformat='%d/%m', tickangle=0, linewidth=1, linecolor='white', row=i, col=j)
-        fig.update_yaxes(title_text="", range=[0, 600], gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
+        fig.update_yaxes(title_text="", range=[0, 850], gridcolor='white', linewidth=1, linecolor='white', row=i, col=j)
 
         j+=1
         if j == nj+1:

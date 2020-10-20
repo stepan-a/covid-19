@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[6]:
 
 
 """
@@ -21,7 +21,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[2]:
+# In[7]:
 
 
 from multiprocessing import Pool
@@ -41,49 +41,53 @@ import locale
 import france_data_management as data
 import numpy as np
 import plotly.figure_factory as ff
-
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 now = datetime.now()
 
 
-# In[ ]:
+# In[8]:
 
 
 df_metro = data.import_data_metropoles()
+df_metro_65 = df_metro[df_metro["clage_65"] == 65]
+df_metro = df_metro[df_metro["clage_65"] == 0]
 
 
-# In[ ]:
+# In[10]:
 
 
-metros = list(dict.fromkeys(list(df_metro['Metropole'].values))) 
-
-for (name, data, title, scale_txt, data_example, digits) in [("cas", '', "Taux d'<br>incidence", " cas", " cas", 1)]:
+for (title, df_temp, name) in [("Tous âges", df_metro, "0"), ("> 65 ans", df_metro_65, "65")]:
+    metros = list(dict.fromkeys(list(df_temp['Metropole'].values)))
+    metros_ordered = df_temp[df_temp['semaine_glissante'] == df_temp['semaine_glissante'].max()].sort_values(by=["ti"], ascending=True)["Metropole"].values
+    dates_heatmap = list(dict.fromkeys(list(df_temp['semaine_glissante'].values))) 
     
-    array_incidence=np.array([])
-    for idx, metro in enumerate(metros): #deps_tests.drop("975", "976", "977", "978")
-        array_incidence += [metros[metros["Metropole"] == metro].values]
-        
+    array_incidence=[]
+    
+    for idx, metro in enumerate(metros_ordered): #deps_tests.drop("975", "976", "977", "978")
+        array_incidence += [df_temp[df_temp["Metropole"] == metro]['ti'].values.astype(int)]
+        #dates_heatmap=df_metro[df_metro["Metropole"] == metro]["semaine_glissante"].values.astype(str)
         
     fig = ff.create_annotated_heatmap(
         z=array_incidence, #df_tests_rolling[data].to_numpy()
-        x=dates_heatmap,
-        y=[str(x-9) + " à " + str(x)+" ans" if x!=99 else "+ 90 ans" for x in range(9, 109, 10)],
+        x=[("<b>" + a[-2:] + "/" + a[-5:-3] + "</b>") for a in dates_heatmap], #date[:10] for date in dates_heatmap
+        y=[str(22-idx) + ". <b>" + metro[:9] +"</b>" for idx, metro in enumerate(metros_ordered)],
         showscale=True,
         font_colors=["white", "white"],
         coloraxis="coloraxis",
         #text=df_tests_rolling[data],
-        annotation_text = array_incidence
+        #annotation_text = array_incidence
         )
 
     annot = []
 
-    fig.update_xaxes(side="bottom", tickfont=dict(size=9))
-    fig.update_yaxes(tickfont=dict(size=9))
+    fig.update_xaxes(side="bottom", tickfont=dict(size=10))
+    fig.update_yaxes(tickfont=dict(size=15))
 
     fig.update_layout(
+        
         title={
-            'text': "{} du Covid19 en fonction de l\'âge".format(title.replace("<br>", " ")),
-            'y':0.98,
+            'text': "<b>Taux d'incidence du Covid19 dans les 22 plus grandes métropoles<br>{}</b>, nombre de cas sur 7 j. pour 100k. hab.".format(title),
+            'y':0.97,
             'x':0.5,
             'xanchor': 'center',
             'yanchor': 'top'},
@@ -99,49 +103,42 @@ for (name, data, title, scale_txt, data_example, digits) in [("cas", '', "Taux d
                 lenmode="pixels", len=300,
                 yanchor="middle", y=0.5,
                 tickfont=dict(size=9),
-                ticks="outside", ticksuffix="{}".format(scale_txt),
+                ticks="outside", ticksuffix="{}".format(" cas"),
                 )
         ),
     margin=dict(
-                    b=80,
-                    t=40,
-                    pad=0
-                ))
+            l=0,
+            r=0,
+            b=70,
+            t=70,
+            pad=0
+        ),
+    )
 
     annotations = annot + [
                     dict(
                         x=0.5,
-                        y=0.5,
-                        xref='paper',
-                        yref='paper',
-                        opacity=0.6,
-                        font=dict(color="white", size=55),
-                        text="Dép. <b>{}</b>".format(dep),
-                        showarrow=False
-                    ),
-                    dict(
-                        x=0.5,
-                        y=-0.16,
+                        y=-0.08,
                         xref='paper',
                         yref='paper',
                         xanchor='center',
                         opacity=0.6,
                         font=dict(color="black", size=12),
-                        text='Lecture : une case correspond au {} pour une tranche d\'âge (à lire à gauche) et à une date donnée (à lire en bas).<br>Du orange correspond à un {} élevé.  <i>Date : {} - Source : covidtracker.fr - Données : Santé publique France</i>'.format(title.lower().replace("<br>", " "), title.lower().replace("<br>", " "), now.strftime('%d %B')),
+                        text='Lecture : une case correspond à l\'incidence pour chaque métropole (à lire à gauche) et à une date donnée (à lire en bas).<br>Du rouge correspond à une incidence élevée.  <i>Date : {} - Source : covidtracker.fr - Données : Santé publique France</i>'.format(title.lower().replace("<br>", " "), title.lower().replace("<br>", " "), now.strftime('%d %B')),
                         showarrow = False
                     ),
                 ]
 
     for i in range(len(fig.layout.annotations)):
-        fig.layout.annotations[i].font.size = 12
-        fig.layout.annotations[i].text = "<b>"+fig.layout.annotations[i].text+"</b>"
+        fig.layout.annotations[i].font.size = 11
+        #fig.layout.annotations[i].text = "<b>"+fig.layout.annotations[i].text+"</b>"
 
     for annot in annotations:
         fig.add_annotation(annot)
 
-    name_fig = "heatmaps_metropoles/heatmap_"+"taux"+"_"+dep
-    fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=2, width=900, height=550)
-    fig.write_image("images/charts/france/{}_SD.jpeg".format(name_fig), scale=0.5, width=900, height=550)
+    name_fig = "heatmaps_metropoles_" + name
+    fig.write_image("images/charts/france/{}.jpeg".format(name_fig), scale=2, width=1000, height=1000)
+    fig.write_image("images/charts/france/{}_SD.jpeg".format(name_fig), scale=0.5, width=900, height=900)
     #fig.show()
     plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
 

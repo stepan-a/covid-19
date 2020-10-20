@@ -43,6 +43,7 @@ def download_data():
     url_incidence = df_metadata[df_metadata['url'].str.contains("/sp-pe-tb-quot")]["url"].values[0]
     url_tests_viro = df_metadata[df_metadata['url'].str.contains("/sp-pos-quot-dep")]["url"].values[0]
     url_sursaud = df_metadata[df_metadata['url'].str.contains("sursaud.*quot.*dep")]["url"].values[0]
+    url_data_clage = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-classe-age-covid19")]["url"].values[0]
     
     pbar.update(6)
     data = requests.get(url_data)
@@ -53,6 +54,7 @@ def download_data():
     data_sursaud = requests.get(url_sursaud)
     data_incidence = requests.get(url_incidence)
     data_tests_viro = requests.get(url_tests_viro)
+    data_clage = requests.get(url_data_clage)
     
     pbar.update(7)
     with open('data/france/donnes-hospitalieres-covid19.csv', 'wb') as f:
@@ -78,6 +80,9 @@ def download_data():
         
     with open('data/france/tests_viro-dep-quot.csv', 'wb') as f:
         f.write(data_tests_viro.content)
+        
+    with open('data/france/donnes-hospitalieres-clage-covid19.csv', 'wb') as f:
+        f.write(data_clage.content)
         
     pbar.update(8)
 
@@ -184,6 +189,11 @@ def import_data_metropoles():
     df_metro = df_metro.merge(epci, left_on='epci2020', right_on='EPCI').drop(['EPCI'], axis=1)
     
     return df_metro
+
+def import_data_hosp_clage():
+    df_hosp = pd.read_csv('data/france/donnes-hospitalieres-clage-covid19.csv', sep=";")
+    
+    return df_hosp
         
 
 
