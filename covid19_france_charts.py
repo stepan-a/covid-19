@@ -4,7 +4,7 @@
 # # COVID-19 French Charts
 # Guillaume Rozier, 2020
 
-# In[606]:
+# In[1]:
 
 
 """
@@ -26,7 +26,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[607]:
+# In[118]:
 
 
 from multiprocessing import Pool
@@ -45,6 +45,7 @@ import json
 import locale
 import france_data_management as data
 import numpy as np
+import cv2
 
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.colors.qualitative.Plotly + px.colors.qualitative.Dark24 + px.colors.qualitative.Alphabet
@@ -54,7 +55,7 @@ now = datetime.now()
 
 # # Data download and import
 
-# In[608]:
+# In[120]:
 
 
 data.download_data()
@@ -62,10 +63,12 @@ data.download_data()
 
 # ## Data transformations
 
-# In[609]:
+# In[121]:
 
 
 df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid, df_tests_viros = data.import_data()
+df_clage = data.import_data_hosp_clage()
+df_clage_france = df_clage.groupby(["jour", "cl_age90"]).sum().reset_index()
 
 df_incid = df_incid[df_incid["cl_age90"] == 0]
 
@@ -93,7 +96,7 @@ df_france = df.groupby('jour').sum().reset_index()
 regions = list(dict.fromkeys(list(df['regionName'].values))) 
 
 
-# In[610]:
+# In[122]:
 
 
 #Calcul sorties de réa
@@ -583,12 +586,6 @@ plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(
 print("> " + name_fig)
 if show_charts:
     fig.show()
-
-
-# In[615]:
-
-
-df_france["dc_new"][-7:]
 
 
 # In[616]:
@@ -1098,7 +1095,6 @@ if show_charts:
 # In[621]:
 
 
-import cv2
 
 im1 = cv2.imread('images/charts/france/cas_journ.jpeg')
 im2 = cv2.imread('images/charts/france/hosp_journ.jpeg')
@@ -3964,7 +3960,24 @@ for graph, data_name in [("", "cas"), ("pop", "cas pour 100 k. hab.")]:
         fig.show()
 
 
-# In[682]:
+# In[138]:
+
+
+def prep_course():
+    colors_regs_def = {}
+    for i, reg in enumerate(regions):
+        df_incid_reg.loc[df_incid_reg["regionName"]==reg, "incidence_rolling"] =             (df_incid_reg.loc[df_incid_reg["regionName"]==reg, "P"].rolling(window=7).sum()*100000/df_incid_reg.loc[df_incid_reg["regionName"]==reg, "pop"])
+
+        df_incid_reg.loc[df_incid_reg["regionName"]==reg, "P_rolling"] = df_incid_reg.loc[df_incid_reg["regionName"]==reg, "P"].rolling(window=7).mean()
+        colors_regs_def[reg] = colors_reg[i]
+
+        df_region.loc[df_region["regionName"]==reg, "dc_pop_new_rolling"] = df_region.loc[df_region["regionName"]==reg, "dc_new"].rolling(window=7).mean()*10000000/df_region.loc[df_region["regionName"]==reg, "regionPopulation"]
+
+    
+    """(df_incid_reg, "incidence_rolling", dates_incid, "Incidence", "course_incidence", "regionName"),    (df_incid_reg, "P_rolling", dates_incid, "Cas de Covid19", "course_cas", "regionName"),    (df_region, "dc_pop_new_rolling", dates, "Décès pour 1M hab.", "course_dc", "regionName")]:"""
+
+
+# In[139]:
 
 
 #COURSE
@@ -3973,87 +3986,168 @@ df_incid_reg = df_incid.groupby(['jour', 'regionName']).sum().reset_index()
 df_incid_reg["P_pop"] = df_incid_reg["P"]*100000/df_incid_reg["pop"]
 
 
-for (dataset, column, dates_to_use, title, folder) in [(df_incid_reg, "incidence_rolling", dates_incid, "Incidence", "course_incidence"),(df_incid_reg, "P_rolling", dates_incid, "Cas de Covid19", "course_cas"),(df_region, "dc_pop_new_rolling", dates, "Décès pour 1M hab.", "course_dc")]:
+for (dataset, column, dates_to_use, title, folder) in [    (df_incid_reg, "incidence_rolling", dates_incid, "Incidence", "course_incidence"),    (df_incid_reg, "P_rolling", dates_incid, "Cas de Covid19", "course_cas"),    (df_region, "dc_pop_new_rolling", dates, "Décès pour 1M hab.", "course_dc")]:
+    
+        colors_regs_def = {}
+        for i, reg in enumerate(regions):
+            df_incid_reg.loc[df_incid_reg["regionName"]==reg, "incidence_rolling"] =                 (df_incid_reg.loc[df_incid_reg["regionName"]==reg, "P"].rolling(window=7).sum()*100000/df_incid_reg.loc[df_incid_reg["regionName"]==reg, "pop"])
 
-    colors_regs_def = {}
-    for i, reg in enumerate(reg_ordered):
-        df_incid_reg.loc[df_incid_reg["regionName"]==reg, "incidence_rolling"] =             (df_incid_reg.loc[df_incid_reg["regionName"]==reg, "P"].rolling(window=7).sum()*100000/df_incid_reg.loc[df_incid_reg["regionName"]==reg, "pop"])
+            df_incid_reg.loc[df_incid_reg["regionName"]==reg, "P_rolling"] = df_incid_reg.loc[df_incid_reg["regionName"]==reg, "P"].rolling(window=7).mean()
+            colors_regs_def[reg] = colors[i]
 
-        df_incid_reg.loc[df_incid_reg["regionName"]==reg, "P_rolling"] = df_incid_reg.loc[df_incid_reg["regionName"]==reg, "P"].rolling(window=7).mean()
-        colors_regs_def[reg] = colors_reg[i]
+            df_region.loc[df_region["regionName"]==reg, "dc_pop_new_rolling"] = df_region.loc[df_region["regionName"]==reg, "dc_new"].rolling(window=7).mean()*10000000/df_region.loc[df_region["regionName"]==reg, "regionPopulation"]
 
-        df_region.loc[df_region["regionName"]==reg, "dc_pop_new_rolling"] = df_region.loc[df_region["regionName"]==reg, "dc_new"].rolling(window=7).mean()*10000000/df_region.loc[df_region["regionName"]==reg, "regionPopulation"]
+        max_value = 0
+        for i in range(-n, 0):
+            data_temp = dataset[dataset["jour"] == dates_to_use[i]].sort_values(by=['regionName'], ascending=False)
+            max_value = max(max_value, data_temp[column].max())
 
-    max_value = 0
-    for i in range(-n, 0):
-        data_temp = dataset[dataset["jour"] == dates_to_use[i]].sort_values(by=['regionName'], ascending=False)
-        max_value = max(max_value, data_temp[column].max())
+        for i in range(-n, 0):   
+            fig = go.Figure()
 
-    for i in range(-n, 0):   
-        fig = go.Figure()
+            data_temp = dataset[dataset["jour"] == dates_to_use[i]].sort_values(by=[column], ascending=True)
+            #data_temp = data_temp[-10:]
 
-        data_temp = dataset[dataset["jour"] == dates_to_use[i]].sort_values(by=[column], ascending=True)
-        #data_temp = data_temp[-10:]
+            colors_regs = []
+            for reg in data_temp["regionName"]:
+                colors_regs += [colors_regs_def[reg]]
 
-        colors_regs = []
-        for reg in data_temp["regionName"]:
-            colors_regs += [colors_regs_def[reg]]
+            fig.add_trace(go.Bar(
+                x = data_temp[column],
+                y = data_temp["regionName"],
+                text = ["<b>" + str(d) + "</b>" for d in data_temp[column].astype(int).values],
+                textposition='auto',
+                textangle=0,
+                marker = dict(color=data_temp[column], coloraxis = "coloraxis",), #colors_regs 
+                orientation="h"))
 
-        fig.add_trace(go.Bar(
-            x = data_temp[column],
-            y = data_temp["regionName"],
-            text = ["<b>" + str(d) + "</b>" for d in data_temp[column].astype(int).values],
-            textposition='auto',
-            textangle=0,
-            marker = dict(color=data_temp[column], coloraxis = "coloraxis",), #colors_regs 
-            orientation="h"))
+            fig.update_xaxes(range=[0, max_value])
 
-        fig.update_xaxes(range=[0, max_value])
+            fig.update_layout(
+                title={
+                        'text': "<b>{}</b> - ".format(title) + datetime.strptime(dates_to_use[i], '%Y-%m-%d').strftime('%d %B'),
+                        'y':0.98,
+                        'x':0.5,
+                        'xanchor': 'center',
+                        'yanchor': 'top'},
+                titlefont = dict(
+                        size=20),
 
-        fig.update_layout(
-            title={
-                    'text': "<b>{}</b> - ".format(title) + datetime.strptime(dates_incid[i], '%Y-%m-%d').strftime('%d %B'),
-                    'y':0.98,
-                    'x':0.5,
-                    'xanchor': 'center',
-                    'yanchor': 'top'},
-            titlefont = dict(
-                    size=20),
-
-            coloraxis=dict(
-                cmin=0, cmax=max_value*0.8,
-                colorscale = [[0, "green"], [0.2, "#ffcc66"], [0.8, "#f50000"], [1, "#b30000"]],
-                colorbar=dict(
-                    #title="{}<br>du Covid19<br> &#8205;".format(title),
-                    thicknessmode="pixels", thickness=6,
-                    lenmode="pixels", len=200,
-                    yanchor="middle", y=0.5,
-                    tickfont=dict(size=7),
-                    ticks="outside", ticksuffix="",
-                    )
-            ),
-
-            annotations = [
-                    dict(
-                        x=-0.06,
-                        y=1.09,
-                        xref='paper',
-                        yref='paper',
-                        font=dict(size=11),
-                        text='Données : Santé publique France. Auteur : @guillaumerozier - covidtracker.fr.',                    
-                        showarrow = False
-                    )],
-
-            margin=dict(
-                    l=50,
-                    r=5,
-                    b=0,
-                    t=60,
-                    pad=0
+                coloraxis=dict(
+                    cmin=0, cmax=max_value*0.8,
+                    colorscale = [[0, "green"], [0.2, "#ffcc66"], [0.8, "#f50000"], [1, "#b30000"]],
+                    colorbar=dict(
+                        #title="{}<br>du Covid19<br> &#8205;".format(title),
+                        thicknessmode="pixels", thickness=6,
+                        lenmode="pixels", len=200,
+                        yanchor="middle", y=0.5,
+                        tickfont=dict(size=7),
+                        ticks="outside", ticksuffix="",
+                        )
                 ),
-        )
 
-        fig.write_image("images/charts/france/{}/{}.jpeg".format(folder, i), scale=2, width=650, height=450)
+                annotations = [
+                        dict(
+                            x=-0.06,
+                            y=1.09,
+                            xref='paper',
+                            yref='paper',
+                            font=dict(size=11),
+                            text='Données : Santé publique France. Auteur : @guillaumerozier - covidtracker.fr.',                    
+                            showarrow = False
+                        )],
+
+                margin=dict(
+                        l=50,
+                        r=5,
+                        b=0,
+                        t=60,
+                        pad=0
+                    ),
+            )
+
+            fig.write_image("images/charts/france/{}/{}.jpeg".format(folder, i), scale=2, width=650, height=450)
+
+
+# In[170]:
+
+
+#COURSE REA
+
+n = 80
+
+for (dataset, column, dates_to_use, title, folder) in [    (df_clage_france, "rea", dates, "Personnes en réanimation pour Covid19", "course_rea_clage_rolling"),    (df_clage_france, "hosp", dates, "Personnes hospitalisées pour Covid19", "course_hosp_clage_rolling")]:
+        
+        for clage in [i for i in range(9, 99, 10)] + [90]:
+            dataset.loc[dataset["cl_age90"]==clage, column+"_rolling"] = dataset.loc[dataset["cl_age90"]==clage, column].rolling(window=7).mean().fillna(0)
+
+        max_value = 0
+        for i in range(-n, 0):
+            data_temp = dataset[ (dataset["jour"] == dates_to_use[i]) & (dataset["cl_age90"] > 0)].sort_values(by=['cl_age90'], ascending=False)
+            max_value = max(max_value, data_temp[column].max())
+
+
+        for i in range(-n, 0):   
+            fig = go.Figure()
+
+            data_temp = dataset[(dataset["jour"] == dates_to_use[i]) & (dataset["cl_age90"] > 0)].sort_values(by=["cl_age90"], ascending=True)
+            #data_temp = data_temp[-10:]
+
+            fig.add_trace(go.Bar(
+                x = data_temp[column],
+                y = [str(age-9) + " - " + str(age) + " ans" for age in range(9, 99, 10) ] + ["> 90 ans"],
+                text = ["<b>" + str(d) + "</b>" for d in data_temp[column].astype(int).values],
+                textposition='auto',
+                textangle=0,
+                marker = dict(color=data_temp[column], coloraxis = "coloraxis",), #colors_regs 
+                orientation="h"))
+
+            fig.update_xaxes(range=[0, max_value])
+
+            fig.update_layout(
+                title={
+                        'text': "<b>{}</b> - ".format(title) + datetime.strptime(dates_to_use[i], '%Y-%m-%d').strftime('%d %B'),
+                        'y':0.98,
+                        'x':0.5,
+                        'xanchor': 'center',
+                        'yanchor': 'top'},
+                titlefont = dict(
+                        size=20),
+
+                coloraxis=dict(
+                    cmin=0, cmax=max_value*0.8,
+                    colorscale = [[0, "green"], [0.2, "#ffcc66"], [0.8, "#f50000"], [1, "#b30000"]],
+                    colorbar=dict(
+                        #title="{}<br>du Covid19<br> &#8205;".format(title),
+                        thicknessmode="pixels", thickness=6,
+                        lenmode="pixels", len=200,
+                        yanchor="middle", y=0.5,
+                        tickfont=dict(size=7),
+                        ticks="outside", ticksuffix="",
+                        )
+                ),
+
+                annotations = [
+                        dict(
+                            x=0.12,
+                            y=1.09,
+                            xref='paper',
+                            yref='paper',
+                            font=dict(size=11),
+                            text='Données : Santé publique France. Auteur : @guillaumerozier - covidtracker.fr.',                    
+                            showarrow = False
+                        )],
+
+                margin=dict(
+                        l=50,
+                        r=5,
+                        b=0,
+                        t=60,
+                        pad=0
+                    ),
+            )
+
+            fig.write_image("images/charts/france/{}/{}.jpeg".format(folder, i), scale=2, width=650, height=450)
 
 
 # In[683]:
@@ -4076,11 +4170,11 @@ with imageio.get_writer("images/charts/france/course_incidence/course.gif", mode
 """
 
 
-# In[684]:
+# In[171]:
 
 
 #import glob
-for folder in ["course_incidence", "course_dc", "course_cas"]:
+for folder in ["course_incidence", "course_dc", "course_cas", "course_rea_clage_rolling", "course_hosp_clage_rolling"]:
     img_array = []
     for i in range(-n, 0):
         img = cv2.imread(("images/charts/france/{}/{}.jpeg").format(folder, i))
@@ -4542,7 +4636,7 @@ if show_charts:
     fig.show()
 
 
-# In[693]:
+# In[26]:
 
 
 fig = go.Figure()
@@ -4641,7 +4735,7 @@ if show_charts:
 # 
 # ## Décès cumulés par habitant (région)
 
-# In[694]:
+# In[27]:
 
 
 """
@@ -4701,7 +4795,7 @@ if show_charts:
 # 
 # ## Décès cumulés par région / temps
 
-# In[695]:
+# In[28]:
 
 
 fig = px.bar(x=df_region['jour'], y = df_region['dc'], color=df_region["regionName"], labels={'color':'Région'}, color_discrete_sequence=colors, opacity=0.9)
@@ -4754,7 +4848,7 @@ if show_charts:
 # 
 # ## Décès cumulés par région / 3 derniers jours
 
-# In[696]:
+# In[29]:
 
 
 
@@ -4844,7 +4938,7 @@ if show_charts:
 # 
 # ## Décès cumulés VS. Décès cumulés par habitant / région
 
-# In[697]:
+# In[30]:
 
 
 fig = go.Figure()
@@ -4921,7 +5015,7 @@ if show_charts:
 # 
 # ## Situation des malades / région
 
-# In[698]:
+# In[31]:
 
 
 #df_region_sumj = df_region.groupby('regionName').sum().reset_index()
@@ -4931,7 +5025,7 @@ df_region_sumj = pd.melt(df_region_sumj, id_vars=['regionName'], value_vars=['ra
 df_region_sumj.drop(df_region_sumj[df_region_sumj['regionName'].isin(['Guyane', 'Mayote', 'La Réunion', 'Guadeloupe', 'Martinique'])].index, inplace = True)
 
 
-# In[699]:
+# In[32]:
 
 
 data = df_region_sumj[df_region_sumj["variable"] == "dc"]
@@ -4999,7 +5093,7 @@ if show_charts:
 # 
 # ## Situation des malades par habitant / région
 
-# In[700]:
+# In[33]:
 
 
 df_region_sumj = df_region[df_region['jour'] == dates[-1]]
@@ -5007,7 +5101,7 @@ df_region_sumj = pd.melt(df_region_sumj, id_vars=['regionName'], value_vars=['ra
 df_region_sumj.drop(df_region_sumj[df_region_sumj['regionName'].isin(['Guyane', 'Mayote', 'La Réunion', 'Guadeloupe', 'Martinique'])].index, inplace = True)
 
 
-# In[701]:
+# In[34]:
 
 
 """data = df_region_sumj[df_region_sumj["variable"] == "dc_pop"]
@@ -5078,7 +5172,7 @@ if show_charts:
 # 
 # # Expérimentations (brouillon)
 
-# In[702]:
+# In[35]:
 
 
 """
