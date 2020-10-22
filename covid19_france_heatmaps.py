@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[22]:
+# In[1]:
 
 
 """
@@ -23,7 +23,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[23]:
+# In[2]:
 
 
 from multiprocessing import Pool
@@ -48,13 +48,13 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 now = datetime.now()
 
 
-# In[24]:
+# In[3]:
 
 
 df, df_confirmed, dates, _, _, _, _, _, df_tests_viros = data.import_data()
 
 
-# In[29]:
+# In[12]:
 
 
 deps_tests = list(dict.fromkeys(list(df_tests_viros['dep'].values))) 
@@ -114,8 +114,8 @@ for (name, data, title, scale_txt, data_example, digits) in [("cas", '', "Taux d
                 titlefont = dict(
                 size=20),
             coloraxis=dict(
-                cmin=0, cmax=300,
-                colorscale = [[0, "green"], [0.2, "#ffcc66"], [0.8, "#f50000"], [1, "#b30000"]],
+                cmin=0, cmax=800,
+                colorscale = [[0, "green"], [0.08, "#ffcc66"], [0.25, "#f50000"], [0.5, "#b30000"], [1, "#3d0000"]], #[[0, "green"], [0.2, "#ffcc66"], [0.8, "#f50000"], [1, "#b30000"]],
                 #color_continuous_scale=["green", "red"],
                 colorbar=dict(
                     #title="{}<br>du Covid19<br> &#8205;".format(title),
@@ -138,7 +138,7 @@ for (name, data, title, scale_txt, data_example, digits) in [("cas", '', "Taux d
                             y=0.5,
                             xref='paper',
                             yref='paper',
-                            opacity=0.6,
+                            opacity=0.8,
                             font=dict(color="white", size=55),
                             text="Dép. <b>{}</b>".format(dep),
                             showarrow=False
@@ -170,7 +170,7 @@ for (name, data, title, scale_txt, data_example, digits) in [("cas", '', "Taux d
         plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
 
 
-# In[26]:
+# In[5]:
 
 
 """OLD
@@ -298,7 +298,7 @@ for (name, data, title, scale_txt, data_example, digits) in [("taux", 'P_taux', 
         plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)"""
 
 
-# In[27]:
+# In[6]:
 
 
 """string= ""
@@ -307,7 +307,7 @@ for dep in deps_tests:
 print(string)"""
 
 
-# In[28]:
+# In[7]:
 
 
 """for (name, data, title, scale_txt, data_example, digits) in [("taux_reg", 'P_taux', "Taux de<br>positivité", "%", "%", 1)]:

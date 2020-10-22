@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[3]:
+# In[14]:
 
 
 import requests
@@ -10,7 +10,7 @@ import json
 from tqdm import tqdm
 
 
-# In[17]:
+# In[15]:
 
 
 # Download data from Santé publique France and export it to local files
@@ -39,7 +39,7 @@ def download_data():
     url_data = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-covid19")]["url"].values[0] #donnees-hospitalieres-classe-age-covid19-2020-10-14-19h00.csv 
     url_data_new = df_metadata[df_metadata['url'].str.contains("/donnees-hospitalieres-nouveaux")]["url"].values[0]
     url_tests = df_metadata[df_metadata['url'].str.contains("/donnees-tests-covid19-labo-quotidien")]["url"].values[0]
-    url_metropoles = df_metadata[df_metadata['url'].str.contains("/sg-metro-opendata")]["url"].values[0]
+    url_metropoles = df_metadata[df_metadata['url'].str.contains("/sg-metro-opendata")]["url"].max()
     url_incidence = df_metadata[df_metadata['url'].str.contains("/sp-pe-tb-quot")]["url"].values[0]
     url_tests_viro = df_metadata[df_metadata['url'].str.contains("/sp-pos-quot-dep")]["url"].values[0]
     url_sursaud = df_metadata[df_metadata['url'].str.contains("sursaud.*quot.*dep")]["url"].values[0]
@@ -153,8 +153,11 @@ def import_data():
     df['hosp_deppop'] = df['hosp']/df['departmentPopulation']*100000
     
     df['hosp_nonrea_pop'] = df['hosp_nonrea']/df['regionPopulation']*100000
+    
     pbar.update(3)
+    
     df_confirmed = pd.read_csv('data/data_confirmed.csv')
+    
     pbar.update(4)
     
     deps = list(dict.fromkeys(list(df['departmentCode'].values))) 
@@ -178,7 +181,7 @@ def import_data():
         for clage in [0, 9, 19, 29, 39, 49, 59, 69, 79, 89, 90]:
             df_incid.loc[(df_incid["dep"] == dep) & (df_incid["cl_age90"]==clage),"incidence"] = df_incid.loc[(df_incid["dep"] == dep) & (df_incid["cl_age90"]==clage)]["P"].rolling(window=7).sum()/df_incid.loc[(df_incid["dep"] == dep) & (df_incid["cl_age90"]==clage)]["pop"]*100000
     df_incid.loc[:,"incidence_color"] = ['Alerte Maximale' if x>= 250 else 'Alerte Renforcée' if x>=150 else 'Alerte' if x >= 50 else 'Risque Faible' for x in df_incid['incidence']]
-    print(df_incid[df_incid["dep"]=="75"])
+
     df_tests_viro["pop"] = pop_df_incid
     return df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid, df_tests_viro
 
@@ -197,14 +200,14 @@ def import_data_hosp_clage():
         
 
 
-# In[5]:
+# In[16]:
 
 
-download_data()
+#download_data()
 #df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid, df_tests_viro = import_data()
 
 
-# In[6]:
+# In[17]:
 
 
 """df_incid = pd.read_csv('data/france/taux-incidence-dep-quot.csv', sep=",")
@@ -219,10 +222,4 @@ df_tests_viro = df_tests_viro[df_tests_viro["cl_age90"] == 0]
 df_incid = df_incid.merge(df_regions, left_on='dep', right_on='departmentCode')
 df_incid = df_incid.merge(df_tests_viro.drop("p", axis=1).drop("cl_age90", axis=1), left_on=['jour', 'dep'], right_on=['jour', 'dep'])
     """
-
-
-# In[ ]:
-
-
-
 

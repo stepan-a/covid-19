@@ -4,7 +4,7 @@
 # # COVID-19 French Charts
 # Guillaume Rozier, 2020
 
-# In[1]:
+# In[4]:
 
 
 """
@@ -26,7 +26,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[118]:
+# In[5]:
 
 
 from multiprocessing import Pool
@@ -55,7 +55,7 @@ now = datetime.now()
 
 # # Data download and import
 
-# In[120]:
+# In[6]:
 
 
 data.download_data()
@@ -63,7 +63,7 @@ data.download_data()
 
 # ## Data transformations
 
-# In[121]:
+# In[23]:
 
 
 df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid, df_tests_viros = data.import_data()
@@ -73,6 +73,7 @@ df_clage_france = df_clage.groupby(["jour", "cl_age90"]).sum().reset_index()
 df_incid = df_incid[df_incid["cl_age90"] == 0]
 
 df_incid_france = df_incid.groupby("jour").sum().reset_index()
+dates_clage = list(dict.fromkeys(list(df_clage_france['jour'].values))) 
 
 df_sursaud_france = df_sursaud.groupby(['date_de_passage']).sum().reset_index()
 df_sursaud_france["taux_covid"] = df_sursaud_france["nbre_pass_corona"] / df_sursaud_france["nbre_pass_tot"]
@@ -96,7 +97,7 @@ df_france = df.groupby('jour').sum().reset_index()
 regions = list(dict.fromkeys(list(df['regionName'].values))) 
 
 
-# In[122]:
+# In[5]:
 
 
 #Calcul sorties de réa
@@ -1289,7 +1290,7 @@ if show_charts:
 
 # ## Entrées/Sortires hosp et réa
 
-# In[624]:
+# In[84]:
 
 
 fig = go.Figure()
@@ -1409,7 +1410,7 @@ if show_charts:
 # ## Entrées/Sorties hosp et réa - rolling mean (7 days)
 # La moyenne glissante sur 4 jours permet de lisser les effets liés aux week-ends (moins de saisies de données, donc il y a un trou) et d'évaluer la tendance.
 
-# In[656]:
+# In[83]:
 
 
 try:
@@ -2665,7 +2666,7 @@ if show_charts:
     fig.show()
 
 
-# In[665]:
+# In[7]:
 
 
 df_tests_viros_france = df_tests_viros.groupby(['jour', 'cl_age90']).sum().reset_index()
@@ -2829,7 +2830,7 @@ for (val, valname) in [('P', 'positifs'), ('T', '')]:
     plotly.offline.plot(fig, filename = 'images/html_exports/france/{}.html'.format(name_fig), auto_open=False)
 
 
-# In[668]:
+# In[20]:
 
 
 import plotly.figure_factory as ff
@@ -2876,11 +2877,11 @@ for (name, array, title, scale_txt, data_example, digits) in [("cas", array_posi
         fig.add_annotation(annot)
         
     if name == "incidence":
-        cmax = 250
+        cmax = 800
     elif name == "cas":
-        cmax = 15000
+        cmax = 28000
     elif name == "taux":
-        cmax = 15
+        cmax = 18
         
     fig.update_layout(
         title={
@@ -2893,7 +2894,7 @@ for (name, array, title, scale_txt, data_example, digits) in [("cas", array_posi
             size=20),
         coloraxis=dict(
             cmin=0, cmax=cmax,
-            colorscale = [[0, "green"], [0.2, "#ffcc66"], [0.8, "#f50000"], [1, "#b30000"]],
+            colorscale = [[0, "green"], [0.08, "#ffcc66"], [0.25, "#f50000"], [0.5, "#b30000"], [1, "#3d0000"]],
             colorbar=dict(
                 #title="{}<br>du Covid19<br> &#8205;".format(title),
                 thicknessmode="pixels", thickness=8,
@@ -3977,11 +3978,11 @@ def prep_course():
     """(df_incid_reg, "incidence_rolling", dates_incid, "Incidence", "course_incidence", "regionName"),    (df_incid_reg, "P_rolling", dates_incid, "Cas de Covid19", "course_cas", "regionName"),    (df_region, "dc_pop_new_rolling", dates, "Décès pour 1M hab.", "course_dc", "regionName")]:"""
 
 
-# In[139]:
+# In[15]:
 
 
 #COURSE
-n = 80
+n1 = 80
 df_incid_reg = df_incid.groupby(['jour', 'regionName']).sum().reset_index()
 df_incid_reg["P_pop"] = df_incid_reg["P"]*100000/df_incid_reg["pop"]
 
@@ -3998,11 +3999,11 @@ for (dataset, column, dates_to_use, title, folder) in [    (df_incid_reg, "incid
             df_region.loc[df_region["regionName"]==reg, "dc_pop_new_rolling"] = df_region.loc[df_region["regionName"]==reg, "dc_new"].rolling(window=7).mean()*10000000/df_region.loc[df_region["regionName"]==reg, "regionPopulation"]
 
         max_value = 0
-        for i in range(-n, 0):
+        for i in range(-n1, 0):
             data_temp = dataset[dataset["jour"] == dates_to_use[i]].sort_values(by=['regionName'], ascending=False)
             max_value = max(max_value, data_temp[column].max())
 
-        for i in range(-n, 0):   
+        for i in range(-n1, 0):   
             fig = go.Figure()
 
             data_temp = dataset[dataset["jour"] == dates_to_use[i]].sort_values(by=[column], ascending=True)
@@ -4069,25 +4070,24 @@ for (dataset, column, dates_to_use, title, folder) in [    (df_incid_reg, "incid
             fig.write_image("images/charts/france/{}/{}.jpeg".format(folder, i), scale=2, width=650, height=450)
 
 
-# In[170]:
+# In[32]:
 
 
 #COURSE REA
+n2 = len(dates_clage)
 
-n = 80
-
-for (dataset, column, dates_to_use, title, folder) in [    (df_clage_france, "rea", dates, "Personnes en réanimation pour Covid19", "course_rea_clage_rolling"),    (df_clage_france, "hosp", dates, "Personnes hospitalisées pour Covid19", "course_hosp_clage_rolling")]:
+for (dataset, column, dates_to_use, title, folder) in [    (df_clage_france, "rea", dates_clage, "Personnes en réanimation pour Covid19", "course_rea_clage_rolling"),    (df_clage_france, "hosp", dates_clage, "Personnes hospitalisées pour Covid19", "course_hosp_clage_rolling")]:
         
         for clage in [i for i in range(9, 99, 10)] + [90]:
-            dataset.loc[dataset["cl_age90"]==clage, column+"_rolling"] = dataset.loc[dataset["cl_age90"]==clage, column].rolling(window=7).mean().fillna(0)
+            dataset.loc[dataset["cl_age90"]==clage, column+"_rolling"] = dataset.loc[dataset["cl_age90"]==clage, column].rolling(window=7).mean().fillna(method="ffill")
 
         max_value = 0
-        for i in range(-n, 0):
+        for i in range(-n2, 0):
             data_temp = dataset[ (dataset["jour"] == dates_to_use[i]) & (dataset["cl_age90"] > 0)].sort_values(by=['cl_age90'], ascending=False)
             max_value = max(max_value, data_temp[column].max())
 
 
-        for i in range(-n, 0):   
+        for i in range(-n2, 0):   
             fig = go.Figure()
 
             data_temp = dataset[(dataset["jour"] == dates_to_use[i]) & (dataset["cl_age90"] > 0)].sort_values(by=["cl_age90"], ascending=True)
@@ -4150,7 +4150,7 @@ for (dataset, column, dates_to_use, title, folder) in [    (df_clage_france, "re
             fig.write_image("images/charts/france/{}/{}.jpeg".format(folder, i), scale=2, width=650, height=450)
 
 
-# In[683]:
+# In[17]:
 
 
 """
@@ -4170,11 +4170,11 @@ with imageio.get_writer("images/charts/france/course_incidence/course.gif", mode
 """
 
 
-# In[171]:
+# In[33]:
 
 
 #import glob
-for folder in ["course_incidence", "course_dc", "course_cas", "course_rea_clage_rolling", "course_hosp_clage_rolling"]:
+for (folder, n, fps) in [("course_rea_clage_rolling", n2, 7), ("course_hosp_clage_rolling", n2, 7), ("course_incidence", n1, 5), ("course_dc", n1, 5), ("course_cas", n1, 5),]:
     img_array = []
     for i in range(-n, 0):
         img = cv2.imread(("images/charts/france/{}/{}.jpeg").format(folder, i))
@@ -4190,7 +4190,7 @@ for folder in ["course_incidence", "course_dc", "course_cas", "course_rea_clage_
             for k in range(12):
                 img_array.append(img)
 
-    out = cv2.VideoWriter('images/charts/france/{}/course.mp4'.format(folder),cv2.VideoWriter_fourcc(*'MP4V'), 5, size)
+    out = cv2.VideoWriter('images/charts/france/{}/course.mp4'.format(folder),cv2.VideoWriter_fourcc(*'MP4V'), fps, size)
 
     for i in range(len(img_array)):
         out.write(img_array[i])
@@ -4198,7 +4198,7 @@ for folder in ["course_incidence", "course_dc", "course_cas", "course_rea_clage_
     out.release()
 
 
-# In[685]:
+# In[19]:
 
 
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')

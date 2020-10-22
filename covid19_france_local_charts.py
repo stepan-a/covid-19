@@ -23,12 +23,13 @@ now = datetime.now()
 colors = px.colors.qualitative.D3 + plotly.colors.DEFAULT_PLOTLY_COLORS + px.colors.qualitative.Plotly + px.colors.qualitative.Dark24 + px.colors.qualitative.Alphabet
 
 
-# In[7]:
+# In[8]:
 
 
 try:
     import subprocess
-    subprocess.run(["sudo", "python3", "covid19_regions_dashboards.py"])
+    subprocess.run(["python3", "covid19_regions_dashboards.py"])
+    subprocess.run(["python3", "covid19_departements_dashboards.py"])
     
 except:
     print("error")
@@ -1559,9 +1560,6 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
     titles = []
     k=0
     for case in range(1, len(deps_ordered_nb)+1):
-        #if case in [80, 81, 89, 90, 98, 99]:
-         #   titles += [""] 
-        #else:
         titles += ["<b>" + deps_ordered_nb[k] + "</b> - " + deps_ordered[k] + ""] #&#9661; 
         k+=1
 
@@ -1619,20 +1617,13 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
         fig.add_trace(go.Bar(x = dates_sursaud, y = values_y,
                             marker_color=clrs),
                       i, j)
-        #fig.add_trace(go.Scatter(x = df_sursaud_dep["date_de_passage"], y = df_sursaud_dep["nbre_pass_tot"],
-         #                   marker_color="Black"),
-          #            i, j, secondary_y=True,)
-        #fig.add_trace(go.Scatter(x = df_sursaud_dep["date_de_passage"], y = df_sursaud_dep["nbre_pass_corona"],
-         #                   marker_color="Blue"),
-          #            i, j, secondary_y=True,)
         
         fig.update_xaxes(title_text="", range=["2020-04-25", last_day_plot], gridcolor='white', showgrid=False, ticks="inside", tickformat='%d/%m', tickfont=dict(size=7), tickangle=0, nticks=6, linewidth=0, linecolor='white', row=i, col=j)
         fig.update_yaxes(title_text="", range=[0, 25], gridcolor='white', linewidth=0, linecolor='white', tickfont=dict(size=7), nticks=8, row=i, col=j)
-        #fig.update_yaxes(title_text="", range=[0, 300], row=i, col=j, secondary_y=True)
 
 
         j+=1
-        if j == nj+1: #or ((i >= 9) & (j >= nj-1)) 
+        if j == nj+1:
             i+=1
             j=1
 
@@ -1809,7 +1800,7 @@ fig.add_trace(go.Bar(x = dta["date_de_passage"], y = dta["taux_covid"]*100, mark
 fig.show()"""
 
 
-# In[25]:
+# In[5]:
 
 
 
@@ -2052,6 +2043,12 @@ for val in ["hosp_deppop"]: #, "hosp", "rea", "rea_pop"
 
 
     #fig.show()
+
+
+# In[6]:
+
+
+#lits_reas[lits_reas["nom_dpt"] == deps_ordered[list(deps_ordered_nb).index("75")]]["LITS"].values[0]
 
 
 # In[26]:
