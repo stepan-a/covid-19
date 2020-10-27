@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[20]:
+# In[1]:
 
 
 """
@@ -21,7 +21,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[21]:
+# In[2]:
 
 
 import france_data_management as data
@@ -38,7 +38,7 @@ import os
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
 
-# In[22]:
+# In[3]:
 
 
 # Import data from Santé publique France
@@ -49,7 +49,7 @@ with open('data/france/dep.geojson') as response:
     depa = json.load(response)
 
 
-# In[23]:
+# In[4]:
 
 
 def build_map(data_df, img_folder, date_val, date_str = "date", dep_str = "departement", color_str = 'indic_synthese', legend_title="legend_title", title="title", subtitle="", subsubtitle="{}<br>{} (données du {})", color_descrete_map={"Risque Faible":"#DAF7A6", "Alerte":"#b8002a", "Alerte Renforcée":"#7c0030", "Alerte Maximale":"#460d37"}):
@@ -124,7 +124,7 @@ def build_map(data_df, img_folder, date_val, date_str = "date", dep_str = "depar
             print("no data")
 
 
-# In[24]:
+# In[5]:
 
 
 def build_gif(file_gif, imgs_folder, dates):
@@ -143,16 +143,16 @@ def build_gif(file_gif, imgs_folder, dates):
                 print("no image for "+str(date))
 
 
-# In[25]:
+# In[6]:
 
 
 dates_deconf = list(dict.fromkeys(list(df_incid["jour"].values)))
 
-date = dates_deconf[-30:]
+date = [dates_deconf[-1]]
 build_map(df_incid.sort_values(by=['incidence']), "images/charts/france/dep-map-incid-cat", date_val=date, date_str = "jour", dep_str = "dep", color_str = 'incidence_color', legend_title="", title="Incidence", subtitle="Nombre de cas hebdomadaires pour 100 000 habitants")
 
 
-# In[26]:
+# In[7]:
 
 
 df_incid #df_incid.loc[:,"color_couvre_feu"] = 
@@ -164,7 +164,7 @@ date = [dates_deconf[-1]]
 build_map(df_incid.sort_values(by=['incidence']), "images/charts/france/dep-map-couvre-feu", date_val=date, date_str = "jour", dep_str = "dep", color_str = 'color_couvre_feu', legend_title="", title="Départements possiblement en couvre feu samedi", subsubtitle="", color_descrete_map={"Pas de couvre-feu":"#a4bda8", "Couvre-feu":"#bd2828"})
 
 
-# In[27]:
+# In[8]:
 
 
 deps_strings=[]
@@ -172,7 +172,7 @@ for dep in deps_couvre_feu:
     deps_strings += [df_incid[df_incid["dep"] == dep]["departmentName"].values[0]]
 
 
-# In[28]:
+# In[9]:
 
 
 to_disp=""
@@ -181,13 +181,13 @@ for val in deps_strings:
 to_disp
 
 
-# In[29]:
+# In[10]:
 
 
 #df_incid.loc[df_incid["dep"] == "75"]["P"].rolling(window=7).sum()/df_incid.loc[df_incid["dep"] == "75"]["pop"]*100000
 
 
-# In[30]:
+# In[11]:
 
 
 build_gif("images/charts/france/incid-cat.gif", "images/charts/france/dep-map-incid-cat", dates_deconf[-30:])

@@ -54,7 +54,7 @@ now = datetime.now()
 df, df_confirmed, dates, _, _, _, _, _, df_tests_viros = data.import_data()
 
 
-# In[12]:
+# In[4]:
 
 
 deps_tests = list(dict.fromkeys(list(df_tests_viros['dep'].values))) 

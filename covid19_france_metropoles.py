@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[5]:
+# In[9]:
 
 
 """
@@ -21,7 +21,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[6]:
+# In[10]:
 
 
 from multiprocessing import Pool
@@ -45,7 +45,7 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 now = datetime.now()
 
 
-# In[7]:
+# In[11]:
 
 
 df_metro = data.import_data_metropoles()
@@ -53,7 +53,7 @@ df_metro_65 = df_metro[df_metro["clage_65"] == 65]
 df_metro = df_metro[df_metro["clage_65"] == 0]
 
 
-# In[8]:
+# In[12]:
 
 
 for (title, df_temp, name) in [("Tous âges", df_metro, "0"), ("> 65 ans", df_metro_65, "65")]:

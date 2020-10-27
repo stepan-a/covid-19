@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[14]:
+# In[1]:
 
 
 import requests
@@ -10,7 +10,7 @@ import json
 from tqdm import tqdm
 
 
-# In[15]:
+# In[2]:
 
 
 # Download data from Santé publique France and export it to local files
@@ -172,7 +172,7 @@ def import_data():
     
     # Correction du 14/05 (pas de données)
     #cols_to_change = df.select_dtypes(include=np.number).columns.tolist()
-    cols_to_change = [s for s in df.columns.tolist() if "new" in s]
+    #cols_to_change = [s for s in df.columns.tolist() if "new" in s]
 
     df['jour'] = df['jour'].str.replace(r'(.*)/(.*)/(.*)',r'\3-\2-\1')     
     dates = sorted(list(dict.fromkeys(list(df['jour'].values))))
@@ -200,14 +200,24 @@ def import_data_hosp_clage():
         
 
 
-# In[16]:
+# In[5]:
 
 
 #download_data()
 #df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid, df_tests_viro = import_data()
 
 
-# In[17]:
+# In[20]:
+
+
+"""df[df["jour"]=="2020-10-15"]
+df2 = pd.read_csv('data/france/donnes-hospitalieres-covid19.csv', sep=";")
+df2.loc[df2["jour"] == "2020-10-15",:] = df2.loc[df2["jour"] == "2020-10-14",:]
+df2[df2["jour"]=="2020-10-15"]
+df2.append(["2020-10-15"], columns=["jour"])"""
+
+
+# In[4]:
 
 
 """df_incid = pd.read_csv('data/france/taux-incidence-dep-quot.csv', sep=",")

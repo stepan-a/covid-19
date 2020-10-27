@@ -42,11 +42,12 @@ import os
 df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid, df_tests_viros = data.import_data()
 
 
-# In[26]:
+# In[4]:
 
 
 df_departements = df.groupby(["jour", "departmentName"]).sum().reset_index()
-df_incid_departements = df_incid.groupby(["jour", "departmentName"]).sum().reset_index()
+df_incid_departements = df_incid[df_incid["cl_age90"]==0].groupby(["jour", "departmentName"]).sum().reset_index()
+
 departements = list(dict.fromkeys(list(df_departements['departmentName'].values))) 
 
 dates_incid = list(dict.fromkeys(list(df_incid['jour'].values))) 
@@ -55,7 +56,7 @@ last_day_plot = (datetime.strptime(max(dates), '%Y-%m-%d') + timedelta(days=1)).
 departements_nb = list(dict.fromkeys(list(df_tests_viros['dep'].values))) 
 
 
-# In[5]:
+# In[9]:
 
 
 def cas_journ(departement):
@@ -154,6 +155,7 @@ def cas_journ(departement):
                 color="rgb(8, 115, 191)",
                 size=20
                 ),
+            bgcolor="rgba(255, 255, 255, 0.6)",
             opacity=1,
             ax=-40,
             ay=-70,
@@ -169,7 +171,7 @@ def cas_journ(departement):
     print("> " + name_fig)
 
 
-# In[6]:
+# In[10]:
 
 
 def hosp_journ(departement):   
@@ -255,6 +257,7 @@ def hosp_journ(departement):
                 color="rgb(209, 102, 21)",
                 size=20
                 ),
+            bgcolor="rgba(255, 255, 255, 0.6)",
             opacity=0.8,
             ax=-50,
             ay=-90,
@@ -270,7 +273,7 @@ def hosp_journ(departement):
     print("> " + name_fig)
 
 
-# In[7]:
+# In[11]:
 
 
 def rea_journ(departement):
@@ -355,6 +358,7 @@ def rea_journ(departement):
                 color="rgb(201, 4, 4)",
                 size=20
                 ),
+            bgcolor="rgba(255, 255, 255, 0.6)",
             opacity=0.8,
             ax=-50,
             ay=-90,
@@ -370,7 +374,7 @@ def rea_journ(departement):
     print("> " + name_fig)
 
 
-# In[63]:
+# In[12]:
 
 
 def dc_journ(departement): 
@@ -468,6 +472,7 @@ def dc_journ(departement):
                 color="black",
                 size=20
                 ),
+            bgcolor="rgba(255, 255, 255, 0.6)",
             opacity=0.8,
             ax=-50,
             ay=-90,
@@ -483,7 +488,7 @@ def dc_journ(departement):
     print("> " + name_fig)
 
 
-# In[64]:
+# In[13]:
 
 
 import cv2
@@ -527,18 +532,26 @@ for idx,dep in enumerate(departements):
     print(space+retourmenu+heading+string+string2)
 
 
-# In[40]:
+# In[49]:
 
 
-print("<!-- wp:buttons --><div class=\"wp-block-buttons\">\n")
+#print("<!-- wp:buttons --><div class=\"wp-block-buttons\">\n")
+output = ""
 for dep in departements:
     numero_dep = df[df["departmentName"] == dep]["dep"].values[-1]
+    output+= "<a href=\"#{}\">{} ({})</a> • ".format(dep, dep, numero_dep)
+    #print("""<!-- wp:button {"className":"is-style-outline"} -->
+    #<div class="wp-block-button is-style-outline">""")
+    #print("<a class=\"wp-block-button__link\" href=\"#{}\">".format(dep))
+    #print("{}</a></div><!-- /wp:button --></div>\n".format(dep + " (" + numero_dep + ")"))
+print(output[:-2])
     
-    print("""<!-- wp:button {"className":"is-style-outline"} -->
-    <div class="wp-block-button is-style-outline">""")
     
-    print("<a class=\"wp-block-button__link\" href=\"#{}\">".format(dep))
-    
-    print("{}</a></div><!-- /wp:button --></div>\n".format(dep + " (" + numero_dep + ")"))
-print("<!-- /wp:buttons -->")
+#print("<!-- /wp:buttons -->")
+
+
+# In[51]:
+
+
+df_incid[df_incid["dep"] == "974"]
 

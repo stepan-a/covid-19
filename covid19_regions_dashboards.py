@@ -23,7 +23,7 @@ Requirements: please see the imports below (use pip3 to install them).
 """
 
 
-# In[110]:
+# In[2]:
 
 
 import pandas as pd
@@ -36,29 +36,29 @@ import math
 import os
 
 
-# In[101]:
+# In[3]:
 
 
 df, df_confirmed, dates, df_new, df_tests, df_deconf, df_sursaud, df_incid, df_tests_viros = data.import_data()
 
 
-# In[218]:
+# In[4]:
 
 
 df_regions = df.groupby(["jour", "regionName"]).sum().reset_index()
-df_incid_regions = df_incid.groupby(["jour", "regionName"]).sum().reset_index()
+df_incid_regions = df_incid[df_incid["cl_age90"] == 0].groupby(["jour", "regionName"]).sum().reset_index()
 regions = list(dict.fromkeys(list(df_regions['regionName'].values))) 
 dates_incid = list(dict.fromkeys(list(df_incid['jour'].values))) 
 last_day_plot = (datetime.strptime(max(dates), '%Y-%m-%d') + timedelta(days=1)).strftime("%Y-%m-%d")
 
 
-# In[219]:
+# In[5]:
 
 
 lits_reas = pd.read_csv('data/france/lits_rea.csv', sep=",")
 
 
-# In[220]:
+# In[6]:
 
 
 regions_deps = df.groupby(["departmentName", "regionName"]).sum().reset_index().loc[:,["departmentName", "regionName"]]
@@ -67,7 +67,7 @@ lits_reas_regs = lits_reas.groupby(["regionName"]).sum().reset_index()
 df_regions = df_regions.merge(lits_reas_regs, left_on="regionName", right_on="regionName")
 
 
-# In[221]:
+# In[7]:
 
 
 def cas_journ(region):
@@ -181,7 +181,7 @@ def cas_journ(region):
     print("> " + name_fig)
 
 
-# In[222]:
+# In[8]:
 
 
 def hosp_journ(region):   
@@ -282,7 +282,7 @@ def hosp_journ(region):
     print("> " + name_fig)
 
 
-# In[223]:
+# In[9]:
 
 
 def rea_journ(region):
@@ -382,7 +382,7 @@ def rea_journ(region):
     print("> " + name_fig)
 
 
-# In[224]:
+# In[10]:
 
 
 def dc_journ(region): 
@@ -495,7 +495,7 @@ def dc_journ(region):
     print("> " + name_fig)
 
 
-# In[225]:
+# In[11]:
 
 
 
@@ -586,7 +586,7 @@ def saturation_rea_journ(region):
     print("> " + name_fig)
 
 
-# In[226]:
+# In[12]:
 
 
 import cv2
@@ -617,7 +617,7 @@ for reg in regions:
     os.remove('images/charts/france/regions_dashboards/dc_journ_{}.jpeg'.format(reg))
 
 
-# In[227]:
+# In[13]:
 
 
 for reg in regions:
@@ -631,7 +631,7 @@ for reg in regions:
     print(space+retourmenu+heading+string+string2)
 
 
-# In[228]:
+# In[14]:
 
 
 print("<!-- wp:buttons --><div class=\"wp-block-buttons\">\n")

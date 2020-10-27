@@ -1,0 +1,945 @@
+# extended LDIF
+#
+# LDAPv3
+# base <dc=customers,dc=networkradius,dc=com> with scope oneLevel
+# filter: (objectclass=*)
+# requesting: o cn supportAgreementIsActive supportAgreementServerCount supportAgreementClass supportAgreementEnds organisationContactTechnical organisationContactManagement organisationContactFinance supportAgreementDocumentURI 
+#
+
+# O2, customers.networkradius.com
+dn: o=O2,dc=customers,dc=networkradius,dc=com
+o: O2
+organisationContactManagement: uid=dcartan,ou=people,o=O2,dc=customers,dc=networkradius,dc=com
+cn: Site
+supportAgreementServerCount: 10
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/o2-uk/
+supportAgreementEnds: 2021091500Z
+
+# VT, customers.networkradius.com
+dn: o=VT,dc=customers,dc=networkradius,dc=com
+o: VT
+organisationContactManagement: uid=mwilliams,ou=people,o=VT,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=mwilliams,ou=people,o=VT,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=jdawson,ou=people,o=VT,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=dmartin,ou=people,o=VT,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/vt.edu/
+supportAgreementEnds: 2021022800Z
+
+# DXC, customers.networkradius.com
+dn: o=DXC,dc=customers,dc=networkradius,dc=com
+o: DXC
+organisationContactManagement: uid=hwallus,ou=people,o=DXC,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=jryan,ou=people,o=DXC,dc=customers,dc=networkradius,dc=com
+supportAgreementServerCount: 10
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+cn: Site
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/eon/
+supportAgreementEnds: 2021083100Z
+
+# EDD, customers.networkradius.com
+dn: o=EDD,dc=customers,dc=networkradius,dc=com
+o: EDD
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementClass: cn=24/7,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2021040600Z
+organisationContactManagement: uid=vrome,ou=people,o=EDD,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=claw,ou=people,o=EDD,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=astanfield,ou=people,o=EDD,dc=customers,dc=networkradius,dc=com
+supportAgreementIsActive: TRUE
+
+# EPB, customers.networkradius.com
+dn: o=EPB,dc=customers,dc=networkradius,dc=com
+o: EPB
+organisationContactTechnical: uid=catheymp,ou=people,o=EPB,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=smithpj,ou=people,o=EPB,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=mlowe,ou=people,o=EPB,dc=customers,dc=networkradius,dc=com
+organisationContactManagement: uid=catheymp,ou=people,o=EPB,dc=customers,dc=networkradius,dc=com
+cn: Site
+supportAgreementServerCount: 2
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementIsActive: TRUE
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/epb/
+supportAgreementEnds: 2021022800Z
+
+# HUG, customers.networkradius.com
+dn: o=HUG,dc=customers,dc=networkradius,dc=com
+o: HUG
+organisationContactManagement: uid=peser,ou=people,o=HUG,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=peser,ou=people,o=HUG,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 1
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/hug/
+supportAgreementEnds: 2021043000Z
+
+# HWU, customers.networkradius.com
+dn: o=HWU,dc=customers,dc=networkradius,dc=com
+o: HWU
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+organisationContactManagement: uid=smurray,ou=people,o=HWU,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=smurray,ou=people,o=HWU,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=smurray,ou=people,o=HWU,dc=customers,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/hwu/Home
+supportAgreementEnds: 2020111100Z
+
+# MKT, customers.networkradius.com
+dn: o=MKT,dc=customers,dc=networkradius,dc=com
+o: MKT
+cn: Standard
+supportAgreementClass: cn=24/7,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2021063000Z
+organisationContactManagement: uid=atudzarov,ou=people,o=MKT,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=atudzarov,ou=people,o=MKT,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=bandrevska,ou=people,o=MKT,dc=customers,dc=networkradius,dc=com
+supportAgreementServerCount: 2
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/mkt/Home
+supportAgreementIsActive: TRUE
+
+# MTA, customers.networkradius.com
+dn: o=MTA,dc=customers,dc=networkradius,dc=com
+o: MTA
+cn: Standard
+supportAgreementServerCount: 4
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+organisationContactManagement: uid=mhaddock,ou=people,o=MTA,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=kwalters,ou=people,o=MTA,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=ccutler,ou=people,o=MTA,dc=customers,dc=networkradius,dc=com
+supportAgreementEnds: 2021022800Z
+
+# NYU, customers.networkradius.com
+dn: o=NYU,dc=customers,dc=networkradius,dc=com
+o: NYU
+organisationContactManagement: uid=mhocke,ou=people,o=NYU,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=mhocke,ou=people,o=NYU,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=acho,ou=people,o=NYU,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=sburns,ou=people,o=NYU,dc=customers,dc=networkradius,dc=com
+supportAgreementServerCount: 10
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/nyu/
+cn: Site
+supportAgreementEnds: 2020063000Z
+supportAgreementIsActive: FALSE
+
+# RSA, customers.networkradius.com
+dn: o=RSA,dc=customers,dc=networkradius,dc=com
+o: RSA
+organisationContactManagement: uid=dyetman,ou=people,o=RSA,dc=customers,dc=networkradius,dc=com
+cn: OEM
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/rsa/
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementIsActive: TRUE
+supportAgreementEnds: 2021051100Z
+
+# SMC, customers.networkradius.com
+dn: o=SMC,dc=customers,dc=networkradius,dc=com
+o: SMC
+organisationContactManagement: uid=jborden,ou=people,o=SMC,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/smc/
+organisationContactTechnical: uid=kfridenmaker,ou=people,o=SMC,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=blong,ou=people,o=SMC,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=mloggins,ou=people,o=SMC,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=jstiller,ou=people,o=SMC,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=btyler,ou=people,o=SMC,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=bgroff,ou=people,o=SMC,dc=customers,dc=networkradius,dc=com
+supportAgreementEnds: 2021040300Z
+
+# UCL, customers.networkradius.com
+dn: o=UCL,dc=customers,dc=networkradius,dc=com
+o: UCL
+organisationContactManagement: uid=mmarques,ou=people,o=UCL,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=mpickett,ou=people,o=UCL,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=rkynaston,ou=people,o=UCL,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=churley,ou=people,o=UCL,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 8
+supportAgreementIsActive: TRUE
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/ucl/
+supportAgreementEnds: 2021031800Z
+supportAgreementClass: cn=Basic,ou=supportClasses,dc=networkradius,dc=com
+
+# UTK, customers.networkradius.com
+dn: o=UTK,dc=customers,dc=networkradius,dc=com
+o: UTK
+organisationContactManagement: uid=fmilton,ou=people,o=UTK,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=tgregory,ou=people,o=UTK,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/utk/
+supportAgreementEnds: 2021032200Z
+
+# Atos, customers.networkradius.com
+dn: o=Atos,dc=customers,dc=networkradius,dc=com
+o: Atos
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+cn: Site
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/siemens/
+organisationContactManagement: uid=jmahlein,ou=people,o=Atos,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=uwueller,ou=people,o=Atos,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=csteiner,ou=people,o=Atos,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=mherrmann,ou=people,o=Atos,dc=customers,dc=networkradius,dc=com
+supportAgreementEnds: 2020093000Z
+
+# Kier, customers.networkradius.com
+dn: o=Kier,dc=customers,dc=networkradius,dc=com
+o: Kier
+organisationContactManagement: uid=bbolton,ou=people,o=Kier,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=phalliday,ou=people,o=Kier,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=mgallagher,ou=people,o=Kier,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementIsActive: TRUE
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/NHS%20Bradford/
+supportAgreementClass: cn=Basic,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2021033100Z
+
+# LICT, customers.networkradius.com
+dn: o=LICT,dc=customers,dc=networkradius,dc=com
+o: LICT
+organisationContactManagement: uid=akalush,ou=people,o=LICT,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=akalush,ou=people,o=LICT,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 1
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2019060400Z
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/LICT/
+supportAgreementIsActive: FALSE
+
+# Shaw, customers.networkradius.com
+dn: o=Shaw,dc=customers,dc=networkradius,dc=com
+o: Shaw
+organisationContactManagement: uid=nkhan,ou=people,o=Shaw,dc=customers,dc=networkradius,dc=com
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+cn: Managed
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/shaw/
+supportAgreementEnds: 2021083100Z
+organisationContactTechnical: uid=iosunkunle,ou=people,o=Shaw,dc=customers,dc=networkradius,dc=com
+
+# SITA, customers.networkradius.com
+dn: o=SITA,dc=customers,dc=networkradius,dc=com
+o: SITA
+organisationContactManagement: uid=pvildier,ou=people,o=SITA,dc=customers,dc=networkradius,dc=com
+cn: Site
+supportAgreementServerCount: 6
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/sita/
+supportAgreementEnds: 2020123100Z
+supportAgreementIsActive: TRUE
+
+# Tata, customers.networkradius.com
+dn: o=Tata,dc=customers,dc=networkradius,dc=com
+o: Tata
+cn: Standard
+supportAgreementServerCount: 4
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2020082900Z
+organisationContactFinance: uid=upatel,ou=people,o=Tata,dc=customers,dc=networkradius,dc=com
+organisationContactManagement: uid=esampin,ou=people,o=Tata,dc=customers,dc=networkradius,dc=com
+organisationContactManagement: uid=sarpale,ou=people,o=Tata,dc=customers,dc=networkradius,dc=com
+organisationContactManagement: uid=ydeole,ou=people,o=Tata,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=sraghu,ou=people,o=Tata,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=svenkata,ou=people,o=Tata,dc=customers,dc=networkradius,dc=com
+supportAgreementIsActive: FALSE
+
+# Claro, customers.networkradius.com
+dn: o=Claro,dc=customers,dc=networkradius,dc=com
+o: Claro
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementIsActive: TRUE
+organisationContactManagement: uid=ssaenz,ou=people,o=Claro,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=ldominguez,ou=people,o=Claro,dc=customers,dc=networkradius,dc=com
+supportAgreementEnds: 2020121100Z
+supportAgreementClass: cn=24/7,ou=supportClasses,dc=networkradius,dc=com
+
+# Noris, customers.networkradius.com
+dn: o=Noris,dc=customers,dc=networkradius,dc=com
+o: Noris
+cn: Standard
+supportAgreementServerCount: 4
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Business Hours,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2022081700Z
+organisationContactManagement: uid=trinck,ou=people,o=Noris,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=mspanner,ou=people,o=Noris,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=jbender,ou=people,o=Noris,dc=customers,dc=networkradius,dc=com
+
+# ONATI, customers.networkradius.com
+dn: o=ONATI,dc=customers,dc=networkradius,dc=com
+o: ONATI
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/onati/Home
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+organisationContactManagement: uid=ybauvit,ou=people,o=ONATI,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=tli,ou=people,o=ONATI,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=gbourdon,ou=people,o=ONATI,dc=customers,dc=networkradius,dc=com
+supportAgreementIsActive: TRUE
+supportAgreementEnds: 2020101500Z
+
+# Airbus, customers.networkradius.com
+dn: o=Airbus,dc=customers,dc=networkradius,dc=com
+o: Airbus
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=24/7,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2021061100Z
+organisationContactManagement: uid=glugat,ou=people,o=Airbus,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=ntruchot,ou=people,o=Airbus,dc=customers,dc=networkradius,dc=com
+
+# Darden, customers.networkradius.com
+dn: o=Darden,dc=customers,dc=networkradius,dc=com
+o: Darden
+organisationContactManagement: uid=uklingberg,ou=people,o=Darden,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=sahmad,ou=people,o=Darden,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 1
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/darden/
+supportAgreementEnds: 2020110900Z
+
+# Fudura, customers.networkradius.com
+dn: o=Fudura,dc=customers,dc=networkradius,dc=com
+o: Fudura
+organisationContactManagement: uid=jtabak,ou=people,o=Fudura,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=jtabak,ou=people,o=Fudura,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementIsActive: TRUE
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/fudura/
+supportAgreementEnds: 2020123100Z
+
+# Purtel, customers.networkradius.com
+dn: o=Purtel,dc=customers,dc=networkradius,dc=com
+o: Purtel
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementIsActive: FALSE
+supportAgreementClass: cn=Business Hours,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2020020700Z
+organisationContactManagement: uid=ckuhlmann,ou=people,o=Purtel,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=hholtschneider,ou=people,o=Purtel,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=obrandscher,ou=people,o=Purtel,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=ckuhlmann,ou=people,o=Purtel,dc=customers,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/purtel/Home
+
+# Viasat, customers.networkradius.com
+dn: o=Viasat,dc=customers,dc=networkradius,dc=com
+o: Viasat
+organisationContactManagement: uid=gbaumbach,ou=people,o=Viasat,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=gbaumbach,ou=people,o=Viasat,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/viasat/
+supportAgreementEnds: 2020123100Z
+
+# ATT-SHI, customers.networkradius.com
+dn: o=ATT-SHI,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 3
+supportAgreementEnds: 2019042100Z
+o: ATT-SHI
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/Customers/att/
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+organisationContactManagement: uid=lvelez,ou=people,o=ATT-SHI,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=rsolema,ou=people,o=ATT-SHI,dc=customers,dc=networkradius,dc=com
+supportAgreementIsActive: FALSE
+
+# Extreme, customers.networkradius.com
+dn: o=Extreme,dc=customers,dc=networkradius,dc=com
+o: Extreme
+organisationContactManagement: uid=sflaherty,ou=people,o=Extreme,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=mneri,ou=people,o=Extreme,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=rhoude,ou=people,o=Extreme,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=cpitchaimani,ou=people,o=Extreme,dc=customers,dc=networkradius,dc=com
+cn: OEM
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementIsActive: TRUE
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/enterasys/
+supportAgreementEnds: 2020111800Z
+
+# Matooma, customers.networkradius.com
+dn: o=Matooma,dc=customers,dc=networkradius,dc=com
+o: Matooma
+cn: None
+supportAgreementClass: cn=Other,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2019053000Z
+organisationContactManagement: uid=mhalluin,ou=people,o=Matooma,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=aouaret,ou=people,o=Matooma,dc=customers,dc=networkradius,dc=com
+supportAgreementServerCount: 4
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/pages/customers/matooma/
+supportAgreementIsActive: FALSE
+
+# Numerex, customers.networkradius.com
+dn: o=Numerex,dc=customers,dc=networkradius,dc=com
+o: Numerex
+organisationContactManagement: uid=gselig,ou=people,o=Numerex,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=jsandidge,ou=people,o=Numerex,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=kdial,ou=people,o=Numerex,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=csmith,ou=people,o=Numerex,dc=customers,dc=networkradius,dc=com
+supportAgreementServerCount: 10
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+cn: Managed
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/numerex/
+supportAgreementEnds: 2021073100Z
+
+# Rutgers, customers.networkradius.com
+dn: o=Rutgers,dc=customers,dc=networkradius,dc=com
+o: Rutgers
+organisationContactTechnical: uid=bbauman,ou=people,o=Rutgers,dc=customers,dc=networkradius,dc=com
+organisationContactManagement: uid=bbauman,ou=people,o=Rutgers,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 1
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/rutgers/
+supportAgreementEnds: 2020030300Z
+supportAgreementIsActive: FALSE
+
+# Tbaytel, customers.networkradius.com
+dn: o=Tbaytel,dc=customers,dc=networkradius,dc=com
+o: Tbaytel
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/tbaytel/
+organisationContactManagement: uid=hlightwood,ou=people,o=Tbaytel,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=jwark,ou=people,o=Tbaytel,dc=customers,dc=networkradius,dc=com
+supportAgreementEnds: 2021121200Z
+
+# Verizon, customers.networkradius.com
+dn: o=Verizon,dc=customers,dc=networkradius,dc=com
+o: Verizon
+organisationContactManagement: uid=zhidiandu,ou=people,o=Verizon,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=ybing,ou=people,o=Verizon,dc=customers,dc=networkradius,dc=com
+supportAgreementServerCount: 14
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/verizon/
+cn: Standard
+supportAgreementEnds: 2020123100Z
+
+# groups, customers.networkradius.com
+dn: ou=groups,dc=customers,dc=networkradius,dc=com
+
+# people, customers.networkradius.com
+dn: ou=people,dc=customers,dc=networkradius,dc=com
+
+# ATT-DHCP, customers.networkradius.com
+dn: o=ATT-DHCP,dc=customers,dc=networkradius,dc=com
+cn: Site
+supportAgreementServerCount: 4
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2019031600Z
+o: ATT-DHCP
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/Customers/att/DHCP
+supportAgreementIsActive: FALSE
+organisationContactManagement: uid=mduckett,ou=people,o=ATT-DHCP,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=mduckett,ou=people,o=ATT-DHCP,dc=customers,dc=networkradius,dc=com
+
+# CallFlow, customers.networkradius.com
+dn: o=CallFlow,dc=customers,dc=networkradius,dc=com
+o: CallFlow
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/callflow/Home
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+organisationContactManagement: uid=agolding,ou=people,o=CallFlow,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=bconnor,ou=people,o=CallFlow,dc=customers,dc=networkradius,dc=com
+supportAgreementIsActive: TRUE
+supportAgreementEnds: 2021010700Z
+
+# Citizens, customers.networkradius.com
+dn: o=Citizens,dc=customers,dc=networkradius,dc=com
+o: Citizens
+organisationContactTechnical: uid=mherring,ou=people,o=Citizens,dc=customers,dc=networkradius,dc=com
+organisationContactManagement: uid=mherring,ou=people,o=Citizens,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 1
+supportAgreementIsActive: FALSE
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2017103100Z
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/pages/customers/citizens/
+
+# Deloitte, customers.networkradius.com
+dn: o=Deloitte,dc=customers,dc=networkradius,dc=com
+o: Deloitte
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+organisationContactTechnical: uid=cbougazale,ou=people,o=Deloitte,dc=customers,dc=networkradius,dc=com
+supportAgreementEnds: 2021072200Z
+
+# Etisalat, customers.networkradius.com
+dn: o=Etisalat,dc=customers,dc=networkradius,dc=com
+o: Etisalat
+organisationContactTechnical: uid=yabukier,ou=people,o=Etisalat,dc=customers,dc=networkradius,dc=com
+organisationContactManagement: uid=malkhaldi,ou=people,o=Etisalat,dc=customers,dc=networkradius,dc=com
+organisationContactManagement: uid=mhalbanna,ou=people,o=Etisalat,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=jmercado,ou=people,o=Etisalat,dc=customers,dc=networkradius,dc=com
+cn: Site
+supportAgreementServerCount: 6
+supportAgreementIsActive: FALSE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2018092700Z
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/etisalat/
+
+# GroupBCI, customers.networkradius.com
+dn: o=GroupBCI,dc=customers,dc=networkradius,dc=com
+o: GroupBCI
+organisationContactTechnical: uid=inubani,ou=people,o=GroupBCI,dc=customers,dc=networkradius,dc=com
+organisationContactManagement: uid=inubani,ou=people,o=GroupBCI,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=aqasem,ou=people,o=GroupBCI,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=mmakhalfeh,ou=people,o=GroupBCI,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 1
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/bci/
+supportAgreementEnds: 2021061100Z
+
+# Real.not, customers.networkradius.com
+dn: o=Real.not,dc=customers,dc=networkradius,dc=com
+o: Real.not
+organisationContactManagement: uid=eremy,ou=people,o=Real.not,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/real/
+supportAgreementEnds: 2020103100Z
+
+# Spark-NZ, customers.networkradius.com
+dn: o=Spark-NZ,dc=customers,dc=networkradius,dc=com
+o: Spark-NZ
+organisationContactManagement: uid=jroby,ou=people,o=Spark-NZ,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=geast,ou=people,o=Spark-NZ,dc=customers,dc=networkradius,dc=com
+cn: Site
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementServerCount: 20
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/sparknz/
+supportAgreementEnds: 2021022800Z
+organisationContactTechnical: uid=ddouglas,ou=people,o=Spark-NZ,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=khiggins,ou=people,o=Spark-NZ,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=plambrechtsen,ou=people,o=Spark-NZ,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=krana,ou=people,o=Spark-NZ,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=rpanzo,ou=people,o=Spark-NZ,dc=customers,dc=networkradius,dc=com
+
+# Xplornet, customers.networkradius.com
+dn: o=Xplornet,dc=customers,dc=networkradius,dc=com
+o: Xplornet
+organisationContactManagement: uid=rmeyer,ou=people,o=Xplornet,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=rmeyer,ou=people,o=Xplornet,dc=customers,dc=networkradius,dc=com
+cn: Site
+supportAgreementServerCount: 7
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/xplornet/
+supportAgreementEnds: 2021043000Z
+
+# Orange-BE, customers.networkradius.com
+dn: o=Orange-BE,dc=customers,dc=networkradius,dc=com
+o: Orange-BE
+cn: Standard
+supportAgreementServerCount: 6
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Silver,ou=supportClasses,dc=networkradius,dc=com
+organisationContactManagement: uid=lsteens,ou=people,o=Orange-BE,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=lsteens,ou=people,o=Orange-BE,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=lpluymaekers,ou=people,o=Orange-BE,dc=customers,dc=networkradius,dc=com
+supportAgreementEnds: 2020121000Z
+
+# Gibtelecom, customers.networkradius.com
+dn: o=Gibtelecom,dc=customers,dc=networkradius,dc=com
+o: Gibtelecom
+cn: Standard
+organisationContactManagement: uid=amedina,ou=people,o=Gibtelecom,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=alopez,ou=people,o=Gibtelecom,dc=customers,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/gibtelecom/Home
+supportAgreementEnds: 2020121200Z
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+
+# Reinhausen, customers.networkradius.com
+dn: o=Reinhausen,dc=customers,dc=networkradius,dc=com
+o: Reinhausen
+cn: CLient library
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Other,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2021081100Z
+organisationContactManagement: uid=sabelen,ou=people,o=Reinhausen,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=sabelen,ou=people,o=Reinhausen,dc=customers,dc=networkradius,dc=com
+
+# Shreveport, customers.networkradius.com
+dn: o=Shreveport,dc=customers,dc=networkradius,dc=com
+o: Shreveport
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+organisationContactManagement: uid=dfrontaura,ou=people,o=Shreveport,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=dfrontaura,ou=people,o=Shreveport,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=adunn,ou=people,o=Shreveport,dc=customers,dc=networkradius,dc=com
+supportAgreementEnds: 2020072800Z
+supportAgreementIsActive: FALSE
+
+# Time-dotCom, customers.networkradius.com
+dn: o=Time-dotCom,dc=customers,dc=networkradius,dc=com
+o: Time-dotCom
+organisationContactManagement: uid=akhoo,ou=people,o=Time-dotCom,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=akhoo,ou=people,o=Time-dotCom,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=arashid,ou=people,o=Time-dotCom,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 4
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/time.com.my/
+supportAgreementEnds: 2021093000Z
+
+# Viasat-DHCP, customers.networkradius.com
+dn: o=Viasat-DHCP,dc=customers,dc=networkradius,dc=com
+o: Viasat-DHCP
+cn: Standard
+supportAgreementServerCount: 8
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+organisationContactManagement: uid=mkulkarni,ou=people,o=Viasat-DHCP,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=dmunshall,ou=people,o=Viasat-DHCP,dc=customers,dc=networkradius,dc=com
+supportAgreementEnds: 2021091400Z
+
+# China-Unicom, customers.networkradius.com
+dn: o=China-Unicom,dc=customers,dc=networkradius,dc=com
+o: China-Unicom
+cn: Standard
+supportAgreementServerCount: 1
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2020031700Z
+organisationContactManagement: uid=bbolotov,ou=people,o=China-Unicom,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=bbolotov,ou=people,o=China-Unicom,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=jzhang,ou=people,o=China-Unicom,dc=customers,dc=networkradius,dc=com
+supportAgreementIsActive: FALSE
+
+# Virgin-Media, customers.networkradius.com
+dn: o=Virgin-Media,dc=customers,dc=networkradius,dc=com
+o: Virgin-Media
+organisationContactManagement: uid=jmarshall,ou=people,o=Virgin-Media,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=jmarshall,ou=people,o=Virgin-Media,dc=customers,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/arqiva/
+cn: Managed
+supportAgreementServerCount: 4
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementIsActive: FALSE
+supportAgreementEnds: 2020033100Z
+
+# Goldman-Sachs, customers.networkradius.com
+dn: o=Goldman-Sachs,dc=customers,dc=networkradius,dc=com
+o: Goldman-Sachs
+organisationContactManagement: uid=vcialino,ou=people,o=Goldman-Sachs,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=gwoollgar,ou=people,o=Goldman-Sachs,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=xwang,ou=people,o=Goldman-Sachs,dc=customers,dc=networkradius,dc=com
+cn: Site
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementServerCount: 18
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/goldman_sachs/
+supportAgreementEnds: 2021093000Z
+
+# ThaiSat-Global, customers.networkradius.com
+dn: o=ThaiSat-Global,dc=customers,dc=networkradius,dc=com
+o: ThaiSat-Global
+cn: Standard
+supportAgreementServerCount: 1
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2019070400Z
+organisationContactManagement: uid=srodgers,ou=people,o=ThaiSat-Global,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=srodgers,ou=people,o=ThaiSat-Global,dc=customers,dc=networkradius,dc=com
+supportAgreementIsActive: FALSE
+
+# Vodafone-Malta, customers.networkradius.com
+dn: o=Vodafone-Malta,dc=customers,dc=networkradius,dc=com
+o: Vodafone-Malta
+cn: Site
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/vodafone_malta/
+organisationContactManagement: uid=esciberras,ou=people,o=Vodafone-Malta,dc=customers,dc=networkradius,dc=com
+supportAgreementEnds: 2020103100Z
+organisationContactTechnical: uid=tscott,ou=people,o=Vodafone-Malta,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=psammut,ou=people,o=Vodafone-Malta,dc=customers,dc=networkradius,dc=com
+
+# Bank-of-America, customers.networkradius.com
+dn: o=Bank-of-America,dc=customers,dc=networkradius,dc=com
+o: Bank-of-America
+organisationContactTechnical: uid=dmullen,ou=people,o=Bank-of-America,dc=customers,dc=networkradius,dc=com
+organisationContactManagement: uid=ssmith,ou=people,o=Bank-of-America,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 4
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2021090600Z
+
+# Chan-Zuckerberg, customers.networkradius.com
+dn: o=Chan-Zuckerberg,dc=customers,dc=networkradius,dc=com
+o: Chan-Zuckerberg
+supportAgreementServerCount: 2
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2019122000Z
+cn: Standard
+organisationContactManagement: uid=alin,ou=people,o=Chan-Zuckerberg,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=alin,ou=people,o=Chan-Zuckerberg,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=alin,ou=people,o=Chan-Zuckerberg,dc=customers,dc=networkradius,dc=com
+supportAgreementIsActive: FALSE
+
+# Sierra-Wireless, customers.networkradius.com
+dn: o=Sierra-Wireless,dc=customers,dc=networkradius,dc=com
+o: Sierra-Wireless
+organisationContactManagement: uid=ymareau,ou=people,o=Sierra-Wireless,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=ymareau,ou=people,o=Sierra-Wireless,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=sdesaintpol,ou=people,o=Sierra-Wireless,dc=customers,dc=networkradius,dc=com
+cn: Site
+supportAgreementServerCount: 6
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/sierra%20wireless/
+supportAgreementEnds: 2021073100Z
+
+# Rockwell-Collins, customers.networkradius.com
+dn: o=Rockwell-Collins,dc=customers,dc=networkradius,dc=com
+o: Rockwell-Collins
+organisationContactTechnical: uid=hmckelvey,ou=people,o=Rockwell-Collins,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=mboettin,ou=people,o=Rockwell-Collins,dc=customers,dc=networkradius,dc=com
+organisationContactManagement: uid=hmckelvey,ou=people,o=Rockwell-Collins,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 1
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementIsActive: TRUE
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/Rockwell%20Collins/
+supportAgreementEnds: 2020120600Z
+
+# Telkom-Indonesia, customers.networkradius.com
+dn: o=Telkom-Indonesia,dc=customers,dc=networkradius,dc=com
+o: Telkom-Indonesia
+organisationContactManagement: uid=suparti,ou=people,o=Telkom-Indonesia,dc=customers,dc=networkradius,dc=com
+supportAgreementClass: cn=Other,ou=supportClasses,dc=networkradius,dc=com
+cn: Managed
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/telkom%20indonesia/
+supportAgreementIsActive: TRUE
+organisationContactTechnical: uid=amh,ou=people,o=Telkom-Indonesia,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=drhatupea,ou=people,o=Telkom-Indonesia,dc=customers,dc=networkradius,dc=com
+supportAgreementEnds: 2021070600Z
+
+# DePaul-University, customers.networkradius.com
+dn: o=DePaul-University,dc=customers,dc=networkradius,dc=com
+o: DePaul-University
+organisationContactFinance: uid=jmoy,ou=people,o=DePaul-University,dc=customers,dc=networkradius,dc=com
+organisationContactManagement: uid=jkristoff,ou=people,o=DePaul-University,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 1
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/depaul/
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2020012900Z
+supportAgreementIsActive: FALSE
+
+# NextGen-Solutions, customers.networkradius.com
+dn: o=NextGen-Solutions,dc=customers,dc=networkradius,dc=com
+o: NextGen-Solutions
+cn: Tier 2
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+organisationContactManagement: uid=ssillich,ou=people,o=NextGen-Solutions,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=ssillich,ou=people,o=NextGen-Solutions,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=ssillich,ou=people,o=NextGen-Solutions,dc=customers,dc=networkradius,dc=com
+supportAgreementEnds: 2021010300Z
+supportAgreementServerCount: 5
+
+# Al-Jazeera-Telecom, customers.networkradius.com
+dn: o=Al-Jazeera-Telecom,dc=customers,dc=networkradius,dc=com
+o: Al-Jazeera-Telecom
+organisationContactManagement: uid=ralmusawi,ou=people,o=Al-Jazeera-Telecom,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=okhalid,ou=people,o=Al-Jazeera-Telecom,dc=customers,dc=networkradius,dc=com
+supportAgreementServerCount: 1
+supportAgreementIsActive: FALSE
+supportAgreementClass: cn=Silver,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2018081500Z
+cn: Standard
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/al_jazeera/
+
+# Hong-Kong-Hospital, customers.networkradius.com
+dn: o=Hong-Kong-Hospital,dc=customers,dc=networkradius,dc=com
+o: Hong-Kong-Hospital
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementIsActive: TRUE
+supportAgreementEnds: 2023011900Z
+organisationContactManagement: uid=tngan,ou=people,o=Hong-Kong-Hospital,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=hkchu,ou=people,o=Hong-Kong-Hospital,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=ewong,ou=people,o=Hong-Kong-Hospital,dc=customers,dc=networkradius,dc=com
+supportAgreementClass: cn=24/7,ou=supportClasses,dc=networkradius,dc=com
+
+# University-of-Basel, customers.networkradius.com
+dn: o=University-of-Basel,dc=customers,dc=networkradius,dc=com
+o: University-of-Basel
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Silver,ou=supportClasses,dc=networkradius,dc=com
+organisationContactManagement: uid=tfritsch,ou=people,o=University-of-Basel,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=ppetermann,ou=people,o=University-of-Basel,dc=customers,dc=networkradius,dc=com
+supportAgreementEnds: 2022120500Z
+
+# University-of-Leeds, customers.networkradius.com
+dn: o=University-of-Leeds,dc=customers,dc=networkradius,dc=com
+o: University-of-Leeds
+organisationContactTechnical: uid=bjones,ou=people,o=University-of-Leeds,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=chrishowley,ou=people,o=University-of-Leeds,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/leeds/
+organisationContactManagement: uid=awheatley,ou=people,o=University-of-Leeds,dc=customers,dc=networkradius,dc=com
+supportAgreementEnds: 2021031000Z
+
+# University-of-Turin, customers.networkradius.com
+dn: o=University-of-Turin,dc=customers,dc=networkradius,dc=com
+o: University-of-Turin
+cn: Standard
+supportAgreementServerCount: 6
+supportAgreementIsActive: TRUE
+organisationContactManagement: uid=pmonteleone,ou=people,o=University-of-Turin,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=pmonteleone,ou=people,o=University-of-Turin,dc=customers,dc=networkradius,dc=com
+supportAgreementClass: cn=Business Hours,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2021110600Z
+
+# University-of-Guelph, customers.networkradius.com
+dn: o=University-of-Guelph,dc=customers,dc=networkradius,dc=com
+o: University-of-Guelph
+organisationContactManagement: uid=dxu,ou=people,o=University-of-Guelph,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=dxu,ou=people,o=University-of-Guelph,dc=customers,dc=networkradius,dc=com
+supportAgreementServerCount: 3
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Platinum,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/uoguelph/
+cn: Site
+supportAgreementEnds: 2021022100Z
+
+# Azteca-Comunicaciones, customers.networkradius.com
+dn: o=Azteca-Comunicaciones,dc=customers,dc=networkradius,dc=com
+o: Azteca-Comunicaciones
+cn: Standard
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Business Hours,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementEnds: 2021071600Z
+organisationContactTechnical: uid=evega,ou=people,o=Azteca-Comunicaciones,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=jguevara,ou=people,o=Azteca-Comunicaciones,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=isanchez,ou=people,o=Azteca-Comunicaciones,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=jrodriguez,ou=people,o=Azteca-Comunicaciones,dc=customers,dc=networkradius,dc=com
+supportAgreementServerCount: 3
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/Customers/azteca/
+
+# Univeristy-of-Bristol, customers.networkradius.com
+dn: o=Univeristy-of-Bristol,dc=customers,dc=networkradius,dc=com
+o: Univeristy-of-Bristol
+cn: Training
+supportAgreementIsActive: FALSE
+supportAgreementEnds: 2018103100Z
+supportAgreementClass: cn=Other,ou=supportClasses,dc=networkradius,dc=com
+organisationContactManagement: uid=pfry,ou=people,o=Univeristy-of-Bristol,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=pfry,ou=people,o=Univeristy-of-Bristol,dc=customers,dc=networkradius,dc=com
+
+# University-of-Adelaide, customers.networkradius.com
+dn: o=University-of-Adelaide,dc=customers,dc=networkradius,dc=com
+o: University-of-Adelaide
+organisationContactManagement: uid=jcook,ou=people,o=University-of-Adelaide,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=jcook,ou=people,o=University-of-Adelaide,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/adelaide/
+supportAgreementEnds: 2021051700Z
+
+# University-of-Michigan, customers.networkradius.com
+dn: o=University-of-Michigan,dc=customers,dc=networkradius,dc=com
+o: University-of-Michigan
+organisationContactManagement: uid=ddredetean,ou=people,o=University-of-Michigan,dc=customers,dc=networkradius,dc=com
+organisationContactManagement: uid=ppatel,ou=people,o=University-of-Michigan,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=ascott,ou=people,o=University-of-Michigan,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=bharold,ou=people,o=University-of-Michigan,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=btucker,ou=people,o=University-of-Michigan,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=bfarver,ou=people,o=University-of-Michigan,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=cmaxfield,ou=people,o=University-of-Michigan,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=deklund,ou=people,o=University-of-Michigan,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=dkirkland,ou=people,o=University-of-Michigan,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=dbonder,ou=people,o=University-of-Michigan,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=edye,ou=people,o=University-of-Michigan,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=jhelzerman,ou=people,o=University-of-Michigan,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=jsimpkins,ou=people,o=University-of-Michigan,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=jhehnlin,ou=people,o=University-of-Michigan,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=rguzman,ou=people,o=University-of-Michigan,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=wreynolds,ou=people,o=University-of-Michigan,dc=customers,dc=networkradius,dc=com
+cn: Site
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/umich/
+supportAgreementEnds: 2021082300Z
+
+# University-of-Bielefeld, customers.networkradius.com
+dn: o=University-of-Bielefeld,dc=customers,dc=networkradius,dc=com
+o: University-of-Bielefeld
+organisationContactManagement: uid=slang,ou=people,o=University-of-Bielefeld,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=slang,ou=people,o=University-of-Bielefeld,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=talthoff,ou=people,o=University-of-Bielefeld,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 2
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/bielefeld/
+supportAgreementEnds: 2021041900Z
+
+# Northern-University-Qatar, customers.networkradius.com
+dn: o=Northern-University-Qatar,dc=customers,dc=networkradius,dc=com
+o: Northern-University-Qatar
+organisationContactManagement: uid=nlughmani,ou=people,o=Northern-University-Qatar,dc=customers,dc=networkradius,dc=com
+organisationContactTechnical: uid=nlughmani,ou=people,o=Northern-University-Qatar,dc=customers,dc=networkradius,dc=com
+organisationContactFinance: uid=amaarouf,ou=people,o=Northern-University-Qatar,dc=customers,dc=networkradius,dc=com
+cn: Standard
+supportAgreementServerCount: 1
+supportAgreementIsActive: TRUE
+supportAgreementClass: cn=Gold,ou=supportClasses,dc=networkradius,dc=com
+supportAgreementDocumentURI: https://03837.wiki.networkradius.com/customers/Northern%20University/
+supportAgreementEnds: 2021063000Z
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 77
+# numEntries: 76
